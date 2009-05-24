@@ -1,0 +1,37 @@
+IF(MINGW OR CMAKE_COMPILER_IS_GNUCC)
+  
+  SET(CMAKE_CXX_FLAGS " -mtune=native $ENV{CXXFLAGS} --std=gnu++0x -Wall -Wextra -pedantic -pipe " )
+  SET(CMAKE_CXX_FLAGS_DEBUG " -O0 -g3 -ggdb3 " )
+  SET(CMAKE_CXX_FLAGS_RELEASE " -O2 " )
+
+ENDIF()
+
+find_package( Boost 1.37.0 )
+IF(NOT Boost_FOUND)
+  MESSAGE(FATAL_ERROR "Can't find boost. Maybe try setting '-DBOOST_INCLUDEDIR=/path/to/boost'?")
+ELSE()
+  INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+endif()
+
+
+IF(NOT QT4_FOUND)
+	MESSAGE(FATAL_ERROR "No Qt4.")
+ELSE()
+	INCLUDE(${QT_USE_FILE})
+ENDIF()
+
+
+INCLUDE(TestForSTDNamespace)
+IF( CMAKE_NO_STD_NAMESPACE )
+  MESSAGE(FATAL_ERROR "No 'std::' namespace support")
+ENDIF()	
+
+INCLUDE(TestForANSIStreamHeaders)
+IF( CMAKE_NO_ANSI_STREAM_HEADERS )
+  MESSAGE(FATAL_ERROR "No ANSI stream heades.")
+ENDIF()	
+
+INCLUDE(TestForANSIForScope)
+IF( CMAKE_NO_ANSI_FOR_SCOPE )
+  MESSAGE(FATAL_ERROR "No ANSI std:: scope on STL.")
+ENDIF()	

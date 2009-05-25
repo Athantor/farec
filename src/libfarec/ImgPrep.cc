@@ -112,6 +112,11 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
 
 			//here new image is created:
 			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(sum, sum, sum).rgb();
+
+			if(ctr % 1000 == 0)
+			{
+				cops->Get_pdialog()->setValue(ctr);
+			}
 		}
 	}
 
@@ -170,7 +175,7 @@ ImgPrep::ret_t ImgPrep::Average_bin_blur( double pct ) const
 				}
 			}
 
-			if((sum) > pct)
+			if((sum) > mypct)
 			{
 				reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(255, 255, 255).rgb();
 			}
@@ -180,6 +185,113 @@ ImgPrep::ret_t ImgPrep::Average_bin_blur( double pct ) const
 			}
 		}
 	}
+
+	return rr;
+}
+
+ImgPrep::ret_t ImgPrep::Otsu_bin() const
+{
+
+	ret_t rr = ret_t(new QImage(*myimg));
+
+	const uint16_t GLVL = 256;
+	const uint64_t IMSIZE = myimg -> height() * myimg -> width();
+
+	uint thd = 0;
+
+	double prob[GLVL];
+	std::fill(prob, prob + GLVL, 0.0);
+
+	double mean[GLVL];
+	std::fill(mean, mean + GLVL, 0.0);
+
+	double omega[GLVL];
+	std::fill(omega, omega + GLVL, 0.0);
+
+	double max_sigma = 0;
+	double sigma[GLVL];
+	std::fill(sigma, sigma + GLVL, 0.0);
+
+	cops->Start_processing(QString::fromUtf8("Binaryzacja Otsu"), (myimg->height() * myimg->width()) + (GLVL * 3));
+	size_t ctr = 0;
+
+	ImgData::histret_t hist = ImgData(pnt, *rr).Make_histogram();
+
+	for(uint16_t i = 0; i < GLVL; ++i)
+	{
+		prob[i] = static_cast<double> ((*hist.get<0> ())[i]) / IMSIZE;
+
+		ctr++;
+		if(ctr % 1000 == 0)
+		{
+			cops->Get_pdialog()->setValue(ctr);
+		}
+
+	}
+
+	mean[0] = 0;
+	omega[0] = prob[0];
+	for(uint16_t i = 1; i < GLVL; ++i)
+	{
+		mean[i] = mean[i - 1] + i * prob[i];
+		omega[i] = omega[i - 1] + prob[i];
+
+		ctr++;
+		if(ctr % 1000 == 0)
+		{
+			cops->Get_pdialog()->setValue(ctr);
+		}
+	}
+
+	for(uint16_t i = 0; i < GLVL - 1; ++i)
+	{
+		if((omega[i] != 0.0) and (omega[i] != 1.0))
+		{
+			sigma[i] = std::pow(mean[GLVL - 1] * omega[i] - mean[i], 2) / (omega[i] * (1.0 - omega[i]));
+		}
+		else
+		{
+			sigma[i] = 0.0;
+		}
+
+		if(sigma[i] > max_sigma)
+		{
+			thd = i;
+			max_sigma = sigma[i];
+		}
+
+		ctr++;
+		if(ctr % 1000 == 0)
+		{
+			cops->Get_pdialog()->setValue(ctr);
+		}
+	}
+
+	for(int y = 0; y < myimg -> height(); ++y)
+	{
+		for(int x = 0; x < myimg -> width(); ++x)
+		{
+			QRgb * pxv = reinterpret_cast<QRgb *> (myimg -> scanLine(y));
+			QRgb * npxv = reinterpret_cast<QRgb *> (rr -> scanLine(y));
+
+			if((unsigned) qRed(pxv[x]) > thd)
+			{
+				npxv[x] = QColor(255, 255, 255).rgb();
+			}
+			else
+			{
+				npxv[x] = QColor(0, 0, 0).rgb();
+			}
+
+			ctr++;
+			if(ctr % 1000 == 0)
+			{
+				cops->Get_pdialog()->setValue(ctr);
+			}
+		}
+	}
+	
+	cops->Stop_processing();
 
 	return rr;
 }

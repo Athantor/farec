@@ -85,18 +85,23 @@ ImgData::gradret_t ImgData::Make_gradients() const
 		}
 
 	}
+	
+	cops->Stop_processing();
 
 	return boost::make_tuple(gx, gy);
 }
 
 ImgData::histret_t ImgData::Make_histogram() const
 {
+	cops->Start_processing(QString::fromUtf8("Obliczanie histogramów"), myimg->height() * myimg->width());
+	size_t ctr = 0;
+
 	//             tuple   -> shared_ptr           ->               vector
 	auto hist_r = histret_t::head_type(new histret_t::head_type::value_type(255));
 	auto hist_g = histret_t::head_type(new histret_t::head_type::value_type(255));
 	auto hist_b = histret_t::head_type(new histret_t::head_type::value_type(255));
 	auto hist_a = histret_t::head_type(new histret_t::head_type::value_type(255));
-	
+
 	std::fill(hist_r->begin(), hist_r->end(), 0);
 	std::fill(hist_g->begin(), hist_g->end(), 0);
 	std::fill(hist_b->begin(), hist_b->end(), 0);
@@ -107,14 +112,21 @@ ImgData::histret_t ImgData::Make_histogram() const
 		for(int x = 0; x < myimg -> width(); ++x)
 		{
 			QRgb * px = reinterpret_cast<decltype( px )> (myimg -> scanLine(y));
-			
-			(*hist_r)[qRed  (px[x])] += 1;
+
+			(*hist_r)[qRed(px[x])] += 1;
 			(*hist_g)[qGreen(px[x])] += 1;
-			(*hist_b)[qBlue (px[x])] += 1;
+			(*hist_b)[qBlue(px[x])] += 1;
 			(*hist_a)[qAlpha(px[x])] += 1;
-			
+
+			if(ctr % 1000 == 0)
+			{
+				cops->Get_pdialog()->setValue(ctr);
+			}
+
 		}
 	}
 	
+	cops->Stop_processing();
+
 	return boost::make_tuple(hist_r, hist_g, hist_b, hist_a);
 }

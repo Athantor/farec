@@ -52,6 +52,7 @@ class ImgPrep : public ImgOp
 		
 		//color
 		ret_t To_gray() const;
+		ret_t Otsu_bin() const;
 		
 		//details
 		ret_t Average_bin_blur(double) const;

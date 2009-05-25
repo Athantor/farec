@@ -20,6 +20,8 @@
  *      Author: athantor
  */
 
+#include <iostream>
+
 #include "ImgPrep.hh"
 
 ImgPrep::ImgPrep( QWidget * p, const QImage & qi ) :
@@ -67,33 +69,34 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
 {
 	ret_t rr = ret_t(new QImage(*myimg));
 
-	//TODO fix fail
-	//TODO make gray
-
-	cops->Start_processing(QString::fromUtf8("Konwersja na skalę szarości"), (rr->height()) * (rr->bytesPerLine()));
+	rr = ImgPrep(pnt, *rr).To_gray();
+	
+	cops->Start_processing(QString::fromUtf8("Wykrywanie krawędzi [sobel]"), (rr->height()) * (rr->bytesPerLine()));
 	size_t ctr = 0;
 
 	ImgData::gradret_t grads = ImgData(pnt, *myimg).Make_gradients();
 
+	std::cout << "w00" << std::endl;
+	
 	int sumx = 0, sumy = 0, sum = 0;
 
-	for(int y = 1; y < myimg -> height() - 1; y++)
+	for(int y = 1; y < rr -> height() - 1; y++)
 	{
-		for(int x = 1; x < myimg -> width() - 1; x++)
+		for(int x = 1; x < rr -> width() - 1; x++)
 		{
 			sumx = sumy = 0;
 
-			if((y == 0) or (y + 1 >= myimg -> height()))
+			if((y == 0) or (y + 1 >= rr -> height()))
 			{
 				sum = 0;
 			}
-			else if((x == 0) or (x + 1 >= myimg -> width()))
+			else if((x == 0) or (x + 1 >= rr -> width()))
 			{
 				sum = 0;
 			}
 			else
 			{
-
+				
 				sumx = (*grads.get<0> ())[x][y];
 				sumy = (*grads.get<1> ())[x][y];
 

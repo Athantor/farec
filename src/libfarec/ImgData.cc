@@ -40,8 +40,8 @@ ImgData::gradret_t ImgData::Make_gradients() const
 	cops->Start_processing(QString::fromUtf8("Obliczanie gradientów"), myimg->height() * myimg->width());
 
 	int sumx = 0, sumy = 0;
-	gradarr_t gx(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(myimg->width(), 0))); //pointer to a vector of vectors filled with 0
-	gradarr_t gy(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(myimg->width(), 0))); //pointer to a vector of vectors filled with 0
+	gradarr_t gx(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(myimg->height(), 0))); //pointer to a vector of vectors filled with 0
+	gradarr_t gy(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(myimg->height(), 0))); //pointer to a vector of vectors filled with 0
 	size_t ctr = 0;
 
 	for(int y = 0; y < myimg->height(); ++y)

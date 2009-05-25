@@ -22,7 +22,8 @@
 
 #include "ImgData.hh"
 
-ImgData::ImgData( QWidget *p, const QImage& im ) : ImgOp(p, im)
+ImgData::ImgData( QWidget *p, const QImage& im ) :
+	ImgOp(p, im)
 {
 
 }
@@ -63,12 +64,11 @@ ImgData::gradret_t ImgData::Make_gradients() const
 				for(int i = -1; i <= 1; i++)
 				{
 					for(int j = -1; j <= 1; j++)
-					{				
-						uchar * sline = myimg -> scanLine(y+j);
-						QRgb * px = reinterpret_cast<decltype(px)>(sline);
+					{
+						QRgb * px = reinterpret_cast<decltype( px )> (myimg -> scanLine(y + j));
 
-						sumx += qRed(px[x+i]) * Gx[i + 1][j + 1];
-						sumy += qRed(px[x+i]) * Gy[i + 1][j + 1];
+						sumx += qRed(px[x + i]) * Gx[i + 1][j + 1];
+						sumy += qRed(px[x + i]) * Gy[i + 1][j + 1];
 					}
 				}
 			}
@@ -87,4 +87,34 @@ ImgData::gradret_t ImgData::Make_gradients() const
 	}
 
 	return boost::make_tuple(gx, gy);
+}
+
+ImgData::histret_t ImgData::Make_histogram() const
+{
+	//             tuple   -> shared_ptr           ->               vector
+	auto hist_r = histret_t::head_type(new histret_t::head_type::value_type(255));
+	auto hist_g = histret_t::head_type(new histret_t::head_type::value_type(255));
+	auto hist_b = histret_t::head_type(new histret_t::head_type::value_type(255));
+	auto hist_a = histret_t::head_type(new histret_t::head_type::value_type(255));
+	
+	std::fill(hist_r->begin(), hist_r->end(), 0);
+	std::fill(hist_g->begin(), hist_g->end(), 0);
+	std::fill(hist_b->begin(), hist_b->end(), 0);
+	std::fill(hist_a->begin(), hist_a->end(), 0);
+
+	for(int y = 0; y < myimg -> height(); ++y)
+	{
+		for(int x = 0; x < myimg -> width(); ++x)
+		{
+			QRgb * px = reinterpret_cast<decltype( px )> (myimg -> scanLine(y));
+			
+			(*hist_r)[qRed  (px[x])] += 1;
+			(*hist_g)[qGreen(px[x])] += 1;
+			(*hist_b)[qBlue (px[x])] += 1;
+			(*hist_a)[qAlpha(px[x])] += 1;
+			
+		}
+	}
+	
+	return boost::make_tuple(hist_r, hist_g, hist_b, hist_a);
 }

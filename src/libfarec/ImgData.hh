@@ -31,6 +31,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <cstdint>
+#include <algorithm>
 
 #include "ImgOp.hh"
 
@@ -44,11 +45,15 @@ class ImgData : public ImgOp
 
 		typedef shared_ptr<QVector<QVector<int64_t> > > gradarr_t;
 		typedef tuple<gradarr_t, gradarr_t> gradret_t;
+		typedef tuple<shared_ptr<QVector<int64_t> > , shared_ptr<QVector<int64_t> > , shared_ptr<QVector<int64_t> > ,
+						shared_ptr<QVector<int64_t> > > histret_t; ///< RGBA histogram
 
 		ImgData(QWidget *, const QImage&);
 		virtual ~ImgData();
 
 		gradret_t Make_gradients() const;
+		histret_t Make_histogram() const;
+		
 };
 
 #endif /* IMGDATA_HH_ */

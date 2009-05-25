@@ -130,6 +130,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionNa_szaro"/>
     <addaction name="actionSobel"/>
+    <addaction name="actionOtsu"/>
    </widget>
    <addaction name="menuPlik"/>
    <addaction name="menuOpsy"/>
@@ -168,6 +169,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionSobel">
    <property name="text">
     <string>Sobel</string>
+   </property>
+  </action>
+  <action name="actionOtsu">
+   <property name="text">
+    <string>Otsu</string>
    </property>
   </action>
  </widget>

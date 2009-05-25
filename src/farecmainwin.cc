@@ -26,6 +26,8 @@ void FarecMainWin::Connect_slots()
 
 	connect(ui.actionNa_szaro, SIGNAL(triggered(bool)), this, SLOT(To_gray(bool)));
 	connect(ui.actionSobel, SIGNAL(triggered(bool)), this, SLOT(Test_sobel(bool)));
+	connect(ui.actionOtsu, SIGNAL(triggered(bool)), this, SLOT(Test_otsu(bool)));
+	
 #else
 	ui.menuOpsy->setEnabled(false);
 #endif

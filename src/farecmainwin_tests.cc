@@ -38,4 +38,10 @@ void FarecMainWin::Test_sobel( bool )
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
+void FarecMainWin::Test_otsu( bool )
+{
+	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Otsu_bin())));
+	Set_label_img(ui.PviewImgLbl, *outimg);
+}
+
 #endif

@@ -32,6 +32,7 @@ class FarecMainWin : public QMainWindow
 #ifdef DEBUG_KRZYS
 		void To_gray( bool );
 		void Test_sobel( bool );
+		void Test_otsu(bool);
 #endif
 
 	private:

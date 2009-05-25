@@ -28,6 +28,7 @@ class FarecMainWin : public QMainWindow
 
 	private slots:
 		void Resize_labels_imgs(int, int);
+		void Make_preview_the_source( bool );
 
 #ifdef DEBUG_KRZYS
 		void To_gray( bool );

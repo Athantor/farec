@@ -20,6 +20,8 @@ void FarecMainWin::Connect_slots()
 
 	connect(ui.actionOtw_rz, SIGNAL(triggered(bool)), this, SLOT(Load_file(bool)));
 
+	connect(ui.actionU_yj_podgl_du, SIGNAL(triggered(bool)), this, SLOT(Make_preview_the_source(bool)));
+
 #ifdef DEBUG_KRZYS
 
 	ui.menuOpsy->setEnabled(true);
@@ -27,11 +29,10 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionNa_szaro, SIGNAL(triggered(bool)), this, SLOT(To_gray(bool)));
 	connect(ui.actionSobel, SIGNAL(triggered(bool)), this, SLOT(Test_sobel(bool)));
 	connect(ui.actionOtsu, SIGNAL(triggered(bool)), this, SLOT(Test_otsu(bool)));
-	
+
 #else
 	ui.menuOpsy->setEnabled(false);
 #endif
-
 
 }
 
@@ -102,4 +103,24 @@ void FarecMainWin::Resize_labels_imgs( int p, int )
 void FarecMainWin::resizeEvent( QResizeEvent * )
 {
 	Resize_labels_imgs(0, 0);
+}
+
+void FarecMainWin::Make_preview_the_source( bool )
+{
+	if((not static_cast<bool> (outimg)) or (QMessageBox::question(this, "Zamiana", QString::fromUtf8(
+			"Na pewno ustawić podgląd jako źródło?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)
+			== QMessageBox::No))
+	{
+		return;
+	}
+
+	inimg.reset(new QImage(*outimg));
+	Set_label_img(ui.InputImgLbl, *inimg);
+
+	ui.groupBox->setTitle(QString::fromUtf8("Obraz wejściowy [Z podglądu] {") + QString::number(
+			inimg->width()) + QString::fromUtf8("×") + QString::number(inimg->height()) + "}");
+
+	ui.PviewImgLbl->setPixmap(QPixmap());
+	outimg.reset();
+
 }

@@ -32,9 +32,11 @@
 #include <boost/scoped_ptr.hpp>
 
 #include <cmath>
+#include <cfloat>
 
 #include "ImgOp.hh"
 #include "ImgData.hh"
+#include "except/FEInvalidParameter.hh"
 
 using boost::shared_ptr;
 using boost::scoped_ptr;
@@ -46,8 +48,17 @@ class ImgPrep : public ImgOp
 		ImgPrep( QWidget *, const QImage & );
 		virtual ~ImgPrep();
 
+		ret_t Batch_prepare() const;
+		
+		//color
 		ret_t To_gray() const;
+		
+		//details
+		ret_t Average_bin_blur(double) const;
+		
+		//edge det
 		ret_t Sobel_ed() const;
+		
 
 };
 

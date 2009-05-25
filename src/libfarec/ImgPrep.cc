@@ -20,8 +20,6 @@
  *      Author: athantor
  */
 
-#include <iostream>
-
 #include "ImgPrep.hh"
 
 ImgPrep::ImgPrep( QWidget * p, const QImage & qi ) :
@@ -75,8 +73,6 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
 	size_t ctr = 0;
 
 	ImgData::gradret_t grads = ImgData(pnt, *myimg).Make_gradients();
-
-	std::cout << "w00" << std::endl;
 	
 	int sumx = 0, sumy = 0, sum = 0;
 
@@ -108,8 +104,8 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
 			ctr++;
 			sum = static_cast<uchar> (sum);
 
-			rr->setPixel(x, y, qRgb(sum, sum, sum));
-
+			reinterpret_cast<QRgb *>(rr -> scanLine(y))[x] = QColor(sum,sum,sum).rgb();
+			
 		}
 	}
 

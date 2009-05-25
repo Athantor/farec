@@ -63,12 +63,12 @@ ImgData::gradret_t ImgData::Make_gradients() const
 				for(int i = -1; i <= 1; i++)
 				{
 					for(int j = -1; j <= 1; j++)
-					{
-						QRgb mspx = myimg -> pixel(x + i, y + j);
+					{				
+						uchar * sline = myimg -> scanLine(y+j);
+						QRgb * px = reinterpret_cast<decltype(px)>(sline);
 
-						sumx += qRed(mspx) * Gx[i + 1][j + 1];
-						sumy += qRed(mspx) * Gy[i + 1][j + 1];
-
+						sumx += qRed(px[x+i]) * Gx[i + 1][j + 1];
+						sumy += qRed(px[x+i]) * Gy[i + 1][j + 1];
 					}
 				}
 			}

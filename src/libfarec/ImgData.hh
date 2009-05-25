@@ -42,6 +42,16 @@ using boost::shared_ptr;
 class ImgData : public ImgOp
 {
 	public:
+		
+		static inline uchar norm_rgb_val(int16_t val)
+		{
+			if(val >= 255)
+				return 255;
+			if(val <= 0)
+				return 0;
+			
+			return val;
+		}
 
 		typedef shared_ptr<QVector<QVector<int64_t> > > gradarr_t;
 		typedef tuple<gradarr_t, gradarr_t> gradret_t;
@@ -53,6 +63,8 @@ class ImgData : public ImgOp
 
 		gradret_t Make_gradients() const;
 		histret_t Make_histogram() const;
+		
+	
 		
 };
 

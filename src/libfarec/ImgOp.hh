@@ -41,12 +41,13 @@ class ImgOp
 
 		typedef shared_ptr<QImage> ret_t;
 
-		ImgOp(QWidget *, const QImage&);
 		virtual ~ImgOp();
 
 		void Change_img(const QImage&);
 
 	protected:
+		ImgOp() = delete;
+		ImgOp(QWidget *, const QImage&);
 		QWidget *pnt;
 		scoped_ptr<CommonOps> cops;
 		ret_t myimg;

@@ -25,14 +25,14 @@
 ImgOp::ImgOp( QWidget * p, const QImage & qi ) :
 	pnt(p), cops(new CommonOps(p)), myimg(new QImage(qi))
 {
-	
+
 }
 
 ImgOp::~ImgOp()
 {
 }
 
-void ImgOp::Change_img(const QImage& qi)
+void ImgOp::Change_img( const QImage& qi )
 {
 	myimg.reset(new QImage(qi));
 }

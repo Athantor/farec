@@ -34,6 +34,7 @@ class FarecMainWin : public QMainWindow
 		void To_gray( bool );
 		void Test_sobel( bool );
 		void Test_otsu(bool);
+		void Test_gauss(bool);
 #endif
 
 	private:

@@ -104,7 +104,7 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
 
 				//  sum = std::abs(sumx) + std::abs(sumy);
 				//sum = static_cast<int> (255 - std::sqrt(std::pow(sumx, 2.0) + std::pow(sumy, 2.0)));
-				sum =  static_cast<int> (255 - std::hypot( static_cast<double>(sumx), static_cast<double>(sumy)) );
+				sum = static_cast<int> (255 - std::hypot(static_cast<double> (sumx), static_cast<double> (sumy)));
 				sum = sum > 255 ? 255 : sum;
 				sum = sum < 0 ? 0 : sum;
 			}
@@ -291,8 +291,93 @@ ImgPrep::ret_t ImgPrep::Otsu_bin() const
 			}
 		}
 	}
-	
+
 	cops->Stop_processing();
+
+	return rr;
+}
+
+ImgPrep::ret_t ImgPrep::Gaussian_blur( uint8_t ksize ) const
+{
+
+	if(ksize % 2 == 0)
+		throw FEInvalidParameter("Kernel size has to be an odd number");
+
+	ret_t rr = ret_t(new QImage(*myimg));
+
+	const double KERNMID = static_cast<int> (ksize / 2.0);
+	QVector<QVector<double> > kern(ksize, QVector<double> (ksize, 0));
+	double sum = 0;
+
+	for(size_t i = 0; i < (ksize - KERNMID); ++i) // y
+	{
+		for(size_t j = 0; j < (ksize - KERNMID); ++j) // x
+		{
+			/*const int16_t X = j - (ksize - KERNMID), Y = i - (ksize - KERNMID);
+			 kern[j][i] = (1 / (2 * M_PI * std::pow(sigma, 2))) * std::exp(-((std::pow(static_cast<const double> (X), 2)
+			 * std::pow(static_cast<const double> (Y), 2)) / (2 * std::pow(sigma, 2))));
+			 sum += kern[j][i];
+			 */
+
+			kern[i][j] = std::pow(2.0, j + i);
+			kern[i][(ksize - 1) - j] = kern[i][j];
+
+			sum += (kern[i][j] * ((i == KERNMID) and (j == KERNMID) ? 1 : 2));
+
+		}
+	}
+
+	double px[3];
+	std::fill(px, px + 3, 0.0);
+
+	for(int y = 0; y < myimg -> height(); y++)
+	{
+		for(int x = 0; x < myimg -> width(); x++)
+		{
+			QRgb currpx = reinterpret_cast<QRgb *> (myimg -> scanLine(y))[x];
+
+			if((y < (ksize - KERNMID)) or ((y + (ksize - KERNMID)) >= myimg -> height()))
+			{
+				px[0] = qRed(currpx);
+				px[1] = qGreen(currpx);
+				px[2] = qBlue(currpx);
+			}
+			else if((x < (ksize - KERNMID)) or ((x + (ksize - KERNMID)) >= myimg -> width()))
+			{
+				px[0] = qRed(currpx);
+				px[1] = qGreen(currpx);
+				px[2] = qBlue(currpx);
+			}
+			else
+			{
+
+				for(int i = -KERNMID; i <= KERNMID; i++)
+				{
+					for(int j = -KERNMID; j <= KERNMID; j++)
+					{
+						px[0] += qRed(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[i + KERNMID][j
+								+ KERNMID];
+						px[1] += qGreen(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[i + KERNMID][j
+														+ KERNMID];
+						px[2] += qBlue(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[i + KERNMID][j
+														+ KERNMID];
+					}
+				}
+
+				std::transform(px, px +3, px, std::bind2nd(std::divides<double>(), sum) );
+				
+			}
+			
+			std::transform(px, px +3, px, std::ptr_fun(static_cast<double(*)(double)>(std::trunc) ) );
+			
+			uint8_t pxvals[3];
+			std::copy(px, px+3, pxvals);
+			
+			
+			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxvals[0], pxvals[1], pxvals[2]).rgb();
+
+		}
+	}
 
 	return rr;
 }

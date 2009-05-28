@@ -44,4 +44,10 @@ void FarecMainWin::Test_otsu( bool )
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
+void  FarecMainWin::Test_gauss(bool)
+{
+	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Gaussian_blur(5))));
+	Set_label_img(ui.PviewImgLbl, *outimg);
+}
+
 #endif

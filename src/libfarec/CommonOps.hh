@@ -26,6 +26,8 @@
 #include <QWidget>
 #include <QProgressDialog>
 
+#include <stack>
+
 #include <boost/shared_ptr.hpp>
 
 using boost::shared_ptr;
@@ -42,7 +44,8 @@ class CommonOps
 
 	private:
 		QWidget * pnt;
-		shared_ptr<QProgressDialog> qpd;
+		std::stack<shared_ptr<QProgressDialog> > qpds;
+		size_t cursctr;
 
 };
 

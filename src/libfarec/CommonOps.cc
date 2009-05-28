@@ -22,28 +22,29 @@
 
 #include "CommonOps.hh"
 
-CommonOps::CommonOps(QWidget *p) : pnt(p)
+CommonOps::CommonOps( QWidget *p ) :
+	pnt(p), cursctr(0)
 {
-	// TODO Auto-generated constructor stub
-
 }
 
 CommonOps::~CommonOps()
 {
-	// TODO Auto-generated destructor stub
 }
-
 
 shared_ptr<QProgressDialog> CommonOps::Get_pdialog() const
 {
-	return qpd;
+	return qpds.top();
 }
 
 void CommonOps::Start_processing( const QString & desc, size_t max )
 {
-	pnt->setCursor(QCursor(Qt::WaitCursor));
+	if(++cursctr >= 1)
+		pnt->setCursor(QCursor(Qt::WaitCursor));
 
-	qpd.reset(new QProgressDialog(desc, "", 0, max, pnt));
+	shared_ptr<QProgressDialog> qpd(new QProgressDialog(desc.size() ? desc : QString::fromUtf8("Przetwarzanie…"), "",
+			0, max, pnt));
+	qpds.push(qpd);
+
 	qpd->setCancelButton(0);
 	qpd->setValue(0);
 	qpd->setAutoClose(true);
@@ -53,8 +54,12 @@ void CommonOps::Start_processing( const QString & desc, size_t max )
 
 void CommonOps::Stop_processing()
 {
+
+	shared_ptr<QProgressDialog> qpd = qpds.top();
+
 	qpd->close();
 	qpd.reset();
 
-	pnt->setCursor(QCursor(Qt::ArrowCursor));
+	if(--cursctr <= 1)
+		pnt->setCursor(QCursor(Qt::ArrowCursor));
 }

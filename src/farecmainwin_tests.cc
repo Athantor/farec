@@ -50,4 +50,10 @@ void  FarecMainWin::Test_gauss(bool)
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
+void FarecMainWin::Test_median(bool)
+{
+	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Median_filter())));
+    Set_label_img(ui.PviewImgLbl, *outimg);
+}
+
 #endif

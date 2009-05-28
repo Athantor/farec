@@ -57,6 +57,7 @@ class ImgPrep : public ImgOp
 		//details
 		ret_t Average_bin_blur(double) const;
 		ret_t Gaussian_blur(uint8_t) const;
+		ret_t Median_filter() const;
 		
 		//edge det
 		ret_t Sobel_ed() const;

@@ -357,25 +357,73 @@ ImgPrep::ret_t ImgPrep::Gaussian_blur( uint8_t ksize ) const
 					{
 						px[0] += qRed(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[i + KERNMID][j
 								+ KERNMID];
-						px[1] += qGreen(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[i + KERNMID][j
-														+ KERNMID];
-						px[2] += qBlue(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[i + KERNMID][j
-														+ KERNMID];
+						px[1] += qGreen(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
+								* kern[i + KERNMID][j + KERNMID];
+						px[2] += qBlue(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
+								* kern[i + KERNMID][j + KERNMID];
 					}
 				}
 
-				std::transform(px, px +3, px, std::bind2nd(std::divides<double>(), sum) );
-				
+				std::transform(px, px + 3, px, std::bind2nd(std::divides<double>(), sum));
+
 			}
-			
-			std::transform(px, px +3, px, std::ptr_fun(static_cast<double(*)(double)>(std::trunc) ) );
-			
+
+			std::transform(px, px + 3, px, std::ptr_fun(static_cast<double(*)( double )> (std::trunc)));
+
 			uint8_t pxvals[3];
-			std::copy(px, px+3, pxvals);
-			
-			
+			std::copy(px, px + 3, pxvals);
+
 			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxvals[0], pxvals[1], pxvals[2]).rgb();
 
+		}
+	}
+
+	return rr;
+}
+
+ImgPrep::ret_t ImgPrep::Median_filter() const
+{
+	ret_t rr = ret_t(new QImage(*myimg));
+
+	for(int y = 0; y < myimg -> height(); y++)
+	{
+		for(int x = 0; x < myimg -> width(); x++)
+		{
+			QVector<QVector<int> > pxbuf(3, QVector<int> (9, 0));
+
+			if((y == 0) or (y + 1 >= myimg -> height()))
+			{
+				//std::fill(px, px+3, 255);
+			}
+			else if((x == 0) or (x + 1 >= myimg -> width()))
+			{
+				//std::fill(px, px+3, 255);
+			}
+			else
+			{
+
+				size_t ctr = 0;
+
+				for(int i = -1; i <= 1; i++)
+				{
+					for(int j = -1; j <= 1; j++)
+					{
+						QRgb currpx = reinterpret_cast<QRgb *> (rr -> scanLine(y + j))[x + i];
+
+						pxbuf[0][ctr] = qRed(currpx);
+						pxbuf[1][ctr] = qGreen(currpx);
+						pxbuf[2][ctr] = qBlue(currpx);
+						ctr++;
+					}
+				}
+
+				for(auto it = pxbuf.begin(); it < pxbuf.end(); ++it)
+				{
+					std::sort(it->begin(), it->end());
+				}
+			}
+
+			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxbuf[0][4], pxbuf[1][4], pxbuf[2][4]).rgb();
 		}
 	}
 

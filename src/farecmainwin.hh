@@ -35,6 +35,7 @@ class FarecMainWin : public QMainWindow
 		void Test_sobel( bool );
 		void Test_otsu(bool);
 		void Test_gauss(bool);
+		void Test_median(bool);
 #endif
 
 	private:

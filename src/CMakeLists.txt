@@ -6,25 +6,28 @@ include_directories( . ${CMAKE_CURRENT_BINARY_DIR} libfarec)
 
 #################3
 
+SET(farec_ui_SRCS
+  ui/farecmainwin
+)
+
 SET(farec_SRCS
   farec
   FarecApp
-  farecmainwin
 )
 
 STRING(TOUPPER ${CMAKE_BUILD_TYPE} MYCBT)
 IF( ${MYCBT} STREQUAL DEBUG )
 	add_definitions("-DDEBUG_KRZYS")
 	
-	SET(farec_SRCS	${farec_SRCS} farecmainwin_tests )
+	SET(farec_SRCS ${farec_ui_SRCS}	${farec_SRCS} ui/farecmainwin_tests )
 ENDIF()
 
 SET(farec_UIS
-	farecmainwin.ui
+	ui/farecmainwin.ui
 )
 
 SET(farec_MOCS_H
-	farecmainwin.hh
+	ui/farecmainwin.hh
 )
 
 QT4_WRAP_CPP(farec_MOCS_SRCS ${farec_MOCS_H})

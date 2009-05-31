@@ -27,7 +27,7 @@
 
 #include <boost/scoped_ptr.hpp>
 
-#include "farecmainwin.hh"
+#include "ui/farecmainwin.hh"
 
 using boost::scoped_ptr;
 

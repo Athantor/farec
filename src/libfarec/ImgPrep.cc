@@ -418,7 +418,8 @@ ImgPrep::ret_t ImgPrep::Median_filter() const
 	{
 		for(int x = 0; x < myimg -> width(); x++)
 		{
-			QVector<QVector<int> > pxbuf(3, QVector<int> (9, 0));
+			//QVector<QVector<int> > pxbuf(3, QVector<int> (9, 0));
+			uint8_t pxbuf[3][9];
 
 			if((y == 0) or (y + 1 >= myimg -> height()))
 			{
@@ -446,9 +447,9 @@ ImgPrep::ret_t ImgPrep::Median_filter() const
 					}
 				}
 
-				for(auto it = pxbuf.begin(); it < pxbuf.end(); ++it)
+				for(uint8_t it = 0; it < 3; ++it)
 				{
-					std::sort(it->begin(), it->end());
+					std::sort(pxbuf[it], pxbuf[it]+9);
 				}
 			}
 

@@ -8,6 +8,8 @@ include_directories( . ${CMAKE_CURRENT_BINARY_DIR} libfarec)
 
 SET(farec_ui_SRCS
   ui/farecmainwin
+  ui/GradientDisplay
+  ui/Graph
 )
 
 SET(farec_SRCS
@@ -24,10 +26,13 @@ ENDIF()
 
 SET(farec_UIS
 	ui/farecmainwin.ui
+	ui/GradientDisplay.ui
 )
 
 SET(farec_MOCS_H
 	ui/farecmainwin.hh
+	ui/GradientDisplay.hh
+	ui/Graph.hh
 )
 
 QT4_WRAP_CPP(farec_MOCS_SRCS ${farec_MOCS_H})

@@ -150,9 +150,23 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionU_yj_podgl_du"/>
    </widget>
+   <widget class="QMenu" name="menuNarz_dzia">
+    <property name="title">
+     <string>&amp;Narzędzia</string>
+    </property>
+    <widget class="QMenu" name="menuGradient">
+     <property name="title">
+      <string>Gradient</string>
+     </property>
+     <addaction name="actionGradPvwWej_cie"/>
+     <addaction name="actionGradPvwPodgl_d"/>
+    </widget>
+    <addaction name="menuGradient"/>
+   </widget>
    <addaction name="menuPlik"/>
    <addaction name="menuObrazy"/>
    <addaction name="menuOpsy"/>
+   <addaction name="menuNarz_dzia"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -223,6 +237,16 @@ p, li { white-space: pre-wrap; }
   <action name="actionMedianowy">
    <property name="text">
     <string>Medianowy</string>
+   </property>
+  </action>
+  <action name="actionGradPvwWej_cie">
+   <property name="text">
+    <string>Wejście</string>
+   </property>
+  </action>
+  <action name="actionGradPvwPodgl_d">
+   <property name="text">
+    <string>Podgląd</string>
    </property>
   </action>
  </widget>

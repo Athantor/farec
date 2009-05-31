@@ -1,3 +1,25 @@
+/*
+ *  This file is part of farec.
+ *
+ *  farec is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  farec is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *   along with farec.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Graph.hh
+ *
+ *  Created on: 2009-05-24
+ *      Author: athantor
+ */
+
 #include "farecmainwin.hh"
 
 FarecMainWin::FarecMainWin( QWidget *parent ) :
@@ -22,6 +44,9 @@ void FarecMainWin::Connect_slots()
 
 	connect(ui.actionU_yj_podgl_du, SIGNAL(triggered(bool)), this, SLOT(Make_preview_the_source(bool)));
 
+	connect(ui.actionGradPvwWej_cie, SIGNAL(triggered(bool)), this, SLOT(Show_grads_src(bool)));
+	connect(ui.actionGradPvwPodgl_d, SIGNAL(triggered(bool)), this, SLOT(Show_grads_pview(bool)));
+
 #ifdef DEBUG_KRZYS
 
 	ui.menuOpsy->setEnabled(true);
@@ -31,7 +56,7 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionOtsu, SIGNAL(triggered(bool)), this, SLOT(Test_otsu(bool)));
 	connect(ui.actionGauss, SIGNAL(triggered(bool)), this, SLOT(Test_gauss(bool)));
 	connect(ui.actionMedianowy, SIGNAL(triggered(bool)), this, SLOT(Test_median(bool)));
-	
+
 #else
 	ui.menuOpsy->setEnabled(false);
 #endif
@@ -54,8 +79,8 @@ void FarecMainWin::Load_file( bool )
 			if(fname.size() > 0)
 			{
 				ui.groupBox->setTitle(QString::fromUtf8("Obraz wejściowy [") + *(fname.end() - 1) + "] {"
-						+ QString::number(inimg->width()) + QString::fromUtf8("×") + QString::number(inimg->height())
-						+ "}");
+						+ QString::number(inimg->width()) + QString::fromUtf8("×") + QString::number(
+						inimg->height()) + "}");
 			}
 
 			ui.PviewImgLbl->setPixmap(QPixmap());
@@ -63,7 +88,8 @@ void FarecMainWin::Load_file( bool )
 		}
 		else
 		{
-			QMessageBox::critical(this, QString::fromUtf8("Błąd"), QString::fromUtf8("Błąd otwierania pliku:\n") + fn);
+			QMessageBox::critical(this, QString::fromUtf8("Błąd"), QString::fromUtf8(
+					"Błąd otwierania pliku:\n") + fn);
 		}
 	}
 }
@@ -78,8 +104,8 @@ void FarecMainWin::Set_label_img( QLabel * lbl, QImage & img, bool pad )
 			tm = Qt::FastTransformation;
 		}
 
-		lbl->setPixmap(QPixmap::fromImage(img).scaled(lbl->width() - (pad ? 5 : 0), lbl->height() - (pad ? 5 : 0),
-				Qt::KeepAspectRatio, tm));
+		lbl->setPixmap(QPixmap::fromImage(img).scaled(lbl->width() - (pad ? 5 : 0), lbl->height() - (pad ? 5
+				: 0), Qt::KeepAspectRatio, tm));
 	}
 }
 
@@ -100,6 +126,29 @@ void FarecMainWin::Resize_labels_imgs( int p, int )
 	{
 		Set_label_img(ui.PviewImgLbl, *outimg, pad);
 	}
+}
+
+void FarecMainWin::Show_grads_src( bool )
+{
+	if(static_cast<bool> (inimg))
+	{
+		Show_grads(new QImage(*inimg));
+	}
+}
+
+void FarecMainWin::Show_grads_pview( bool )
+{
+	if(static_cast<bool> (outimg))
+	{
+		Show_grads(new QImage(*outimg));
+	}
+}
+
+void FarecMainWin::Show_grads( QImage * qi )
+{
+	scoped_ptr<GradientDisplay> gdsp(new GradientDisplay(qi, this));
+
+	gdsp->exec();
 }
 
 void FarecMainWin::resizeEvent( QResizeEvent * )

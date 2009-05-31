@@ -7,13 +7,19 @@
 #include <QDir>
 #include <QMessageBox>
 
+#ifdef DEBUG_KRZYS
+#include <QInputDialog>
+#endif
+
 #include <boost/scoped_ptr.hpp>
+#include <boost/cast.hpp>
 
 #include "ui_farecmainwin.h"
 
 #include "libfarec/ImgPrep.hh"
 
 using boost::scoped_ptr;
+using boost::polymorphic_downcast;
 
 class FarecMainWin : public QMainWindow
 {

@@ -30,9 +30,11 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/foreach.hpp>
 
 #include <cmath>
 #include <cfloat>
+#include <numeric>
 
 #include "ImgOp.hh"
 #include "ImgData.hh"

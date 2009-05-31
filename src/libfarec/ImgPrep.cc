@@ -76,7 +76,7 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
 
 	rr = ImgPrep(pnt, *rr).To_gray();
 
-	cops->Start_processing(QString::fromUtf8("Wykrywanie krawędzi [sobel]"), (rr->height()) * (rr->bytesPerLine()));
+	cops->Start_processing(QString::fromUtf8("Wykrywanie krawędzi [sobel]"), (rr->height()) * (rr->width()));
 	size_t ctr = 0;
 
 	ImgData::gradret_t grads = ImgData(pnt, *myimg).Make_gradients();
@@ -146,6 +146,9 @@ ImgPrep::ret_t ImgPrep::Average_bin_blur( double pct ) const
 	ret_t rr = ret_t(new QImage(*myimg));
 	uint16_t sum = 0, curr = 0;
 
+	cops->Start_processing(QString::fromUtf8("Rozmywanie średnie"), (rr->height()) * (rr->width()));
+	size_t ctr = 0;
+
 	const double mypct = (9.0 * 255) * pct;
 
 	for(int y = 0; y < myimg -> height(); y++)
@@ -185,7 +188,14 @@ ImgPrep::ret_t ImgPrep::Average_bin_blur( double pct ) const
 				reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(curr, curr, curr).rgb();
 			}
 		}
+
+		if(ctr % 1000 == 0)
+		{
+			cops->Get_pdialog()->setValue(ctr);
+		}
 	}
+
+	cops->Stop_processing();
 
 	return rr;
 }
@@ -213,7 +223,7 @@ ImgPrep::ret_t ImgPrep::Otsu_bin() const
 	double sigma[GLVL];
 	std::fill(sigma, sigma + GLVL, 0.0);
 
-	cops->Start_processing(QString::fromUtf8("Binaryzacja Otsu"), (myimg->height() * myimg->width()) + (GLVL * 3));
+	cops->Start_processing(QString::fromUtf8("Binaryzacja Otsu"), IMSIZE + (GLVL * 3));
 	size_t ctr = 0;
 
 	ImgData::histret_t hist = ImgData(pnt, *rr).Make_histogram();
@@ -305,9 +315,16 @@ ImgPrep::ret_t ImgPrep::Gaussian_blur( uint8_t ksize ) const
 
 	ret_t rr = ret_t(new QImage(*myimg));
 
-	const double KERNMID = static_cast<int> (ksize / 2.0);
-	QVector<QVector<double> > kern(ksize, QVector<double> (ksize, 0));
-	double sum = 0;
+	const size_t KERNMID = static_cast<size_t> (ksize / 2.0);
+	QVector<QVector<uint64_t> > kern(ksize, QVector<uint64_t> (ksize, 0));
+	uint64_t sum = 0;
+
+	//uint kern[][5] = { { 2, 4, 5, 4, 2 }, { 4, 9, 12, 9, 4 }, { 5, 12, 15, 12, 5 }, { 2, 4, 5, 4, 2 }, { 4, 9, 12, 9, 4 } };
+	//uint64_t sum = 159;
+
+	cops->Start_processing(QString::fromUtf8("Rozmywanie met. Gaussa"), (rr->height() * (rr->width())) + (std::pow(
+			static_cast<double> ((ksize - KERNMID)), 2)));
+	size_t ctr = 0;
 
 	for(size_t i = 0; i < (ksize - KERNMID); ++i) // y
 	{
@@ -316,74 +333,86 @@ ImgPrep::ret_t ImgPrep::Gaussian_blur( uint8_t ksize ) const
 			/*const int16_t X = j - (ksize - KERNMID), Y = i - (ksize - KERNMID);
 			 kern[j][i] = (1 / (2 * M_PI * std::pow(sigma, 2))) * std::exp(-((std::pow(static_cast<const double> (X), 2)
 			 * std::pow(static_cast<const double> (Y), 2)) / (2 * std::pow(sigma, 2))));
-			 sum += kern[j][i];
-			 */
+			 sum += kern[j][i];*/
 
-			kern[i][j] = std::pow(2.0, j + i);
-			kern[i][(ksize - 1) - j] = kern[i][j];
-
-			sum += (kern[i][j] * ((i == KERNMID) and (j == KERNMID) ? 1 : 2));
-
+			kern[j][i] = kern[(ksize - j) - 1][i] = kern[j][(ksize - i) - 1] = kern[(ksize - j) - 1][(ksize - i) - 1]
+					= std::pow(2.0, static_cast<int> (j + i));
 		}
 	}
 
-	double px[3];
-	std::fill(px, px + 3, 0.0);
-
-	for(int y = 0; y < myimg -> height(); y++)
-	{
-		for(int x = 0; x < myimg -> width(); x++)
+	BOOST_FOREACH(QVector<uint64_t> vct, kern)
+	{	
+		BOOST_FOREACH(uint64_t vval, vct)
 		{
-			QRgb currpx = reinterpret_cast<QRgb *> (myimg -> scanLine(y))[x];
-
-			if((y < (ksize - KERNMID)) or ((y + (ksize - KERNMID)) >= myimg -> height()))
-			{
-				px[0] = qRed(currpx);
-				px[1] = qGreen(currpx);
-				px[2] = qBlue(currpx);
-			}
-			else if((x < (ksize - KERNMID)) or ((x + (ksize - KERNMID)) >= myimg -> width()))
-			{
-				px[0] = qRed(currpx);
-				px[1] = qGreen(currpx);
-				px[2] = qBlue(currpx);
-			}
-			else
-			{
-
-				for(int i = -KERNMID; i <= KERNMID; i++)
-				{
-					for(int j = -KERNMID; j <= KERNMID; j++)
-					{
-						px[0] += qRed(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[i + KERNMID][j
-								+ KERNMID];
-						px[1] += qGreen(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
-								* kern[i + KERNMID][j + KERNMID];
-						px[2] += qBlue(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
-								* kern[i + KERNMID][j + KERNMID];
-					}
-				}
-
-				std::transform(px, px + 3, px, std::bind2nd(std::divides<double>(), sum));
-
-			}
-
-			std::transform(px, px + 3, px, std::ptr_fun(static_cast<double(*)( double )> (std::trunc)));
-
-			uint8_t pxvals[3];
-			std::copy(px, px + 3, pxvals);
-
-			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxvals[0], pxvals[1], pxvals[2]).rgb();
-
+			sum += vval;
 		}
 	}
 
-	return rr;
+int64_t px[3];
+for(size_t y = 0; y < static_cast<size_t>(myimg -> height()); y++)
+{
+	for(size_t x = 0; x < static_cast<size_t>(myimg -> width()); x++)
+	{
+		QRgb currpx = reinterpret_cast<QRgb *> (myimg -> scanLine(y))[x];
+
+		std::fill(px, px + 3, 0);
+		if((y < (ksize - KERNMID)) or ((y + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> height())))
+		{
+			px[0] = qRed(currpx);
+			px[1] = qGreen(currpx);
+			px[2] = qBlue(currpx);
+		}
+		else if((x < (ksize - KERNMID)) or ((x + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> width())))
+		{
+			px[0] = qRed(currpx);
+			px[1] = qGreen(currpx);
+			px[2] = qBlue(currpx);
+		}
+		else
+		{
+
+			for(int16_t i = -static_cast<int64_t>(KERNMID); i <= static_cast<int64_t>(KERNMID); i++)
+			{
+				for(int16_t j = -static_cast<int64_t>(KERNMID); j <= static_cast<int64_t>(KERNMID); j++)
+				{
+					px[0] += qRed(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[j + KERNMID][i
+					+ KERNMID];
+					px[1] += qGreen(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
+					* kern[j + KERNMID][i + KERNMID];
+					px[2] += qBlue(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
+					* kern[j + KERNMID][i + KERNMID];
+				}
+			}
+
+			std::transform(px, px + 3, px, std::bind2nd(std::divides<double>(), sum));
+
+		}
+
+		uint8_t pxvals[3];
+		std::copy(px, px + 3, pxvals);
+
+		reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxvals[0], pxvals[1], pxvals[2]).rgb();
+
+		ctr++;
+		if(ctr % 1000 == 0)
+		{
+			cops->Get_pdialog()->setValue(ctr);
+		}
+
+	}
+}
+
+cops->Stop_processing();
+
+return rr;
 }
 
 ImgPrep::ret_t ImgPrep::Median_filter() const
 {
 	ret_t rr = ret_t(new QImage(*myimg));
+
+	cops->Start_processing(QString::fromUtf8("Rozmywanie średnie"), (rr->height()) * (rr->width()));
+	size_t pctr = 0;
 
 	for(int y = 0; y < myimg -> height(); y++)
 	{
@@ -424,8 +453,16 @@ ImgPrep::ret_t ImgPrep::Median_filter() const
 			}
 
 			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxbuf[0][4], pxbuf[1][4], pxbuf[2][4]).rgb();
+
+			pctr++;
+			if(pctr % 5000 == 0)
+			{
+				cops->Get_pdialog()->setValue(pctr);
+			}
 		}
 	}
+
+	cops->Stop_processing();
 
 	return rr;
 }

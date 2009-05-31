@@ -56,6 +56,7 @@ void CommonOps::Stop_processing()
 {
 
 	shared_ptr<QProgressDialog> qpd = qpds.top();
+	qpds.pop();
 
 	qpd->close();
 	qpd.reset();

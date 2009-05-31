@@ -44,16 +44,31 @@ void FarecMainWin::Test_otsu( bool )
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
-void  FarecMainWin::Test_gauss(bool)
+void FarecMainWin::Test_gauss( bool )
 {
-	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Gaussian_blur(5))));
-	Set_label_img(ui.PviewImgLbl, *outimg);
+
+	bool ok = false;
+	uint64_t sz = QInputDialog::getInt(this, "Gauss", "Rozmiar macierzy", 5, 0, 999, 2, &ok);
+
+	if(ok)
+	{
+		try
+		{
+			outimg.reset(new QImage(*(ImgPrep(this, *inimg).Gaussian_blur(sz))));
+			Set_label_img(ui.PviewImgLbl, *outimg);
+		}
+		catch(const FEInvalidParameter & e)
+		{
+			QMessageBox::critical(this, QString::fromUtf8("Błąd"),
+					polymorphic_downcast<const FarecException *> (&e)->what());
+		}
+	}
 }
 
-void FarecMainWin::Test_median(bool)
+void FarecMainWin::Test_median( bool )
 {
 	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Median_filter())));
-    Set_label_img(ui.PviewImgLbl, *outimg);
+	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
 #endif

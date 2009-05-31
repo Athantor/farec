@@ -50,10 +50,35 @@ void CommonOps::Start_processing( const QString & desc, size_t max )
 	qpd->setAutoClose(true);
 
 	qpd->show();
+
+#ifdef DEBUG_KRZYS
+	shared_ptr<timeval> tv(new timeval());
+	gettimeofday(tv.get(), 0);
+	times.push(tv);
+#endif
+
 }
 
 void CommonOps::Stop_processing()
 {
+
+#ifdef DEBUG_KRZYS
+	try
+	{
+		timeval tv;
+		gettimeofday(&tv, 0);
+
+		shared_ptr<timeval> stv = times.top();
+		times.pop();
+
+		polymorphic_cast<QMainWindow *> (pnt)->statusBar()->showMessage(QString::number(tv2sec(tv) - tv2sec(*stv), 'f',
+				4) + "s", 5000);
+	}
+	catch(const std::bad_cast & exc)
+	{
+		//
+	}
+#endif
 
 	shared_ptr<QProgressDialog> qpd = qpds.top();
 	qpds.pop();

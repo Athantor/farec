@@ -25,27 +25,48 @@
 
 #include <QWidget>
 #include <QProgressDialog>
+#ifdef DEBUG_KRZYS
+#include <QMainWindow>
+#include <QStatusBar>
+#endif
 
 #include <stack>
+
+#ifdef DEBUG_KRZYS
+#include <sys/time.h>
+#include <boost/cast.hpp>
+#endif
 
 #include <boost/shared_ptr.hpp>
 
 using boost::shared_ptr;
+#ifdef DEBUG_KRZYS
+using boost::polymorphic_cast;
+#endif
 
 class CommonOps
 {
 	public:
-		CommonOps(QWidget *);
+		CommonOps( QWidget * );
 		virtual ~CommonOps();
 
 		shared_ptr<QProgressDialog> Get_pdialog() const;
-		void Start_processing(const QString &, size_t);
+		void Start_processing( const QString &, size_t );
 		void Stop_processing();
 
 	private:
 		QWidget * pnt;
 		std::stack<shared_ptr<QProgressDialog> > qpds;
 		size_t cursctr;
+
+#ifdef DEBUG_KRZYS
+		std::stack<shared_ptr<timeval> > times;
+		
+		inline static double tv2sec(const timeval& tv)
+		{
+			return tv.tv_sec + (tv.tv_usec * 1e-6);
+		}
+#endif
 
 };
 

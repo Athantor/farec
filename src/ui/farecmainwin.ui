@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>FaRec</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/icons/face-smile.png</normaloff>:/icons/face-smile.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
@@ -185,6 +189,10 @@ p, li { white-space: pre-wrap; }
    </attribute>
   </widget>
   <action name="actionOtw_rz">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Otwórz</string>
    </property>
@@ -211,6 +219,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionU_yj_podgl_du">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/system-switch-user.png</normaloff>:/icons/system-switch-user.png</iconset>
+   </property>
    <property name="text">
     <string>Użyj podglądu</string>
    </property>
@@ -256,6 +268,8 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -398,7 +398,6 @@ ImgPrep::ret_t ImgPrep::Gaussian_blur( uint8_t ksize ) const
 			{
 				cops->Get_pdialog()->setValue(ctr);
 			}
-
 		}
 	}
 

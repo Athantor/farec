@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>icons/document-open.png</file>
+        <file>icons/system-switch-user.png</file>
+        <file>icons/face-smile.png</file>
+    </qresource>
+</RCC>

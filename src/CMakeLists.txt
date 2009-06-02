@@ -35,6 +35,12 @@ SET(farec_MOCS_H
 	ui/Graph.hh
 )
 
+SET(farec_RC
+	ui/icons.qrc
+)
+
+QT4_ADD_RESOURCES(farec_RC_F ${farec_RC})
+
 QT4_WRAP_CPP(farec_MOCS_SRCS ${farec_MOCS_H})
 
 
@@ -42,6 +48,6 @@ QT4_WRAP_UI(farec_UIS_H ${farec_UIS})
 
 ADD_SUBDIRECTORY(libfarec)
 
-ADD_EXECUTABLE(farec ${farec_SRCS} ${farec_UIS_H} ${farec_MOCS_SRCS})
+ADD_EXECUTABLE(farec ${farec_SRCS} ${farec_UIS_H} ${farec_MOCS_SRCS} ${farec_RC_F})
 
 TARGET_LINK_LIBRARIES(farec ${QT_LIBRARIES} fr)

@@ -56,6 +56,7 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionOtsu, SIGNAL(triggered(bool)), this, SLOT(Test_otsu(bool)));
 	connect(ui.actionGauss, SIGNAL(triggered(bool)), this, SLOT(Test_gauss(bool)));
 	connect(ui.actionMedianowy, SIGNAL(triggered(bool)), this, SLOT(Test_median(bool)));
+	connect(ui.actionHough, SIGNAL(triggered(bool)), this, SLOT(Test_hough(bool)));
 
 #else
 	ui.menuOpsy->setEnabled(false);

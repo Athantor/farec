@@ -83,9 +83,9 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
 
 	int sumx = 0, sumy = 0, sum = 0;
 
-	for(int y = 1; y < rr -> height() - 1; y++)
+	for(int y = 1; y < rr -> height() - 1; ++y)
 	{
-		for(int x = 1; x < rr -> width() - 1; x++)
+		for(int x = 1; x < rr -> width() - 1; ++x)
 		{
 			sumx = sumy = 0;
 

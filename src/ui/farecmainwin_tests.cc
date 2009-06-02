@@ -59,8 +59,8 @@ void FarecMainWin::Test_gauss( bool )
 		}
 		catch(const FEInvalidParameter & e)
 		{
-			QMessageBox::critical(this, QString::fromUtf8("Błąd"),
-					polymorphic_downcast<const FarecException *> (&e)->what());
+			QMessageBox::critical(this, QString::fromUtf8("Błąd"), polymorphic_downcast<
+					const FarecException *> (&e)->what());
 		}
 	}
 }
@@ -69,6 +69,56 @@ void FarecMainWin::Test_median( bool )
 {
 	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Median_filter())));
 	Set_label_img(ui.PviewImgLbl, *outimg);
+}
+
+void FarecMainWin::Test_hough( bool )
+{
+
+	if(!static_cast<bool> (inimg))
+	{
+		return;
+	}
+
+	bool ok = false;
+	uint64_t sz = QInputDialog::getInt(this, QString::fromUtf8("/ˈhʌf/"), QString::fromUtf8("Promień"), 20,
+			0, 999, 1, &ok);
+	if(ok)
+	{
+		ok = false;
+		uint64_t sz2 = QInputDialog::getInt(this, QString::fromUtf8("/ˈhʌf/ 2"),
+				QString::fromUtf8("Wyników"), 10, 0, 999, 1, &ok);
+		if(ok)
+		{
+			ImgData::houghret_t ht = ImgData(this, *inimg).Hough_tm(sz, sz2);
+
+			if(!static_cast<bool> (outimg))
+			{
+				outimg.reset(new QImage(*inimg));
+			}
+
+			QPainter qpt(outimg.get());
+			qpt.setPen(QPen("red"));
+
+			for(auto it = ht->begin(); it != ht->end(); ++it)
+			{
+				qpt.setPen(QPen("red"));
+				qpt.drawEllipse(it->first, sz, sz);
+				qpt.drawRect(it->first.x() - 2, it->first.y() - 2, 4, 4);
+				qpt.drawLine(it->first.x(), it->first.y() - 5, it->first.x(), it->first.y() + 5);
+				qpt.drawLine(it->first.x() - 5, it->first.y(), it->first.x() + 5, it->first.y());
+
+				qpt.setPen(QPen("lime"));
+				qpt.drawText(it->first, QString::fromUtf8("(%1, %2), %3").arg(it->first.x()).arg(
+						it->first.y()).arg(sz));
+			}
+
+			qpt.end();
+
+			Set_label_img(ui.PviewImgLbl, *outimg);
+		}
+
+	}
+
 }
 
 #endif

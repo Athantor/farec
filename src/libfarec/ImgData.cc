@@ -25,12 +25,10 @@
 ImgData::ImgData( QWidget *p, const QImage& im ) :
 	ImgOp(p, im)
 {
-
 }
 
 ImgData::~ImgData()
 {
-	// XXX Auto-generated destructor stub
 }
 
 ImgData::gradret_t ImgData::Make_gradients() const
@@ -74,7 +72,7 @@ ImgData::gradret_t ImgData::Make_gradients() const
 			}
 
 			ctr++;
-
+			
 			(*gx)[x][y] = sumx;
 			(*gy)[x][y] = sumy;
 
@@ -119,6 +117,7 @@ ImgData::histret_t ImgData::Make_histogram() const
 			if(myimg->hasAlphaChannel())
 				(*hist_a)[norm_rgb_val(qAlpha(px[x]))] += 1;
 
+			
 			if(ctr % 1000 == 0)
 			{
 				cops->Get_pdialog()->setValue(ctr);
@@ -130,4 +129,127 @@ ImgData::histret_t ImgData::Make_histogram() const
 	cops->Stop_processing();
 
 	return boost::make_tuple(hist_r, hist_g, hist_b, hist_a);
+}
+
+ImgData::houghret_t ImgData::Hough_tm( size_t rad, size_t cics )
+{
+	//const size_t IMSIZE = myimg -> height() * myimg -> width();
+	typedef QVector<QVector<uint64_t> > acc_t;
+	
+	cops->Start_processing(QString::fromUtf8("CHT"), std::pow(static_cast<double>(myimg -> height() * myimg -> width()), 4));
+	size_t ctr = 0;
+
+	acc_t acc(myimg -> width(), acc_t::value_type(myimg -> height(), 0));
+	ImgData::houghret_t res = ImgData::houghret_t(new ImgData::houghret_t::value_type(cics, ImgData::houghret_t::value_type::value_type() ));
+
+	double x0 = 0, y0 = 0, rth = 0;
+	uint64_t max = 0;
+
+	for(int y = 0; y < myimg -> height(); y++)
+	{
+		for(int x = 0; x < myimg -> width(); x++)
+		{
+			QRgb * px = reinterpret_cast<decltype( px )> (myimg -> scanLine(y));
+
+			if(qRed(px[x]) == 0)
+			{
+				for(uint16_t theta = 0; theta < 360; ++theta)
+				{
+					rth = (theta * M_PI) / 180.0;
+					x0 = rint(x - rad * std::cos(rth));
+					y0 = rint(y - rad * std::sin(rth));
+
+					if((x0 > 0) and (x0 < myimg -> width()) and (y0 > 0) and (y0 < myimg -> height()))
+					{
+						acc[static_cast<size_t> (x0)][static_cast<size_t> (y0)]++;
+					}
+				}
+			}
+			
+			ctr++;
+			if(ctr % 1000 == 0)
+			{
+				cops->Get_pdialog()->setValue(ctr);
+			}
+			
+		}
+	}
+
+	//max
+	for(int y = 0; y < myimg -> height(); y++)
+	{
+		for(int x = 0; x < myimg -> width(); x++)
+		{
+			max = acc[x][y] > max ? acc[x][y] : max;
+		}
+
+		ctr++;
+		if(ctr % 1000 == 0)
+		{
+			cops->Get_pdialog()->setValue(ctr);
+		}
+	}
+
+	//norm
+	for(int y = 0; y < myimg -> height(); y++)
+	{
+		for(int x = 0; x < myimg -> width(); x++)
+		{
+			acc[x][y] = static_cast<acc_t::value_type::value_type> ((acc[x][y] / (max * 1.0)) * 255.0);
+		}
+
+		ctr++;
+		if(ctr % 1000 == 0)
+		{
+			cops->Get_pdialog()->setValue(ctr);
+		}
+	}
+
+	//vals
+	for(int y = 0; y < myimg -> height(); y++)
+	{
+		for(int x = 0; x < myimg -> width(); x++)
+		{
+			if(acc[x][y] > res -> front().second)
+			{
+				houghret_t::value_type::iterator it;
+				bool broke = false;
+
+				for(it = res -> begin(); it != res-> end(); it++)
+				{
+					if(acc[x][y] < (it -> second))
+					{
+						broke = true;
+						break;
+					}
+				}
+
+				if(broke)
+				{
+					res -> insert(it, qMakePair(QPoint(x, y), acc[x][y]));
+				}
+				else if(it == res->end())
+				{
+					res -> push_back(qMakePair(QPoint(x, y), acc[x][y]));
+				}
+
+				while(static_cast<size_t> (res->size()) > cics)
+				{
+					res->pop_front();
+				}
+
+			}
+			
+			ctr++;
+			if(ctr % 1000 == 0)
+			{
+				cops->Get_pdialog()->setValue(ctr);
+			}
+
+		}
+	}
+	
+	cops->Stop_processing();
+	
+	return res;
 }

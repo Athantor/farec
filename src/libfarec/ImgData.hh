@@ -25,6 +25,9 @@
 
 #include <QImage>
 #include <QVector>
+#include <QList>
+#include <QPoint>
+#include <QPair>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -32,6 +35,7 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <list>
 
 #include "ImgOp.hh"
 
@@ -42,30 +46,32 @@ using boost::shared_ptr;
 class ImgData : public ImgOp
 {
 	public:
-		
-		static inline uchar norm_rgb_val(int16_t val)
+
+		static inline uchar norm_rgb_val( int16_t val )
 		{
 			if(val >= 255)
 				return 255;
 			if(val <= 0)
 				return 0;
-			
+
 			return val;
 		}
 
 		typedef shared_ptr<QVector<QVector<int64_t> > > gradarr_t;
 		typedef tuple<gradarr_t, gradarr_t> gradret_t;
-		typedef tuple<shared_ptr<QVector<int64_t> > , shared_ptr<QVector<int64_t> > , shared_ptr<QVector<int64_t> > ,
-						shared_ptr<QVector<int64_t> > > histret_t; ///< RGBA histogram
+		typedef tuple<shared_ptr<QVector<int64_t> > , shared_ptr<QVector<int64_t> > , shared_ptr<QVector<
+				int64_t> > , shared_ptr<QVector<int64_t> > > histret_t; ///< RGBA histogram
+		typedef shared_ptr<std::list<QPair<QPoint, uint64_t> > > houghret_t; // (x,y), val
 
-		ImgData(QWidget *, const QImage&);
+
+		ImgData( QWidget *, const QImage& );
 		virtual ~ImgData();
 
 		gradret_t Make_gradients() const;
 		histret_t Make_histogram() const;
 		
-	
-		
+		houghret_t Hough_tm(size_t, size_t);
+
 };
 
 #endif /* IMGDATA_HH_ */

@@ -143,6 +143,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionOtsu"/>
     <addaction name="actionGauss"/>
     <addaction name="actionMedianowy"/>
+    <addaction name="actionHough"/>
    </widget>
    <widget class="QMenu" name="menuObrazy">
     <property name="title">
@@ -247,6 +248,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionGradPvwPodgl_d">
    <property name="text">
     <string>Podgląd</string>
+   </property>
+  </action>
+  <action name="actionHough">
+   <property name="text">
+    <string>Hough</string>
    </property>
   </action>
  </widget>

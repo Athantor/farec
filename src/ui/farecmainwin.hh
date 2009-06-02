@@ -76,6 +76,8 @@ class FarecMainWin : public QMainWindow
 		Ui::FarecMainWinClass ui;
 
 		void Connect_slots();
+		void Populate_toolbar();
+		
 		void Set_label_img( QLabel *, QImage & , bool = false);
 
 		void Show_grads(QImage *) ;

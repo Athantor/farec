@@ -27,6 +27,7 @@ FarecMainWin::FarecMainWin( QWidget *parent ) :
 {
 	ui.setupUi(this);
 
+	Populate_toolbar();
 	Connect_slots();
 }
 
@@ -64,9 +65,16 @@ void FarecMainWin::Connect_slots()
 
 }
 
+void FarecMainWin::Populate_toolbar()
+{
+	ui.toolBar -> addAction(ui.actionOtw_rz);
+	
+	ui.toolBar -> addAction(ui.actionU_yj_podgl_du);
+}
+
 void FarecMainWin::Load_file( bool )
 {
-	QString fn = QFileDialog::getOpenFileName(this, tr("Wybór pliku"), QDir::homePath(), tr(
+	QString fn = QFileDialog::getOpenFileName(this, QString::fromUtf8("Wybór pliku"), QDir::homePath(), tr(
 			"Obrazy (*.png *.jpg *.jpeg *.bmp *.gif *.xpm *.xbm *.tif *.tiff);;Wszystko (*) "));
 
 	QStringList fname = fn.split(QRegExp("[\\\\/]"), QString::SkipEmptyParts);

@@ -117,7 +117,7 @@ ImgData::histret_t ImgData::Make_histogram() const
 			if(myimg->hasAlphaChannel())
 				(*hist_a)[norm_rgb_val(qAlpha(px[x]))] += 1;
 
-			
+			ctr++;
 			if(ctr % 1000 == 0)
 			{
 				cops->Get_pdialog()->setValue(ctr);

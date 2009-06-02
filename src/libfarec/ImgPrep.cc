@@ -42,8 +42,8 @@ ImgPrep::ret_t ImgPrep::To_gray() const
 {
 	ret_t rr = ret_t(new QImage(*myimg));
 
-	cops->Start_processing(QString::fromUtf8("Konwersja na skalę szarości"), (rr->height()) * (rr->bytesPerLine()
-			/ sizeof(QRgb)));
+	cops->Start_processing(QString::fromUtf8("Konwersja na skalę szarości"), (rr->height())
+			* (rr->bytesPerLine() / sizeof(QRgb)));
 	size_t ctr = 0;
 
 	for(int i = 0; i < rr->height(); ++i)
@@ -104,7 +104,8 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
 
 				//  sum = std::abs(sumx) + std::abs(sumy);
 				//sum = static_cast<int> (255 - std::sqrt(std::pow(sumx, 2.0) + std::pow(sumy, 2.0)));
-				sum = static_cast<int> (255 - std::hypot(static_cast<double> (sumx), static_cast<double> (sumy)));
+				sum = static_cast<int> (255 - std::hypot(static_cast<double> (sumx),
+						static_cast<double> (sumy)));
 				sum = sum > 255 ? 255 : sum;
 				sum = sum < 0 ? 0 : sum;
 			}
@@ -139,8 +140,8 @@ ImgPrep::ret_t ImgPrep::Average_bin_blur( double pct ) const
 {
 	if((pct < (0 + DBL_EPSILON)) or (pct > (1.0 - DBL_EPSILON)))
 	{
-		throw FEInvalidParameter(
-				QString::fromUtf8("Blur factor out of range (0.0-1.0): %1 ").arg(pct, 0, 'f', 2).toStdString());
+		throw FEInvalidParameter(QString::fromUtf8("Blur factor out of range (0.0-1.0): %1 ").arg(pct, 0,
+				'f', 2).toStdString());
 	}
 
 	ret_t rr = ret_t(new QImage(*myimg));
@@ -322,8 +323,8 @@ ImgPrep::ret_t ImgPrep::Gaussian_blur( uint8_t ksize ) const
 	//uint kern[][5] = { { 2, 4, 5, 4, 2 }, { 4, 9, 12, 9, 4 }, { 5, 12, 15, 12, 5 }, { 2, 4, 5, 4, 2 }, { 4, 9, 12, 9, 4 } };
 	//uint64_t sum = 159;
 
-	cops->Start_processing(QString::fromUtf8("Rozmywanie met. Gaussa"), (rr->height() * (rr->width())) + (std::pow(
-			static_cast<double> ((ksize - KERNMID)), 2)));
+	cops->Start_processing(QString::fromUtf8("Rozmywanie met. Gaussa"), (rr->height() * (rr->width()))
+			+ (std::pow(static_cast<double> ((ksize - KERNMID)), 2)));
 	size_t ctr = 0;
 
 	for(size_t i = 0; i < (ksize - KERNMID); ++i) // y
@@ -335,76 +336,75 @@ ImgPrep::ret_t ImgPrep::Gaussian_blur( uint8_t ksize ) const
 			 * std::pow(static_cast<const double> (Y), 2)) / (2 * std::pow(sigma, 2))));
 			 sum += kern[j][i];*/
 
-			kern[j][i] = kern[(ksize - j) - 1][i] = kern[j][(ksize - i) - 1] = kern[(ksize - j) - 1][(ksize - i) - 1]
-					= std::pow(2.0, static_cast<int> (j + i));
+			kern[j][i] = kern[(ksize - j) - 1][i] = kern[j][(ksize - i) - 1] = kern[(ksize - j) - 1][(ksize
+					- i) - 1] = std::pow(2.0, static_cast<int> (j + i));
 		}
 	}
 
 	BOOST_FOREACH(QVector<uint64_t> vct, kern)
-	{	
-		BOOST_FOREACH(uint64_t vval, vct)
+	{
+		BOOST_FOREACH	(uint64_t vval, vct)
 		{
 			sum += vval;
 		}
 	}
 
-int64_t px[3];
-for(size_t y = 0; y < static_cast<size_t>(myimg -> height()); y++)
-{
-	for(size_t x = 0; x < static_cast<size_t>(myimg -> width()); x++)
+	int64_t px[3];
+	for(size_t y = 0; y < static_cast<size_t>(myimg -> height()); y++)
 	{
-		QRgb currpx = reinterpret_cast<QRgb *> (myimg -> scanLine(y))[x];
+		for(size_t x = 0; x < static_cast<size_t>(myimg -> width()); x++)
+		{
+			QRgb currpx = reinterpret_cast<QRgb *> (myimg -> scanLine(y))[x];
 
-		std::fill(px, px + 3, 0);
-		if((y < (ksize - KERNMID)) or ((y + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> height())))
-		{
-			px[0] = qRed(currpx);
-			px[1] = qGreen(currpx);
-			px[2] = qBlue(currpx);
-		}
-		else if((x < (ksize - KERNMID)) or ((x + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> width())))
-		{
-			px[0] = qRed(currpx);
-			px[1] = qGreen(currpx);
-			px[2] = qBlue(currpx);
-		}
-		else
-		{
-
-			for(int16_t i = -static_cast<int64_t>(KERNMID); i <= static_cast<int64_t>(KERNMID); i++)
+			std::fill(px, px + 3, 0);
+			if((y < (ksize - KERNMID)) or ((y + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> height())))
 			{
-				for(int16_t j = -static_cast<int64_t>(KERNMID); j <= static_cast<int64_t>(KERNMID); j++)
+				px[0] = qRed(currpx);
+				px[1] = qGreen(currpx);
+				px[2] = qBlue(currpx);
+			}
+			else if((x < (ksize - KERNMID)) or ((x + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> width())))
+			{
+				px[0] = qRed(currpx);
+				px[1] = qGreen(currpx);
+				px[2] = qBlue(currpx);
+			}
+			else
+			{
+
+				for(int16_t i = -static_cast<int64_t>(KERNMID); i <= static_cast<int64_t>(KERNMID); i++)
 				{
-					px[0] += qRed(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[j + KERNMID][i
-					+ KERNMID];
-					px[1] += qGreen(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
-					* kern[j + KERNMID][i + KERNMID];
-					px[2] += qBlue(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
-					* kern[j + KERNMID][i + KERNMID];
+					for(int16_t j = -static_cast<int64_t>(KERNMID); j <= static_cast<int64_t>(KERNMID); j++)
+					{
+						px[0] += qRed(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[j + KERNMID][i
+						+ KERNMID];
+						px[1] += qGreen(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
+						* kern[j + KERNMID][i + KERNMID];
+						px[2] += qBlue(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
+						* kern[j + KERNMID][i + KERNMID];
+					}
 				}
+
+				std::transform(px, px + 3, px, std::bind2nd(std::divides<double>(), sum));
 			}
 
-			std::transform(px, px + 3, px, std::bind2nd(std::divides<double>(), sum));
+			uint8_t pxvals[3];
+			std::copy(px, px + 3, pxvals);
+
+			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxvals[0], pxvals[1], pxvals[2]).rgb();
+
+			ctr++;
+			if(ctr % 1000 == 0)
+			{
+				cops->Get_pdialog()->setValue(ctr);
+			}
 
 		}
-
-		uint8_t pxvals[3];
-		std::copy(px, px + 3, pxvals);
-
-		reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxvals[0], pxvals[1], pxvals[2]).rgb();
-
-		ctr++;
-		if(ctr % 1000 == 0)
-		{
-			cops->Get_pdialog()->setValue(ctr);
-		}
-
 	}
-}
 
-cops->Stop_processing();
+	cops->Stop_processing();
 
-return rr;
+	return rr;
 }
 
 ImgPrep::ret_t ImgPrep::Median_filter() const
@@ -449,11 +449,12 @@ ImgPrep::ret_t ImgPrep::Median_filter() const
 
 				for(uint8_t it = 0; it < 3; ++it)
 				{
-					std::sort(pxbuf[it], pxbuf[it]+9);
+					std::sort(pxbuf[it], pxbuf[it] + 9);
 				}
 			}
 
-			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxbuf[0][4], pxbuf[1][4], pxbuf[2][4]).rgb();
+			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x]
+					= QColor(pxbuf[0][4], pxbuf[1][4], pxbuf[2][4]).rgb();
 
 			pctr++;
 			if(pctr % 5000 == 0)

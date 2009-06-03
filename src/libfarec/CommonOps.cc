@@ -41,8 +41,8 @@ void CommonOps::Start_processing( const QString & desc, size_t max )
 	if(++cursctr >= 1)
 		pnt->setCursor(QCursor(Qt::WaitCursor));
 
-	shared_ptr<QProgressDialog> qpd(new QProgressDialog(desc.size() ? desc : QString::fromUtf8("Przetwarzanie…"), "",
-			0, max, pnt));
+	shared_ptr<QProgressDialog> qpd(new QProgressDialog(desc.size() ? desc : QString::fromUtf8(
+			"Przetwarzanie…"), "", 0, max, pnt));
 	qpds.push(qpd);
 
 	qpd->setCancelButton(0);
@@ -62,6 +62,8 @@ void CommonOps::Start_processing( const QString & desc, size_t max )
 void CommonOps::Stop_processing()
 {
 
+	shared_ptr<QProgressDialog> qpd = qpds.top();
+
 #ifdef DEBUG_KRZYS
 	try
 	{
@@ -71,8 +73,10 @@ void CommonOps::Stop_processing()
 		shared_ptr<timeval> stv = times.top();
 		times.pop();
 
-		polymorphic_cast<QMainWindow *> (pnt)->statusBar()->showMessage(QString::number(tv2sec(tv) - tv2sec(*stv), 'f',
-				4) + "s", 5000);
+		polymorphic_cast<QMainWindow *> (pnt)->statusBar()->showMessage(
+				polymorphic_cast<QMainWindow *> (pnt)->statusBar()->currentMessage() + "; "
+						+ qpd-> labelText() + ": " + QString::number(tv2sec(tv) - tv2sec(*stv), 'f', 4) + "s",
+				5000);
 	}
 	catch(const std::bad_cast & exc)
 	{
@@ -80,7 +84,6 @@ void CommonOps::Stop_processing()
 	}
 #endif
 
-	shared_ptr<QProgressDialog> qpd = qpds.top();
 	qpds.pop();
 
 	qpd->close();

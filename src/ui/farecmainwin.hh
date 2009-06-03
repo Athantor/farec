@@ -39,6 +39,7 @@
 #include "ui_farecmainwin.h"
 
 #include "libfarec/ImgPrep.hh"
+#include "libfarec/FeatExtract.hh"
 
 #include "GradientDisplay.hh"
 
@@ -71,6 +72,7 @@ class FarecMainWin : public QMainWindow
 		void Test_median(bool);
 		void Test_hough(bool);
 		void Test_avg(bool);
+		void Test_face_reg(bool);
 #endif
 
 	private:

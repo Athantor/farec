@@ -149,6 +149,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionMedianowy"/>
     <addaction name="actionHough"/>
     <addaction name="action_redni"/>
+    <addaction name="separator"/>
+    <addaction name="actionTwarz"/>
    </widget>
    <widget class="QMenu" name="menuObrazy">
     <property name="title">
@@ -271,6 +273,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_redni">
    <property name="text">
     <string>Średni</string>
+   </property>
+  </action>
+  <action name="actionTwarz">
+   <property name="text">
+    <string>Twarz</string>
    </property>
   </action>
  </widget>

@@ -13,6 +13,8 @@ SET(libfarec_SRC
 	ImgOp
 	ImgPrep
 	ImgData
+	
+	FeatExtract
 )
 
 

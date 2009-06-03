@@ -74,7 +74,7 @@ void FarecMainWin::Test_median( bool )
 void FarecMainWin::Test_hough( bool )
 {
 
-	if(!static_cast<bool> (inimg))
+	if(not static_cast<bool> (inimg) or inimg->isNull())
 	{
 		return;
 	}
@@ -91,10 +91,9 @@ void FarecMainWin::Test_hough( bool )
 		{
 			ImgData::houghret_t ht = ImgData(this, *inimg).Hough_tm(sz, sz2);
 
-			if(!static_cast<bool> (outimg))
-			{
+		
 				outimg.reset(new QImage(*inimg));
-			}
+			
 
 			QPainter qpt(outimg.get());
 			qpt.setPen(QPen("red"));
@@ -135,6 +134,27 @@ void FarecMainWin::Test_avg( bool )
 		outimg.reset(new QImage(*(ImgPrep(this, *inimg).Average_bin_blur(sz))));
 		Set_label_img(ui.PviewImgLbl, *outimg);
 	}
+}
+
+void FarecMainWin::Test_face_reg(bool)
+{
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+		{
+			return;
+		}
+	
+	FeatExtract::region_t freg =  FeatExtract(this, *inimg).Get_face_from_grads();
+	outimg.reset(new QImage(*inimg));
+	
+	QPainter qpt(outimg.get());
+	qpt.setPen("red");
+	
+	qpt.drawRect(*freg);
+	
+	qpt.end();
+	
+	Set_label_img(ui.PviewImgLbl, *outimg);
+	
 }
 
 #endif

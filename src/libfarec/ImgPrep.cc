@@ -138,7 +138,7 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
  */
 ImgPrep::ret_t ImgPrep::Average_bin_blur( double pct ) const
 {
-	if((pct < (0 + DBL_EPSILON)) or (pct > (1.0 - DBL_EPSILON)))
+	if((pct < (0/* + DBL_EPSILON*/)) or (pct > (1.0/* - DBL_EPSILON*/)))
 	{
 		throw FEInvalidParameter(QString::fromUtf8("Blur factor out of range (0.0-1.0): %1 ").arg(pct, 0,
 				'f', 2).toStdString());

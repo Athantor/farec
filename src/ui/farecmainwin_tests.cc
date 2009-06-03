@@ -121,4 +121,20 @@ void FarecMainWin::Test_hough( bool )
 
 }
 
+void FarecMainWin::Test_avg( bool )
+{
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
+
+	bool ok = false;
+	double sz = QInputDialog::getDouble(this, QString::fromUtf8("średni"), QString::fromUtf8("% białych:"), 0.75, 0, 1.0, 2, &ok);
+	if(ok)
+	{
+		outimg.reset(new QImage(*(ImgPrep(this, *inimg).Average_bin_blur(sz))));
+		Set_label_img(ui.PviewImgLbl, *outimg);
+	}
+}
+
 #endif

@@ -70,6 +70,7 @@ class FarecMainWin : public QMainWindow
 		void Test_gauss(bool);
 		void Test_median(bool);
 		void Test_hough(bool);
+		void Test_avg(bool);
 #endif
 
 	private:

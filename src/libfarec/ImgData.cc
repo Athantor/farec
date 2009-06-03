@@ -39,8 +39,10 @@ ImgData::gradret_t ImgData::Make_gradients() const
 	cops->Start_processing(QString::fromUtf8("Obliczanie gradientów"), myimg->height() * myimg->width());
 
 	int sumx = 0, sumy = 0;
-	gradarr_t gx(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(myimg->height(), 0))); //pointer to a vector of vectors filled with 0
-	gradarr_t gy(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(myimg->height(), 0))); //pointer to a vector of vectors filled with 0
+	gradarr_t gx(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(
+			myimg->height(), 0))); //pointer to a vector of vectors filled with 0
+	gradarr_t gy(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(
+			myimg->height(), 0))); //pointer to a vector of vectors filled with 0
 	size_t ctr = 0;
 
 	for(int y = 0; y < myimg->height(); ++y)
@@ -72,7 +74,7 @@ ImgData::gradret_t ImgData::Make_gradients() const
 			}
 
 			ctr++;
-			
+
 			(*gx)[x][y] = sumx;
 			(*gy)[x][y] = sumy;
 
@@ -135,12 +137,14 @@ ImgData::houghret_t ImgData::Hough_tm( size_t rad, size_t cics )
 {
 	//const size_t IMSIZE = myimg -> height() * myimg -> width();
 	typedef QVector<QVector<uint64_t> > acc_t;
-	
-	cops->Start_processing(QString::fromUtf8("CHT"), std::pow(static_cast<double>(myimg -> height() * myimg -> width()), 4));
+
+	cops->Start_processing(QString::fromUtf8("CHT"), std::pow(static_cast<double> (myimg -> height()
+			* myimg -> width()), 4));
 	size_t ctr = 0;
 
 	acc_t acc(myimg -> width(), acc_t::value_type(myimg -> height(), 0));
-	ImgData::houghret_t res = ImgData::houghret_t(new ImgData::houghret_t::value_type(cics, ImgData::houghret_t::value_type::value_type() ));
+	ImgData::houghret_t res = ImgData::houghret_t(new ImgData::houghret_t::value_type(cics,
+			ImgData::houghret_t::value_type::value_type()));
 
 	double x0 = 0, y0 = 0, rth = 0;
 	uint64_t max = 0;
@@ -165,13 +169,12 @@ ImgData::houghret_t ImgData::Hough_tm( size_t rad, size_t cics )
 					}
 				}
 			}
-			
+
 			ctr++;
 			if(ctr % 1000 == 0)
 			{
 				cops->Get_pdialog()->setValue(ctr);
 			}
-			
 		}
 	}
 
@@ -239,7 +242,7 @@ ImgData::houghret_t ImgData::Hough_tm( size_t rad, size_t cics )
 				}
 
 			}
-			
+
 			ctr++;
 			if(ctr % 1000 == 0)
 			{
@@ -248,8 +251,8 @@ ImgData::houghret_t ImgData::Hough_tm( size_t rad, size_t cics )
 
 		}
 	}
-	
+
 	cops->Stop_processing();
-	
+
 	return res;
 }

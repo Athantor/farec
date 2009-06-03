@@ -73,6 +73,15 @@ void FarecMainWin::Populate_toolbar()
 	ui.toolBar -> addAction(ui.actionOtw_rz);
 	
 	ui.toolBar -> addAction(ui.actionU_yj_podgl_du);
+	
+	ui.OpstoolBar->addAction(ui.actionNa_szaro);
+	ui.OpstoolBar->addAction(ui.actionSobel);
+	ui.OpstoolBar->addAction(ui.actionOtsu);
+	ui.OpstoolBar->addAction(ui.actionGauss);
+	ui.OpstoolBar->addAction(ui.actionMedianowy);
+	ui.OpstoolBar->addAction(ui.actionHough);
+	ui.OpstoolBar->addAction(ui.action_redni);
+	ui.OpstoolBar->addAction(ui.actionTwarz);
 }
 
 void FarecMainWin::Load_file( bool )

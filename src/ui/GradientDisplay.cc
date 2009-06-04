@@ -38,16 +38,16 @@ GradientDisplay::~GradientDisplay()
 
 void GradientDisplay::Disp_grads()
 {
-	
-	if(not static_cast<bool>(theimg))
+
+	if(not static_cast<bool> (theimg))
 		return;
-	
+
 	ImgData::gradret_t grd = ImgData(this, *theimg).Make_gradients();
 	QVector<double> *gx = new QVector<double> (theimg->height(), 0.0), *gy = new QVector<double> (
 			theimg->width(), 0.0);
 
 	cops->Start_processing("Przetwarzanie gradientów", theimg -> height() * theimg -> width());
-	
+
 	for(int y = 0; y < theimg -> height(); ++y)
 	{
 		for(int x = 0; x < theimg -> width(); ++x)
@@ -57,10 +57,14 @@ void GradientDisplay::Disp_grads()
 		}
 	}
 
+	(*(gx->begin())) = 0;
+	(*(gx->end() - 1)) = 0;
+	(*(gy->begin())) = 0;
+	(*(gy->end() - 1)) = 0;
 
 	ui.vgrad -> Set_data(gy);
 	ui.hgrad -> Set_data(gx);
-	
+
 	cops->Stop_processing();
 }
 

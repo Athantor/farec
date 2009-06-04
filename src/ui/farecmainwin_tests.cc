@@ -167,4 +167,33 @@ void FarecMainWin::Test_autoprep( bool )
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
+void FarecMainWin::Test_eyes_cht(bool)
+{
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
+	FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_eyes_from_cht();
+	
+	outimg.reset(new QImage(*inimg));
+	
+	QPainter qpt(outimg.get());
+	qpt.setPen(QPen("red"));
+
+	
+	qpt.drawRect(el->first.x() - 7, el->first.y() - 7, 14, 14);
+	qpt.drawLine(el->first.x(), el->first.y() - 10, el->first.x(), el->first.y() + 5);
+	qpt.drawLine(el->first.x() - 10, el->first.y(), el->first.x() + 10, el->first.y());
+	
+	qpt.drawRect(el->second.x() - 7, el->second.y() - 7, 14, 14);
+	qpt.drawLine(el->second.x(), el->second.y() - 10, el->second.x(), el->second.y() + 5);
+	qpt.drawLine(el->second.x() - 10, el->second.y(), el->second.x() + 10, el->second.y());
+	
+	qpt.end();
+
+	Set_label_img(ui.PviewImgLbl, *outimg);
+
+	
+}
+
 #endif

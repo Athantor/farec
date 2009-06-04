@@ -74,6 +74,7 @@ class FarecMainWin : public QMainWindow
 		void Test_hough(bool);
 		void Test_avg(bool);
 		void Test_face_reg(bool);
+		void Test_eyes_cht(bool);
 #endif
 
 	private:

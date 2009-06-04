@@ -37,7 +37,7 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 {
 	QVector<uint64_t> gx(myimg->height(), 0), gy(myimg->width(), 0);
 	region_t ret = region_t(new region_t::value_type);
-	
+
 	cops->Start_processing("Wyszukiwanie twarzy", myimg -> height() * myimg -> width());
 
 	ImgData::gradret_t grd = ImgData(pnt, *ImgPrep(pnt, *myimg).Batch_prepare(false)).Make_gradients();
@@ -55,25 +55,92 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 	{ // x block
 		auto stit = gx.begin() + 5;
 		ret->setTop(std::distance(stit, std::max_element(stit, stit + (myimg -> height() / 6))));
-		
 
-		/*std::reverse_iterator<decltype( stit )> revsp(stit), revst(gx.end() - ((myimg -> height() / 6) * 1));
-		ret->setBottom(std::distance(revst, std::max_element(revst, revsp)));*/
 		stit = gx.begin() + ((myimg -> height() / 6) * 5);
-		ret->setBottom(std::distance(stit, std::max_element(stit , gx.end() - 5)) + std::distance(gx.begin(), stit));
+		ret->setBottom(std::distance(stit, std::max_element(stit, gx.end() - 5)) + std::distance(gx.begin(),
+				stit));
 	}
 
 	{ //y block
 		auto stit = gy.begin() + 3;
 		ret->setLeft(std::distance(stit, std::max_element(stit, gy.begin() + (myimg -> width() / 5))));
 
-		/*std::reverse_iterator<decltype( stit )> revsp(stit), revst(gy.end() - ((myimg -> width() / 4) * 1));
-		ret->setRight(std::distance(revst, std::max_element(revst, revsp)));*/
 		stit = gy.begin() + ((myimg -> width() / 5) * 3);
-		ret->setRight(std::distance(stit, std::max_element(stit, gy.end() - 3)) + std::distance(gy.begin(), stit));
+		ret->setRight(std::distance(stit, std::max_element(stit, gy.end() - 3)) + std::distance(gy.begin(),
+				stit));
 	}
+
+	return ret;
+}
+
+FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht()
+{
+
+	typedef QList<tuple<QRegion, uint64_t, uint64_t, uint64_t> > buf_t; //reg, x, y, ctr
+
+	region_t facereg = Get_face_from_grads();
+
+	QImage tmpi = ImgPrep(pnt, *myimg).Batch_prepare(true)->copy(facereg->top(), facereg->left(), facereg->width(), facereg->height() / 2);
+
+	const size_t RAD = tmpi.width() / 20;
+
+	ImgData::houghret_t ht = ImgData(pnt, tmpi).Hough_tm(RAD, 100);
+	buf_t buf;
+
+	for(auto it = ht->begin(); it != ht->end(); ++it)
+	{
+		bool hasit = false;
+		auto hit = buf.begin();
+		for(; hit != buf.end(); ++hit)
+		{
+			if(hit->get<0> ().contains(it->first))
+			{
+				hasit = true;
+				break;
+			}
+		}
+
+		if(hasit)
+		{
+			hit->get<1> () += it->first.x();
+			hit->get<2> () += it->first.y();
+			hit->get<3> ()++;
+		}
+		else
+		{
+			QPoint ctr = it->first;
+			const size_t off = (RAD * 1.5) * M_SQRT2; // R
+			const size_t alen = std::hypot(static_cast<double> (off), static_cast<double> (off)); // a; Pythagorean theorem
+
+			buf.push_back(make_tuple(QRegion(ctr.x() - off, ctr.y() - off, alen, alen, QRegion::Ellipse),
+					ctr.x(), ctr.y(), 1));
+		}
+	}
+
+	size_t pb1 = 0, pb2 = 0, pctr = 0;
+	for(auto it = buf.begin(); it != buf.end(); ++it)
+	{
+		const uint64_t val = it->get<3> ();
+		if(val > pb2 and val > pb1)
+		{
+			pb1 = pctr;
+		}
+		else if(val < pb1 and val > pb2)
+		{
+			pb2 = pctr;
+		}
+
+		++pctr;
+	}
+
+	//makes pair with averaged 2 first max els
+	cht_eyeloc_t ret = cht_eyeloc_t(new cht_eyeloc_t::value_type(qMakePair(QPoint(buf[pb1].get<1> ()
+			/ buf[pb1].get<3> (), buf[pb1].get<2> () / buf[pb1].get<3> ()), QPoint(buf[pb2].get<1> ()
+			/ buf[pb2].get<3> (), buf[pb2].get<2> () / buf[pb2].get<3> ()))));
 	
-	std::cout << ret->width();
+	//map to global
+	ret->first += QPoint(myimg->width() - facereg->width(), myimg->height() - facereg->height());
+	ret->second += QPoint(myimg->width() - facereg->width(), myimg->height() - facereg->height());
 	
 	return ret;
 }

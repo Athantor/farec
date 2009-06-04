@@ -61,6 +61,8 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionHough, SIGNAL(triggered(bool)), this, SLOT(Test_hough(bool)));
 	connect(ui.action_redni, SIGNAL(triggered(bool)), this, SLOT(Test_avg(bool)));
 	connect(ui.actionTwarz, SIGNAL(triggered(bool)), this, SLOT(Test_face_reg(bool)));
+	connect(ui.actionOczyHough, SIGNAL(triggered(bool)), this, SLOT(Test_eyes_cht(bool)));
+	
 	
 	
 	
@@ -86,7 +88,10 @@ void FarecMainWin::Populate_toolbar()
 	ui.OpstoolBar->addAction(ui.actionMedianowy);
 	ui.OpstoolBar->addAction(ui.actionHough);
 	ui.OpstoolBar->addAction(ui.action_redni);
+	ui.OpstoolBar->addSeparator();
 	ui.OpstoolBar->addAction(ui.actionTwarz);
+	ui.OpstoolBar->addAction(ui.actionOczyHough);
+	
 }
 
 void FarecMainWin::Load_file( bool )

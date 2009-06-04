@@ -142,6 +142,12 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Opsy</string>
     </property>
+    <widget class="QMenu" name="menuOczy">
+     <property name="title">
+      <string>Oczy</string>
+     </property>
+     <addaction name="actionOczyHough"/>
+    </widget>
     <addaction name="actionAutoprep"/>
     <addaction name="separator"/>
     <addaction name="actionNa_szaro"/>
@@ -153,6 +159,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="action_redni"/>
     <addaction name="separator"/>
     <addaction name="actionTwarz"/>
+    <addaction name="menuOczy"/>
    </widget>
    <widget class="QMenu" name="menuObrazy">
     <property name="title">
@@ -296,6 +303,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionAutoprep">
    <property name="text">
     <string>Autoprep</string>
+   </property>
+  </action>
+  <action name="actionOczyHough">
+   <property name="text">
+    <string>Hough</string>
    </property>
   </action>
  </widget>

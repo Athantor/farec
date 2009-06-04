@@ -25,28 +25,39 @@
 
 #include <QRect>
 #include <QVector>
+#include <QRegion>
+#include <QList>
+#include <QHash>
 
 #include <algorithm>
 #include <iterator>
+#include <cstdint>
+#include <cmath>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include "ImgOp.hh"
 #include "ImgData.hh"
 #include "ImgPrep.hh"
 
 using boost::shared_ptr;
+using boost::tuple;
+using boost::make_tuple;
 
 class FeatExtract : private ImgOp
 {
 	public:
 		
-		typedef shared_ptr<QRect> region_t;  
+		typedef shared_ptr<QRect> region_t;
+		typedef shared_ptr<QPair<QPoint, QPoint> > cht_eyeloc_t; // left, right
 		
 		FeatExtract(QWidget *, const QImage&);
 		virtual ~FeatExtract();
 		
 		region_t Get_face_from_grads();
+		cht_eyeloc_t Get_eyes_from_cht();
+		
 		
 };
 

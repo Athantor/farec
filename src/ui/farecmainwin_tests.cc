@@ -163,7 +163,7 @@ void FarecMainWin::Test_autoprep( bool )
 		return;
 	}
 
-	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Batch_prepare())));
+	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Batch_prepare(QMessageBox::question(this, "Przygotowanie", QString::fromUtf8("Zrobić pełne?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes ))));
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 

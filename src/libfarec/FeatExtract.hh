@@ -33,6 +33,7 @@
 
 #include "ImgOp.hh"
 #include "ImgData.hh"
+#include "ImgPrep.hh"
 
 using boost::shared_ptr;
 

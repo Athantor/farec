@@ -33,7 +33,6 @@ GradientDisplay::GradientDisplay( QImage *im, QWidget *parent ) :
 
 GradientDisplay::~GradientDisplay()
 {
-
 }
 
 void GradientDisplay::Disp_grads()
@@ -57,12 +56,11 @@ void GradientDisplay::Disp_grads()
 		}
 	}
 
-	
 	std::fill(gx->begin(), gx->begin() + 3, 0);
 	std::fill(gy->begin(), gy->begin() + 3, 0);
-	std::fill(gx->end() - 3, gx->end() , 0);
-	std::fill(gy->end() - 3, gy->end() , 0);
-	
+	std::fill(gx->end() - 3, gx->end(), 0);
+	std::fill(gy->end() - 3, gy->end(), 0);
+
 	ui.vgrad -> Set_data(gy);
 	ui.hgrad -> Set_data(gx);
 

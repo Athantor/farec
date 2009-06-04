@@ -40,7 +40,7 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 	
 	cops->Start_processing("Wyszukiwanie twarzy", myimg -> height() * myimg -> width());
 
-	ImgData::gradret_t grd = ImgData(pnt, *myimg).Make_gradients();
+	ImgData::gradret_t grd = ImgData(pnt, *ImgPrep(pnt, *myimg).Batch_prepare(false)).Make_gradients();
 	//size_t pts[4] = { 0, 0, 0, 0 }; //top, bottom, left, right
 
 	for(size_t y = 0; y < static_cast<decltype( y )> (myimg -> height()); ++y)
@@ -72,6 +72,8 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 		stit = gy.begin() + ((myimg -> width() / 5) * 3);
 		ret->setRight(std::distance(stit, std::max_element(stit, gy.end() - 3)) + std::distance(gy.begin(), stit));
 	}
+	
+	std::cout << ret->width();
 	
 	return ret;
 }

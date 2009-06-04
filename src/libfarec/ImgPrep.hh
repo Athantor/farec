@@ -50,7 +50,7 @@ class ImgPrep : public ImgOp
 		ImgPrep( QWidget *, const QImage & );
 		virtual ~ImgPrep();
 
-		ret_t Batch_prepare() const;
+		ret_t Batch_prepare(bool) const;
 		
 		//color
 		ret_t To_gray() const;

@@ -23,8 +23,9 @@
 #include "Graph.hh"
 
 Graph::Graph( QWidget *pnt, QWidget * bud, Graph_dir gd, QPen * qp, QBrush * qb ) :
-	QFrame(pnt), mydir(gd), buddy(bud), mypen(qp), mybrush(qb)
+	QFrame(pnt), mydir(gd), buddy(bud), mypen(qp), avgpen(new QPen("red")), mybrush(qb), avgshow(true)
 {
+	avgpen->setStyle(Qt::DashLine);
 }
 
 Graph::Graph( const Graph& gr ) :
@@ -57,6 +58,8 @@ void Graph::paintEvent( QPaintEvent * )
 
 	QPainter pnr(this);
 
+	pnr.save();
+	
 	pnr.setBrush(Get_brush());
 	pnr.setPen(Get_pen());
 	pnr.setBackground(Get_brush());
@@ -66,7 +69,7 @@ void Graph::paintEvent( QPaintEvent * )
 
 	if(static_cast<bool> (data) and data->size() > 0)
 	{
-		pnr.save();
+		
 
 		switch(mydir)
 		{
@@ -91,11 +94,26 @@ void Graph::paintEvent( QPaintEvent * )
 
 		//	std::transform(data->begin(), data->end(), data->begin(), std::ptr_fun(static_cast<double(*)(double)>(std::fabs)) );
 		const double maxgrad = max / (*std::max_element(data->begin(), data->end()));
+		uint64_t avg = 0;
 
 		for(int64_t idx = 0; idx < data-> size(); ++idx)
 		{
 			pnr.drawLine(static_cast<int64_t> (idx * mod * idxmod), 0, static_cast<int64_t> (idx * mod
 					* idxmod), static_cast<int64_t> (((*data)[idx] * maxgrad)));
+			if(avgshow)
+			{
+				avg += ((*data)[idx] * maxgrad);
+			}
+		}
+
+		if(avgshow)
+		{
+			pnr.save();
+			
+			pnr.setPen(*avgpen);
+			pnr.drawLine(0, avg / data-> size(), data-> size() * idxmod * mod, avg / data-> size());
+			
+			pnr.restore();
 		}
 
 		pnr.restore();
@@ -165,4 +183,24 @@ const QWidget * Graph::Get_buddy() const
 void Graph::Set_buddy( QWidget * b )
 {
 	buddy = b;
+}
+
+void Graph::Set_avg_pen( const QPen& p )
+{
+	avgpen.reset(new QPen(p));
+}
+
+const QPen& Graph::Get_avg_pen() const
+{
+	return *avgpen;
+}
+
+void Graph::Set_show_avg( bool show )
+{
+	avgshow = show;
+}
+
+bool Graph::Show_avg() const
+{
+	return avgshow;
 }

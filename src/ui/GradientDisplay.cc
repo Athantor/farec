@@ -57,11 +57,12 @@ void GradientDisplay::Disp_grads()
 		}
 	}
 
-	(*(gx->begin())) = 0;
-	(*(gx->end() - 1)) = 0;
-	(*(gy->begin())) = 0;
-	(*(gy->end() - 1)) = 0;
-
+	
+	std::fill(gx->begin(), gx->begin() + 3, 0);
+	std::fill(gy->begin(), gy->begin() + 3, 0);
+	std::fill(gx->end() - 3, gx->end() , 0);
+	std::fill(gy->end() - 3, gy->end() , 0);
+	
 	ui.vgrad -> Set_data(gy);
 	ui.hgrad -> Set_data(gx);
 

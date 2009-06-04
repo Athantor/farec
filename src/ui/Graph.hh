@@ -49,7 +49,8 @@ class Graph : public QFrame
 			LTR, UTD
 		};
 
-		Graph( QWidget * = 0, QWidget * = 0, Graph_dir = LTR, QPen * = new QPen("black"), QBrush * = new QBrush("white") );
+		Graph( QWidget * = 0, QWidget * = 0, Graph_dir = LTR, QPen * = new QPen("black"), QBrush * =
+				new QBrush("white") );
 		Graph( const Graph& );
 		Graph& operator=( const Graph& );
 		virtual ~Graph();
@@ -61,20 +62,26 @@ class Graph : public QFrame
 		Graph_dir Get_gdir() const;
 		const QPen& Get_pen() const;
 		const QWidget * Get_buddy() const;
-		void Set_buddy(QWidget *);
+		void Set_buddy( QWidget * );
 		void Set_data( QVector<double> * );
 		void Set_brush( const QBrush& );
 		void Set_gdir( Graph_dir );
 		void Set_pen( const QPen& );
-		
-		virtual QSize minimumSizeHint () const;
+		void Set_avg_pen( const QPen& );
+		const QPen& Get_avg_pen() const;
+		void Set_show_avg( bool );
+		bool Show_avg() const;
+
+		virtual QSize minimumSizeHint() const;
 
 	protected:
 		Graph_dir mydir;
 		QWidget * buddy;
 		scoped_ptr<QVector<double> > data;
 		scoped_ptr<QPen> mypen;
+		scoped_ptr<QPen> avgpen;
 		scoped_ptr<QBrush> mybrush;
+		bool avgshow;
 
 };
 

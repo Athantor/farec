@@ -142,6 +142,8 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Opsy</string>
     </property>
+    <addaction name="actionAutoprep"/>
+    <addaction name="separator"/>
     <addaction name="actionNa_szaro"/>
     <addaction name="actionSobel"/>
     <addaction name="actionOtsu"/>
@@ -289,6 +291,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionTwarz">
    <property name="text">
     <string>Twarz</string>
+   </property>
+  </action>
+  <action name="actionAutoprep">
+   <property name="text">
+    <string>Autoprep</string>
    </property>
   </action>
  </widget>

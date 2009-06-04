@@ -31,6 +31,83 @@ ImgData::~ImgData()
 {
 }
 
+//not so precise
+/*ImgData::gradret_t ImgData::Make_gradients_sse() const
+ {
+ 
+ const int16_t __attribute__((aligned(16))) Gxx[8] = { 2, 1, 0, 0, 0, -1, -2, -1 }; //1
+ const int16_t __attribute__((aligned(16))) Gyy[8] = { 0, 1, -2, 0, 2, -1, 0, 1 }; // -1
+ const __m128i GGxx = _mm_load_si128(reinterpret_cast<const __m128i *> (Gxx));
+ const __m128i GGyy = _mm_load_si128(reinterpret_cast<const __m128i *> (Gyy));
+
+ cops->Start_processing(QString::fromUtf8("Obliczanie gradientów"), myimg->height() * myimg->width());
+
+ int sumx = 0, sumy = 0;
+ gradarr_t gx(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(
+ myimg->height(), 0))); //pointer to a vector of vectors filled with 0
+ gradarr_t gy(new gradarr_t::element_type(myimg->width(), gradarr_t::element_type::value_type(
+ myimg->height(), 0))); //pointer to a vector of vectors filled with 0
+ size_t ctr = 0;
+
+ for(int y = 0; y < myimg->height(); ++y)
+ {
+ for(int x = 0; x < myimg->width(); ++x)
+ {
+ sumx = sumy = 0;
+
+ if((y == 0) or (y + 1 >= myimg -> height()))
+ {
+ //sum = 0;
+ }
+ else if((x == 0) or (x + 1 >= myimg -> width()))
+ {
+ //sum = 0;
+ }
+ else
+ {
+
+ QRgb * px_1 = reinterpret_cast<decltype( px_1 )> (myimg -> scanLine(y - 1));
+ QRgb * px_2 = reinterpret_cast<decltype( px_2 )> (myimg -> scanLine(y));
+ QRgb * px_3 = reinterpret_cast<decltype( px_3 )> (myimg -> scanLine(y + 1));
+
+ const __m128i px = _mm_set_epi16(qRed(px_3[x]), qRed(px_3[x - 1]), qRed(px_2[x + 1]), qRed(
+ px_2[x]), qRed(px_3[x - 1]), qRed(px_1[x + 1]), qRed(px_1[x]), qRed(px_3[x - 1]));
+
+ __m128i pxx = _mm_mullo_epi16(px, GGxx);
+ __m128i pxy = _mm_mullo_epi16(px, GGyy);
+
+ int16_t * xvals = reinterpret_cast<decltype( xvals )> (&pxx);
+ int16_t * yvals = reinterpret_cast<decltype( xvals )> (&pxy);
+
+ for(size_t i = 0; i < 8; ++i)
+ {
+ sumx += xvals[i];
+ sumy += yvals[i];
+ }
+
+ sumx += qRed(px_3[x + 1]) * 1;
+ sumy += qRed(px_3[x + 1]) * -1;
+
+ }
+
+ ctr++;
+
+ (*gx)[x][y] = sumx;
+ (*gy)[x][y] = sumy;
+
+ if(ctr % 1000 == 0)
+ {
+ cops->Get_pdialog()->setValue(ctr);
+ }
+ }
+
+ }
+
+ cops->Stop_processing();
+
+ return boost::make_tuple(gx, gy);
+ }*/
+
 ImgData::gradret_t ImgData::Make_gradients() const
 {
 	const int8_t Gx[3][3] = { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } };

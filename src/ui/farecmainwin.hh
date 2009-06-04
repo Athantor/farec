@@ -65,6 +65,7 @@ class FarecMainWin : public QMainWindow
 		void Show_grads_pview(bool) ;
 
 #ifdef DEBUG_KRZYS
+		void Test_autoprep(bool);
 		void To_gray( bool );
 		void Test_sobel( bool );
 		void Test_otsu(bool);

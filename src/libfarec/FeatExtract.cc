@@ -53,24 +53,24 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 	}
 
 	{ // x block
-		auto stit = gx.begin() + 2;
+		auto stit = gx.begin() + 5;
 		ret->setTop(std::distance(stit, std::max_element(stit, stit + (myimg -> height() / 6))));
 		
 
 		/*std::reverse_iterator<decltype( stit )> revsp(stit), revst(gx.end() - ((myimg -> height() / 6) * 1));
 		ret->setBottom(std::distance(revst, std::max_element(revst, revsp)));*/
 		stit = gx.begin() + ((myimg -> height() / 6) * 5);
-		ret->setBottom(std::distance(stit, std::max_element(stit , gx.end() - 2)) + std::distance(gx.begin(), stit));
+		ret->setBottom(std::distance(stit, std::max_element(stit , gx.end() - 5)) + std::distance(gx.begin(), stit));
 	}
 
 	{ //y block
-		auto stit = gy.begin() + 2;
+		auto stit = gy.begin() + 3;
 		ret->setLeft(std::distance(stit, std::max_element(stit, gy.begin() + (myimg -> width() / 5))));
 
 		/*std::reverse_iterator<decltype( stit )> revsp(stit), revst(gy.end() - ((myimg -> width() / 4) * 1));
 		ret->setRight(std::distance(revst, std::max_element(revst, revsp)));*/
-		stit = gy.begin() + ((myimg -> width() / 5) * 4);
-		ret->setRight(std::distance(stit, std::max_element(stit, gy.end() - 2)) + std::distance(gy.begin(), stit));
+		stit = gy.begin() + ((myimg -> width() / 5) * 3);
+		ret->setRight(std::distance(stit, std::max_element(stit, gy.end() - 3)) + std::distance(gy.begin(), stit));
 	}
 	
 	return ret;

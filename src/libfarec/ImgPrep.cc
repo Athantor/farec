@@ -34,7 +34,11 @@ ImgPrep::~ImgPrep()
 ImgPrep::ret_t ImgPrep::Batch_prepare() const
 {
 	ret_t rr = ImgPrep(pnt, *myimg).To_gray();
-
+	rr = ImgPrep(pnt, *rr).Gaussian_blur(5);
+	rr = ImgPrep(pnt, *rr).Sobel_ed();
+	rr = ImgPrep(pnt, *rr).Otsu_bin();
+	rr = ImgPrep(pnt, *rr).Median_filter();
+	
 	return rr;
 }
 

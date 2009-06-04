@@ -91,9 +91,7 @@ void FarecMainWin::Test_hough( bool )
 		{
 			ImgData::houghret_t ht = ImgData(this, *inimg).Hough_tm(sz, sz2);
 
-		
-				outimg.reset(new QImage(*inimg));
-			
+			outimg.reset(new QImage(*inimg));
 
 			QPainter qpt(outimg.get());
 			qpt.setPen(QPen("red"));
@@ -128,7 +126,8 @@ void FarecMainWin::Test_avg( bool )
 	}
 
 	bool ok = false;
-	double sz = QInputDialog::getDouble(this, QString::fromUtf8("średni"), QString::fromUtf8("% białych:"), 0.75, 0, 1.0, 2, &ok);
+	double sz = QInputDialog::getDouble(this, QString::fromUtf8("średni"), QString::fromUtf8("% białych:"),
+			0.75, 0, 1.0, 2, &ok);
 	if(ok)
 	{
 		outimg.reset(new QImage(*(ImgPrep(this, *inimg).Average_bin_blur(sz))));
@@ -136,25 +135,36 @@ void FarecMainWin::Test_avg( bool )
 	}
 }
 
-void FarecMainWin::Test_face_reg(bool)
+void FarecMainWin::Test_face_reg( bool )
 {
 	if(!static_cast<bool> (inimg) or inimg->isNull())
-		{
-			return;
-		}
-	
-	FeatExtract::region_t freg =  FeatExtract(this, *inimg).Get_face_from_grads();
+	{
+		return;
+	}
+
+	FeatExtract::region_t freg = FeatExtract(this, *inimg).Get_face_from_grads();
 	outimg.reset(new QImage(*inimg));
-	
+
 	QPainter qpt(outimg.get());
 	qpt.setPen("red");
-	
+
 	qpt.drawRect(*freg);
-	
+
 	qpt.end();
-	
+
 	Set_label_img(ui.PviewImgLbl, *outimg);
-	
+
+}
+
+void FarecMainWin::Test_autoprep( bool )
+{
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
+
+	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Batch_prepare())));
+	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
 #endif

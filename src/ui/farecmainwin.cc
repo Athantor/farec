@@ -52,6 +52,7 @@ void FarecMainWin::Connect_slots()
 
 	ui.menuOpsy->setEnabled(true);
 
+	connect(ui.actionAutoprep, SIGNAL(triggered(bool)), this, SLOT(Test_autoprep(bool)));
 	connect(ui.actionNa_szaro, SIGNAL(triggered(bool)), this, SLOT(To_gray(bool)));
 	connect(ui.actionSobel, SIGNAL(triggered(bool)), this, SLOT(Test_sobel(bool)));
 	connect(ui.actionOtsu, SIGNAL(triggered(bool)), this, SLOT(Test_otsu(bool)));
@@ -60,6 +61,8 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionHough, SIGNAL(triggered(bool)), this, SLOT(Test_hough(bool)));
 	connect(ui.action_redni, SIGNAL(triggered(bool)), this, SLOT(Test_avg(bool)));
 	connect(ui.actionTwarz, SIGNAL(triggered(bool)), this, SLOT(Test_face_reg(bool)));
+	
+	
 	
 	
 #else
@@ -71,9 +74,11 @@ void FarecMainWin::Connect_slots()
 void FarecMainWin::Populate_toolbar()
 {
 	ui.toolBar -> addAction(ui.actionOtw_rz);
-	
 	ui.toolBar -> addAction(ui.actionU_yj_podgl_du);
 	
+	ui.OpstoolBar->addAction(ui.actionAutoprep);
+	ui.OpstoolBar->addSeparator();
+	ui.OpstoolBar->addAction(ui.actionNa_szaro);
 	ui.OpstoolBar->addAction(ui.actionNa_szaro);
 	ui.OpstoolBar->addAction(ui.actionSobel);
 	ui.OpstoolBar->addAction(ui.actionOtsu);

@@ -200,6 +200,13 @@ void FarecMainWin::Test_eyes_cht( bool )
 		qpt.drawEllipse(el->get<0> (), el->get<2> (), el->get<2> ());
 		qpt.drawEllipse(el->get<1> (), el->get<2> (), el->get<2> ());
 
+		qpt.save();
+		
+		qpt.setFont(QFont("monospace", 16));	
+		qpt.drawText(0,16, "r = " + QString::number(el->get<2> ()) + "px");
+		
+		qpt.restore();
+		
 		qpt.end();
 
 		Set_label_img(ui.PviewImgLbl, *outimg);

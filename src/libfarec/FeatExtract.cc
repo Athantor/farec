@@ -71,49 +71,71 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 	return ret;
 }
 
-FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht(size_t radsnum)
+FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht( size_t radsnum )
 {
 
 	typedef QList<tuple<QRegion, uint64_t, uint64_t, uint64_t> > buf_t; //reg, x, y, ctr
 
 	region_t facereg = Get_face_from_grads();
 
-	QImage tmpi = ImgPrep(pnt, *myimg).Batch_prepare(true)->copy( *facereg );
+	QImage tmpi = ImgPrep(pnt, *myimg).Batch_prepare(true)->copy(*facereg);
+	ImgData::gradret_t grd = ImgData(pnt, ImgPrep(pnt, *myimg).Batch_prepare(false)->copy(*facereg)).Make_gradients();
 
-	//eye width is equal to five times of face width, and height is equal to ⅓ of its width;  
+	QVector<double> gx = QVector<double> (tmpi.height(), 0.0);
+	uint64_t avg= 0;
+	for(int y = 0; y < tmpi.height(); ++y)
+	{
+		for(int x = 0; x < tmpi.width(); ++x)
+		{
+			gx[y] += ImgData::norm_rgb_val((*grd.get<0> ())[x][y]);
+			avg +=gx[y]; 
+		}
+	}
+
+	std::fill(gx.begin(), gx.begin() + 3, 0);
+	std::fill(gx.end() - 3, gx.end(), 0);
+	
+	const size_t maxgradthd = avg / (tmpi.height() *tmpi.width() * 1.0) * 2.5 ;
+	
+	//eye width is equal to five times of face width, and height is equal to ≈⅓ of its width;  
 	const size_t RAD = std::round((0.305 * (facereg -> width() / 5.0)) * (static_cast<double>(facereg ->width()) / facereg ->height()));
-	const float CLEARRAD = 2.0;
+	const float CLEARRAD = 2.5;
 
 	ImgData::houghret_t ht = ImgData(pnt, tmpi).Hough_tm(RAD, radsnum);
 	buf_t buf;
 
 	for(auto it = ht->begin(); it != ht->end(); ++it)
 	{
-		bool hasit = false;
-		auto hit = buf.begin();
-		for(; hit != buf.end(); ++hit)
+		if( (it->first.y()) < ( (facereg -> height() / 4.0) * 3) ) // if circle is in upper half of face region
 		{
-			if(hit->get<0> ().contains(it->first))
+			bool hasit = false;
+			auto hit = buf.begin();
+			for(; hit != buf.end(); ++hit)
 			{
-				hasit = true;
-				break;
+				if(hit->get<0> ().contains(it->first))
+				{
+					hasit = true;
+					break;
+				}
 			}
-		}
 
-		if(hasit)
-		{
-			hit->get<1> () += it->first.x();
-			hit->get<2> () += it->first.y();
-			hit->get<3> ()++;
-		}
-		else
-		{
-			QPoint ctr = it->first;
-			const size_t off = (RAD * CLEARRAD) * M_SQRT2; // R
-			const size_t alen = std::hypot(static_cast<double> (off), static_cast<double> (off)); // a; Pythagorean theorem
+			const uint8_t mod = gx[it->first.y()] >= maxgradthd ? 2 : 1;
 
-			buf.push_back(make_tuple(QRegion(ctr.x() - off, ctr.y() - off, alen, alen, QRegion::Ellipse),
-					ctr.x(), ctr.y(), 1));
+			if(hasit)
+			{
+				hit->get<1> () += it->first.x() * mod;
+				hit->get<2> () += it->first.y() * mod;
+				hit->get<3> () += mod;
+			}
+			else
+			{
+				QPoint ctr = it->first;
+				const size_t off = (RAD * CLEARRAD) * M_SQRT2; // R
+				const size_t alen = std::hypot(static_cast<double> (off), static_cast<double> (off)); // a; Pythagorean theorem
+
+				buf.push_back(make_tuple(QRegion(ctr.x() - off, ctr.y() - off, alen, alen, QRegion::Ellipse),
+						ctr.x() * mod, ctr.y() * mod, mod));
+			}
 		}
 	}
 
@@ -129,7 +151,6 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht(size_t radsnum)
 		{
 			pb2 = pctr;
 		}
-
 		++pctr;
 	}
 

@@ -139,8 +139,9 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht()
 			/ buf[pb2].get<3> (), buf[pb2].get<2> () / buf[pb2].get<3> ()))));
 	
 	//map to global
-	ret->first += QPoint(myimg->width() - facereg->width(), myimg->height() - facereg->height());
-	ret->second += QPoint(myimg->width() - facereg->width(), myimg->height() - facereg->height());
+	ret->first += QPoint( facereg->left() , facereg->top());
+	ret->second += QPoint( facereg->left() , facereg->top());;
+	
 	
 	return ret;
 }

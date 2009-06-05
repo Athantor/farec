@@ -50,7 +50,7 @@ class FeatExtract : private ImgOp
 	public:
 		
 		typedef shared_ptr<QRect> region_t;
-		typedef shared_ptr<QPair<QPoint, QPoint> > cht_eyeloc_t; // left, right
+		typedef shared_ptr<tuple<QPoint, QPoint, uint16_t> > cht_eyeloc_t; // left, right, radius
 		
 		FeatExtract(QWidget *, const QImage&);
 		virtual ~FeatExtract();

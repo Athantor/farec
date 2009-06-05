@@ -134,13 +134,13 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht()
 	}
 
 	//makes pair with averaged 2 first max els
-	cht_eyeloc_t ret = cht_eyeloc_t(new cht_eyeloc_t::value_type(qMakePair(QPoint(buf[pb1].get<1> ()
+	cht_eyeloc_t ret = cht_eyeloc_t(new cht_eyeloc_t::value_type(make_tuple(QPoint(buf[pb1].get<1> ()
 			/ buf[pb1].get<3> (), buf[pb1].get<2> () / buf[pb1].get<3> ()), QPoint(buf[pb2].get<1> ()
-			/ buf[pb2].get<3> (), buf[pb2].get<2> () / buf[pb2].get<3> ()))));
+			/ buf[pb2].get<3> (), buf[pb2].get<2> () / buf[pb2].get<3> ()), RAD)) );
 	
 	//map to global
-	ret->first += QPoint( facereg->left() , facereg->top());
-	ret->second += QPoint( facereg->left() , facereg->top());;
+	ret->get<0>() += QPoint( facereg->left() , facereg->top());
+	ret->get<1>() += QPoint( facereg->left() , facereg->top());;
 	
 	
 	return ret;

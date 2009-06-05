@@ -181,13 +181,16 @@ void FarecMainWin::Test_eyes_cht(bool)
 	qpt.setPen(QPen("red"));
 
 	
-	qpt.drawRect(el->first.x() - 7, el->first.y() - 7, 14, 14);
-	qpt.drawLine(el->first.x(), el->first.y() - 10, el->first.x(), el->first.y() + 5);
-	qpt.drawLine(el->first.x() - 10, el->first.y(), el->first.x() + 10, el->first.y());
+	qpt.drawRect(el->get<0>().x() - 7, el->get<0>().y() - 7, 14, 14);
+	qpt.drawLine(el->get<0>().x(), el->get<0>().y() - 10, el->get<0>().x(), el->get<0>().y() + 5);
+	qpt.drawLine(el->get<0>().x() - 10, el->get<0>().y(), el->get<0>().x() + 10, el->get<0>().y());
 	
-	qpt.drawRect(el->second.x() - 7, el->second.y() - 7, 14, 14);
-	qpt.drawLine(el->second.x(), el->second.y() - 10, el->second.x(), el->second.y() + 5);
-	qpt.drawLine(el->second.x() - 10, el->second.y(), el->second.x() + 10, el->second.y());
+	qpt.drawRect(el->get<1>().x() - 7, el->get<1>().y() - 7, 14, 14);
+	qpt.drawLine(el->get<1>().x(), el->get<1>().y() - 10, el->get<1>().x(), el->get<1>().y() + 5);
+	qpt.drawLine(el->get<1>().x() - 10, el->get<1>().y(), el->get<1>().x() + 10, el->get<1>().y());
+	
+	qpt.drawEllipse(el->get<0>(), el->get<2>(), el->get<2>());
+	qpt.drawEllipse(el->get<1>(), el->get<2>(), el->get<2>());
 	
 	qpt.end();
 

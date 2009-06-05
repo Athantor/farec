@@ -60,7 +60,6 @@ class FarecMainWin : public QMainWindow
 	private slots:
 		void Resize_labels_imgs(int, int);
 		void Make_preview_the_source( bool );
-		
 		void Show_grads_src(bool) ;
 		void Show_grads_pview(bool) ;
 

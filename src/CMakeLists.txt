@@ -21,7 +21,7 @@ STRING(TOUPPER ${CMAKE_BUILD_TYPE} MYCBT)
 IF( ${MYCBT} STREQUAL DEBUG )
 	add_definitions("-DDEBUG_KRZYS")
 	
-	SET(farec_SRCS ${farec_ui_SRCS}	${farec_SRCS} ui/farecmainwin_tests )
+	SET(farec_SRCS ${farec_SRCS} ui/farecmainwin_tests )
 ENDIF()
 
 SET(farec_UIS
@@ -48,6 +48,6 @@ QT4_WRAP_UI(farec_UIS_H ${farec_UIS})
 
 ADD_SUBDIRECTORY(libfarec)
 
-ADD_EXECUTABLE(farec ${farec_SRCS} ${farec_UIS_H} ${farec_MOCS_SRCS} ${farec_RC_F})
+ADD_EXECUTABLE(farec ${farec_ui_SRCS} ${farec_MOCS_SRCS} ${farec_SRCS} ${farec_UIS_H} ${farec_RC_F})
 
 TARGET_LINK_LIBRARIES(farec ${QT_LIBRARIES} fr)

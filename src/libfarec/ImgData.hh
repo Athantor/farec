@@ -36,6 +36,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <list>
+#include <cmath>
 //#include <emmintrin.h> //grads sse
 
 #include "ImgOp.hh"

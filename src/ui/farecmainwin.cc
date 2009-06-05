@@ -63,10 +63,6 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionTwarz, SIGNAL(triggered(bool)), this, SLOT(Test_face_reg(bool)));
 	connect(ui.actionOczyHough, SIGNAL(triggered(bool)), this, SLOT(Test_eyes_cht(bool)));
 	
-	
-	
-	
-	
 #else
 	ui.menuOpsy->setEnabled(false);
 #endif
@@ -75,9 +71,11 @@ void FarecMainWin::Connect_slots()
 
 void FarecMainWin::Populate_toolbar()
 {
+
 	ui.toolBar -> addAction(ui.actionOtw_rz);
 	ui.toolBar -> addAction(ui.actionU_yj_podgl_du);
-	
+
+#ifdef DEBUG_KRZYS
 	ui.OpstoolBar->addAction(ui.actionAutoprep);
 	ui.OpstoolBar->addSeparator();
 	ui.OpstoolBar->addAction(ui.actionNa_szaro);
@@ -91,7 +89,10 @@ void FarecMainWin::Populate_toolbar()
 	ui.OpstoolBar->addSeparator();
 	ui.OpstoolBar->addAction(ui.actionTwarz);
 	ui.OpstoolBar->addAction(ui.actionOczyHough);
-	
+#else
+	ui.OpstoolBar->setVisible(false);
+#endif
+
 }
 
 void FarecMainWin::Load_file( bool )

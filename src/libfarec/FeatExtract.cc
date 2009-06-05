@@ -22,8 +22,6 @@
 
 #include "FeatExtract.hh"
 
-#include <iostream>
-
 FeatExtract::FeatExtract( QWidget * p, const QImage& im ) :
 	ImgOp(p, im)
 {
@@ -80,9 +78,11 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht(size_t radsnum)
 
 	region_t facereg = Get_face_from_grads();
 
-	QImage tmpi = ImgPrep(pnt, *myimg).Batch_prepare(true)->copy(facereg->top(), facereg->left(), facereg->width(), facereg->height() / 2);
+	QImage tmpi = ImgPrep(pnt, *myimg).Batch_prepare(true)->copy( *facereg );
 
-	const size_t RAD = tmpi.width() / 20;
+	//eye width is equal to five times of face width, and height is equal to ⅓ of its width;  
+	const size_t RAD = std::round((0.305 * (facereg -> width() / 5.0)) * (static_cast<double>(facereg ->width()) / facereg ->height()));
+	const float CLEARRAD = 2.0;
 
 	ImgData::houghret_t ht = ImgData(pnt, tmpi).Hough_tm(RAD, radsnum);
 	buf_t buf;
@@ -109,7 +109,7 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht(size_t radsnum)
 		else
 		{
 			QPoint ctr = it->first;
-			const size_t off = (RAD * 1.5) * M_SQRT2; // R
+			const size_t off = (RAD * CLEARRAD) * M_SQRT2; // R
 			const size_t alen = std::hypot(static_cast<double> (off), static_cast<double> (off)); // a; Pythagorean theorem
 
 			buf.push_back(make_tuple(QRegion(ctr.x() - off, ctr.y() - off, alen, alen, QRegion::Ellipse),
@@ -138,10 +138,13 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht(size_t radsnum)
 			/ buf[pb1].get<3> (), buf[pb1].get<2> () / buf[pb1].get<3> ()), QPoint(buf[pb2].get<1> ()
 			/ buf[pb2].get<3> (), buf[pb2].get<2> () / buf[pb2].get<3> ()), RAD)) );
 	
-	//map to global
-	ret->get<0>() += QPoint( facereg->left() , facereg->top());
-	ret->get<1>() += QPoint( facereg->left() , facereg->top());;
+	//make sure 0 has the left eye
+	if(ret->get<0>().x() < ret->get<1>().x())
+		std::swap(ret->get<1>(), ret->get<0>());
 	
+	//map to global
+	ret->get<0>() += QPoint( facereg->left()  , facereg->top());
+	ret->get<1>() += QPoint( facereg->left()  , facereg->top() );
 	
 	return ret;
 }

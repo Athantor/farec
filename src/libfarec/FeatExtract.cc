@@ -73,7 +73,7 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 	return ret;
 }
 
-FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht()
+FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht(size_t radsnum)
 {
 
 	typedef QList<tuple<QRegion, uint64_t, uint64_t, uint64_t> > buf_t; //reg, x, y, ctr
@@ -84,7 +84,7 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht()
 
 	const size_t RAD = tmpi.width() / 20;
 
-	ImgData::houghret_t ht = ImgData(pnt, tmpi).Hough_tm(RAD, 100);
+	ImgData::houghret_t ht = ImgData(pnt, tmpi).Hough_tm(RAD, radsnum);
 	buf_t buf;
 
 	for(auto it = ht->begin(); it != ht->end(); ++it)

@@ -163,40 +163,48 @@ void FarecMainWin::Test_autoprep( bool )
 		return;
 	}
 
-	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Batch_prepare(QMessageBox::question(this, "Przygotowanie", QString::fromUtf8("Zrobić pełne?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes ))));
+	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Batch_prepare(QMessageBox::question(this,
+			"Przygotowanie", QString::fromUtf8("Zrobić pełne?"), QMessageBox::Yes | QMessageBox::No,
+			QMessageBox::Yes) == QMessageBox::Yes))));
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
-void FarecMainWin::Test_eyes_cht(bool)
+void FarecMainWin::Test_eyes_cht( bool )
 {
 	if(!static_cast<bool> (inimg) or inimg->isNull())
 	{
 		return;
 	}
-	FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_eyes_from_cht();
-	
-	outimg.reset(new QImage(*inimg));
-	
-	QPainter qpt(outimg.get());
-	qpt.setPen(QPen("red"));
 
-	
-	qpt.drawRect(el->get<0>().x() - 7, el->get<0>().y() - 7, 14, 14);
-	qpt.drawLine(el->get<0>().x(), el->get<0>().y() - 10, el->get<0>().x(), el->get<0>().y() + 5);
-	qpt.drawLine(el->get<0>().x() - 10, el->get<0>().y(), el->get<0>().x() + 10, el->get<0>().y());
-	
-	qpt.drawRect(el->get<1>().x() - 7, el->get<1>().y() - 7, 14, 14);
-	qpt.drawLine(el->get<1>().x(), el->get<1>().y() - 10, el->get<1>().x(), el->get<1>().y() + 5);
-	qpt.drawLine(el->get<1>().x() - 10, el->get<1>().y(), el->get<1>().x() + 10, el->get<1>().y());
-	
-	qpt.drawEllipse(el->get<0>(), el->get<2>(), el->get<2>());
-	qpt.drawEllipse(el->get<1>(), el->get<2>(), el->get<2>());
-	
-	qpt.end();
+	bool ok = false;
+	uint64_t sz = QInputDialog::getInt(this, "Haf", QString::fromUtf8("Ilość okręgów"), 20, 0, 999, 1, &ok);
 
-	Set_label_img(ui.PviewImgLbl, *outimg);
+	if(ok)
+	{
 
-	
+		FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_eyes_from_cht(sz);
+
+		outimg.reset(new QImage(*inimg));
+
+		QPainter qpt(outimg.get());
+		qpt.setPen(QPen("red"));
+
+		qpt.drawRect(el->get<0> ().x() - 7, el->get<0> ().y() - 7, 14, 14);
+		qpt.drawLine(el->get<0> ().x(), el->get<0> ().y() - 10, el->get<0> ().x(), el->get<0> ().y() + 5);
+		qpt.drawLine(el->get<0> ().x() - 10, el->get<0> ().y(), el->get<0> ().x() + 10, el->get<0> ().y());
+
+		qpt.drawRect(el->get<1> ().x() - 7, el->get<1> ().y() - 7, 14, 14);
+		qpt.drawLine(el->get<1> ().x(), el->get<1> ().y() - 10, el->get<1> ().x(), el->get<1> ().y() + 5);
+		qpt.drawLine(el->get<1> ().x() - 10, el->get<1> ().y(), el->get<1> ().x() + 10, el->get<1> ().y());
+
+		qpt.drawEllipse(el->get<0> (), el->get<2> (), el->get<2> ());
+		qpt.drawEllipse(el->get<1> (), el->get<2> (), el->get<2> ());
+
+		qpt.end();
+
+		Set_label_img(ui.PviewImgLbl, *outimg);
+
+	}
 }
 
 #endif

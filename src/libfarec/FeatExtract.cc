@@ -63,7 +63,7 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 		auto stit = gy.begin() + 3;
 		ret->setLeft(std::distance(stit, std::max_element(stit, gy.begin() + (myimg -> width() / 5))));
 
-		stit = gy.begin() + ((myimg -> width() / 5) * 3);
+		stit = gy.begin() + ((myimg -> width() / 3) * 2);
 		ret->setRight(std::distance(stit, std::max_element(stit, gy.end() - 3)) + std::distance(gy.begin(),
 				stit));
 	}

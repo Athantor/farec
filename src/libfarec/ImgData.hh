@@ -28,6 +28,7 @@
 #include <QList>
 #include <QPoint>
 #include <QPair>
+#include <QRect>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -59,11 +60,17 @@ class ImgData : public ImgOp
 			return val;
 		}
 
+		enum Vpf_dir /*: uint8_t*/// damn you eclipse! :< 
+		{
+			HOR, VERT
+		};
+
 		typedef shared_ptr<QVector<QVector<int64_t> > > gradarr_t;
 		typedef tuple<gradarr_t, gradarr_t> gradret_t;
 		typedef tuple<shared_ptr<QVector<int64_t> > , shared_ptr<QVector<int64_t> > , shared_ptr<QVector<
 				int64_t> > , shared_ptr<QVector<int64_t> > > histret_t; ///< RGBA histogram
 		typedef shared_ptr<std::list<QPair<QPoint, uint64_t> > > houghret_t; // (x,y), val
+		typedef shared_ptr<tuple<QVector<int64_t> , Vpf_dir, int32_t> > Vpf_t; // vals, dir, eye center coord (x or y depending on dir: v=x; h=y)
 
 
 		ImgData( QWidget *, const QImage& );
@@ -71,8 +78,10 @@ class ImgData : public ImgOp
 
 		gradret_t Make_gradients() const;
 		histret_t Make_histogram() const;
-		
-		houghret_t Hough_tm(size_t, size_t);
+
+		houghret_t Hough_tm( size_t, size_t );
+
+		Vpf_t Vpf( const QRect&, Vpf_dir );
 
 };
 

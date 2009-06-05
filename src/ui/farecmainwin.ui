@@ -14,7 +14,7 @@
    <string>FaRec</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset>
     <normaloff>:/icons/face-smile.png</normaloff>:/icons/face-smile.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -148,6 +148,13 @@ p, li { white-space: pre-wrap; }
      </property>
      <addaction name="actionOczyHough"/>
     </widget>
+    <widget class="QMenu" name="menuVPF">
+     <property name="title">
+      <string>VPF</string>
+     </property>
+     <addaction name="actionHori"/>
+     <addaction name="actionVert"/>
+    </widget>
     <addaction name="actionAutoprep"/>
     <addaction name="separator"/>
     <addaction name="actionNa_szaro"/>
@@ -157,6 +164,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionMedianowy"/>
     <addaction name="actionHough"/>
     <addaction name="action_redni"/>
+    <addaction name="menuVPF"/>
     <addaction name="separator"/>
     <addaction name="actionTwarz"/>
     <addaction name="menuOczy"/>
@@ -213,7 +221,7 @@ p, li { white-space: pre-wrap; }
   </widget>
   <action name="actionOtw_rz">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset>
      <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
    </property>
    <property name="text">
@@ -243,7 +251,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionU_yj_podgl_du">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset>
      <normaloff>:/icons/system-switch-user.png</normaloff>:/icons/system-switch-user.png</iconset>
    </property>
    <property name="text">
@@ -308,6 +316,16 @@ p, li { white-space: pre-wrap; }
   <action name="actionOczyHough">
    <property name="text">
     <string>Hough</string>
+   </property>
+  </action>
+  <action name="actionHori">
+   <property name="text">
+    <string>Hori</string>
+   </property>
+  </action>
+  <action name="actionVert">
+   <property name="text">
+    <string>Vert</string>
    </property>
   </action>
  </widget>

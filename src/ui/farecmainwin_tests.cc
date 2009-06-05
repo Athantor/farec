@@ -177,7 +177,7 @@ void FarecMainWin::Test_eyes_cht( bool )
 	}
 
 	bool ok = false;
-	uint64_t sz = QInputDialog::getInt(this, "Haf", QString::fromUtf8("Ilość okręgów"), 20, 0, 999, 1, &ok);
+	uint64_t sz = QInputDialog::getInt(this, "Haf", QString::fromUtf8("Ilość okręgów"), 50, 0, 999, 1, &ok);
 
 	if(ok)
 	{
@@ -201,17 +201,50 @@ void FarecMainWin::Test_eyes_cht( bool )
 		qpt.drawEllipse(el->get<1> (), el->get<2> (), el->get<2> ());
 
 		qpt.save();
-		
-		qpt.setFont(QFont("monospace", 16));	
-		qpt.drawText(0,16, "r = " + QString::number(el->get<2> ()) + "px");
-		
+
+		qpt.setFont(QFont("monospace", 16));
+		qpt.drawText(0, 16, "r = " + QString::number(el->get<2> ()) + "px");
+
 		qpt.restore();
-		
+
 		qpt.end();
 
 		Set_label_img(ui.PviewImgLbl, *outimg);
-
 	}
+}
+
+void FarecMainWin::Test_Vpf_hori( bool )
+{
+	Test_vpf(ImgData::Vpf_dir::HOR);
+}
+
+void FarecMainWin::Test_Vpf_vert( bool )
+{
+	Test_vpf(ImgData::Vpf_dir::VERT);
+}
+
+void FarecMainWin::Test_vpf( ImgData::Vpf_dir  vd)
+{
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
+
+	FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_eyes_from_cht(50);
+	const int16_t esize = el->get<2> () * 3.0;
+	const int16_t evsize = el->get<2> () * 1.1;
+	ImgData::Vpf_t ret = ImgData(this, *inimg).Vpf(QRect(el->get<0> () + QPoint(-esize, -evsize),
+			el->get<0> () + QPoint(esize, evsize)), vd);
+
+	outimg.reset(new QImage(*inimg));
+
+	QPainter qpt(outimg.get());
+	qpt.setPen(QPen("red"));
+	qpt.drawRect(QRect(el->get<0> () + QPoint(-esize, -el->get<2> ()), el->get<0> () + QPoint(esize, el->get<
+			2> ())));
+	qpt.end();
+
+	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
 #endif

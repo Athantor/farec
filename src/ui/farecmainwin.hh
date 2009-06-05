@@ -74,6 +74,8 @@ class FarecMainWin : public QMainWindow
 		void Test_avg(bool);
 		void Test_face_reg(bool);
 		void Test_eyes_cht(bool);
+		void Test_Vpf_hori(bool);
+		void Test_Vpf_vert(bool);
 #endif
 
 	private:
@@ -89,6 +91,10 @@ class FarecMainWin : public QMainWindow
 		virtual void resizeEvent(QResizeEvent *);
 
 		scoped_ptr<QImage> inimg, outimg;
+		
+#ifdef DEBUG_KRZYS
+		void Test_vpf(ImgData::Vpf_dir);
+#endif
 };
 
 #endif // FARECMAINWIN_H

@@ -62,6 +62,8 @@ void FarecMainWin::Connect_slots()
 	connect(ui.action_redni, SIGNAL(triggered(bool)), this, SLOT(Test_avg(bool)));
 	connect(ui.actionTwarz, SIGNAL(triggered(bool)), this, SLOT(Test_face_reg(bool)));
 	connect(ui.actionOczyHough, SIGNAL(triggered(bool)), this, SLOT(Test_eyes_cht(bool)));
+	connect(ui.actionHori, SIGNAL(triggered(bool)), this, SLOT(Test_Vpf_hori(bool)));
+	connect(ui.actionVert, SIGNAL(triggered(bool)), this, SLOT(Test_Vpf_vert(bool)));
 	
 #else
 	ui.menuOpsy->setEnabled(false);

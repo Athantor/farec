@@ -233,15 +233,60 @@ void FarecMainWin::Test_vpf( ImgData::Vpf_dir  vd)
 	FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_eyes_from_cht(50);
 	const int16_t esize = el->get<2> () * 3.0;
 	const int16_t evsize = el->get<2> () * 1.1;
-	ImgData::Vpf_t ret = ImgData(this, *inimg).Vpf(QRect(el->get<0> () + QPoint(-esize, -evsize),
-			el->get<0> () + QPoint(esize, evsize)), vd);
+	QRect reg(el->get<0> () + QPoint(-esize, -evsize),
+			el->get<0> () + QPoint(esize, evsize));
+	ImgData::Vpf_t ret = ImgData(this, *inimg).Vpf(reg, vd);
 
 	outimg.reset(new QImage(*inimg));
+	double scale_dev = 0;
+	uint32_t startcnd = 0, stopcnd = 0, substcnd = 0, subspcnd = 0, divval = 1, *coordx = 0, *coordy = 0;
+		uint32_t i = 0, n = 0;
+	
+	if(ret->get<1>() == ImgData::Vpf_dir::VERT)
+		{
+			startcnd = reg.left();
+			stopcnd = reg.right();
+			substcnd = reg.top();
+			subspcnd = reg.bottom();
+
+			divval = reg.height();
+
+			coordy = &i;
+			coordx = &n;
+
+		}
+		else if(ret->get<1>() == ImgData::Vpf_dir::HOR)
+		{
+			startcnd = reg.top();
+			stopcnd = reg.bottom();
+			substcnd = reg.left();
+			subspcnd = reg.right();
+
+			divval = reg.width();
+
+			coordy = &n;
+			coordx = &i;
+		}
+	
+	scale_dev = sqrt(ret->get<3>());
+		while ( ret->get<3>()/scale_dev > outimg->height() ) 
+			scale_dev++;
+		
+		for ( i=startcnd; i< stopcnd; i++ )
+		{
+			n = (int)(subspcnd - ret->get<0>()[i-startcnd]/scale_dev) ;
+			if ( n < substcnd )
+				n=0;
+			if ( n>=subspcnd )
+				n = subspcnd-1;
+			outimg->setPixel(*coordx, *coordy ,QColor(255,0,0).rgb());
+		}
 
 	QPainter qpt(outimg.get());
+	qpt.setPen(QPen("lime"));
+	qpt.drawRect(reg);
 	qpt.setPen(QPen("red"));
-	qpt.drawRect(QRect(el->get<0> () + QPoint(-esize, -el->get<2> ()), el->get<0> () + QPoint(esize, el->get<
-			2> ())));
+	qpt.drawEllipse(reg.x() + *coordx, reg.y() + ret->get<2>(), 10, 10);
 	qpt.end();
 
 	Set_label_img(ui.PviewImgLbl, *outimg);

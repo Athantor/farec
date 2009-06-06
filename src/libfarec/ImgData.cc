@@ -338,7 +338,7 @@ ImgData::houghret_t ImgData::Hough_tm( size_t rad, size_t cics )
 
 ImgData::Vpf_t ImgData::Vpf( const QRect& reg, Vpf_dir vd )
 {
-	double sum = 0, mean = 0, maxValue = 0;
+	double sum = 0, mean = 0;
 	uint32_t startcnd = 0, stopcnd = 0, substcnd = 0, subspcnd = 0, divval = 1, *coordx = 0, *coordy = 0;
 	uint32_t i = 0, n = 0;
 
@@ -367,30 +367,31 @@ ImgData::Vpf_t ImgData::Vpf( const QRect& reg, Vpf_dir vd )
 		coordy = &n;
 		coordx = &i;
 	}
-
-	std::cout << vd << " " << stopcnd << ", " << startcnd << std::endl; 
 	
 	Vpf_t ret = Vpf_t(new Vpf_t::value_type(Vpf_t::value_type::head_type(stopcnd - startcnd), vd, 0));
 
-	for(uint32_t i = startcnd; i < stopcnd; ++i)
+	for( i = startcnd; i < stopcnd; ++i)
 	{
-
-		for(uint32_t n = substcnd; n < subspcnd; ++n)
+		mean = 0; 
+		for( n = substcnd; n < subspcnd; ++n)
 			mean += qRed(reinterpret_cast<QRgb *> (myimg->scanLine(*coordy))[*coordx]);
 
 		mean /= divval;
-
-		for(uint32_t n = substcnd; n < subspcnd; ++n)
+		
+		sum=0;
+		for( n = substcnd; n < subspcnd; ++n)
 		{
 			int16_t intv = qRed(reinterpret_cast<QRgb *> (myimg->scanLine(*coordy))[*coordx]);
 			sum += (intv - mean) * (intv - mean);
+			std::cout <<  i << ", " << n  << ": "<< sum << std::endl;
 		}
 
 		ret->get<0> ()[i - startcnd] = sum / reg.height();
-		if(ret->get<0> ()[i - startcnd] >= maxValue)
+		
+		if(ret->get<0> ()[i - startcnd] >= ret->get<3> ())
 		{
 			ret->get<2> () = i;
-			maxValue = ret->get<0> ()[i - startcnd];
+			ret->get<3> () = ret->get<0> ()[i - startcnd];
 		}
 	}
 

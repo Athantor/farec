@@ -70,7 +70,7 @@ class ImgData : public ImgOp
 		typedef tuple<shared_ptr<QVector<int64_t> > , shared_ptr<QVector<int64_t> > , shared_ptr<QVector<
 				int64_t> > , shared_ptr<QVector<int64_t> > > histret_t; ///< RGBA histogram
 		typedef shared_ptr<std::list<QPair<QPoint, uint64_t> > > houghret_t; // (x,y), val
-		typedef shared_ptr<tuple<QVector<int64_t> , Vpf_dir, int32_t> > Vpf_t; // vals, dir, eye center coord (x or y depending on dir: v=x; h=y)
+		typedef shared_ptr<tuple<QVector<int64_t> , Vpf_dir, int32_t, double> > Vpf_t; // vals, dir, eye center coord (x or y depending on dir: v=x; h=y), maxval
 
 
 		ImgData( QWidget *, const QImage& );

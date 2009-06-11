@@ -14,7 +14,7 @@
    <string>FaRec</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="icons.qrc">
     <normaloff>:/icons/face-smile.png</normaloff>:/icons/face-smile.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -119,7 +119,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuPlik">
@@ -147,6 +147,7 @@ p, li { white-space: pre-wrap; }
       <string>Oczy</string>
      </property>
      <addaction name="actionOczyHough"/>
+     <addaction name="actionVPF"/>
     </widget>
     <widget class="QMenu" name="menuVPF">
      <property name="title">
@@ -221,7 +222,7 @@ p, li { white-space: pre-wrap; }
   </widget>
   <action name="actionOtw_rz">
    <property name="icon">
-    <iconset>
+    <iconset resource="icons.qrc">
      <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
    </property>
    <property name="text">
@@ -251,7 +252,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionU_yj_podgl_du">
    <property name="icon">
-    <iconset>
+    <iconset resource="icons.qrc">
      <normaloff>:/icons/system-switch-user.png</normaloff>:/icons/system-switch-user.png</iconset>
    </property>
    <property name="text">
@@ -326,6 +327,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionVert">
    <property name="text">
     <string>Vert</string>
+   </property>
+  </action>
+  <action name="actionVPF">
+   <property name="text">
+    <string>VPF</string>
    </property>
   </action>
  </widget>

@@ -71,7 +71,7 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 	return ret;
 }
 
-FeatExtract::cht_eyeloc_t FeatExtract::Get_eyes_from_cht( size_t radsnum )
+FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum )
 {
 
 	typedef QList<tuple<QRegion, uint64_t, uint64_t, uint64_t> > buf_t; //reg, x, y, ctr

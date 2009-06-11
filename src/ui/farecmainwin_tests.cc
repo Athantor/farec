@@ -181,7 +181,7 @@ void FarecMainWin::Test_eyes_cht( bool )
 
 	if(ok)
 	{
-		FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_eyes_from_cht(sz);
+		FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_irises_from_cht(sz);
 
 		outimg.reset(new QImage(*inimg));
 
@@ -229,7 +229,7 @@ void FarecMainWin::Test_vpf( ImgData::Vpf_dir vd )
 		return;
 	}
 
-	FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_eyes_from_cht(50);
+	FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_irises_from_cht(50);
 	const int16_t esize = el->get<2> () * 3.3;
 	const int16_t evsize = el->get<2> () * 1.6;
 	

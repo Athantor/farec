@@ -56,7 +56,7 @@ class FeatExtract : private ImgOp
 		virtual ~FeatExtract();
 		
 		region_t Get_face_from_grads();
-		cht_eyeloc_t Get_eyes_from_cht(size_t);	
+		cht_eyeloc_t Get_irises_from_cht(size_t);	
 		
 };
 

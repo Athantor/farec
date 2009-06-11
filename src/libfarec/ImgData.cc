@@ -367,34 +367,35 @@ ImgData::Vpf_t ImgData::Vpf( const QRect& reg, Vpf_dir vd )
 		coordy = &n;
 		coordx = &i;
 	}
-	
+
 	Vpf_t ret = Vpf_t(new Vpf_t::value_type(Vpf_t::value_type::head_type(stopcnd - startcnd), vd, 0));
 
-	for( i = startcnd; i < stopcnd; ++i)
+	for(i = startcnd; i < stopcnd; ++i)
 	{
-		mean = 0; 
-		for( n = substcnd; n < subspcnd; ++n)
+		mean = 0;
+		for(n = substcnd; n < subspcnd; ++n)
 			mean += qRed(reinterpret_cast<QRgb *> (myimg->scanLine(*coordy))[*coordx]);
 
 		mean /= divval;
-		
-		sum=0;
-		for( n = substcnd; n < subspcnd; ++n)
+
+		sum = 0;
+		for(n = substcnd; n < subspcnd; ++n)
 		{
 			int16_t intv = qRed(reinterpret_cast<QRgb *> (myimg->scanLine(*coordy))[*coordx]);
 			sum += (intv - mean) * (intv - mean);
 		}
 
 		ret->get<0> ()[i - startcnd] = sum / reg.height();
-		
+
 		if(ret->get<0> ()[i - startcnd] >= ret->get<3> ())
 		{
-			ret->get<2> () = i*1.0;
+			ret->get<2> () = i * 1.0;
 			ret->get<3> () = ret->get<0> ()[i - startcnd];
 		}
 	}
-	
-	ret->get<4>() = Approx_1st_derivat(ret->get<0>());
+
+	ret->get<4> () = Approx_1st_derivat(ret->get<0> ());
+	ret->get<5> () = Find_critical_points(ret->get<4> ());
 
 	return ret;
 
@@ -410,7 +411,7 @@ ImgData::Vpf_derivat_t ImgData::Approx_1st_derivat( const Vpf_t::value_type::hea
 
 	const Vpf_derivat_t::value_type::value_type c[2] __attribute__ ((aligned (16))) = { 2 * h, 2 * h };
 	const __m128d cs = _mm_load_pd(c);
-	for(int32_t i = 1; i < vals.size() - 1; i += 2)
+	for(int32_t i = 1; i < vals.size() - 2; i += 2)
 	{
 		Vpf_derivat_t::value_type::value_type a[2] __attribute__ ((aligned (16))) = { vals[i + 1],
 				vals[i + 2] };
@@ -418,15 +419,64 @@ ImgData::Vpf_derivat_t ImgData::Approx_1st_derivat( const Vpf_t::value_type::hea
 				b[2] __attribute__ ((aligned (16))) = { -vals[i - 1], -vals[i] };
 		__m128d as = _mm_load_pd(a);
 		__m128d bs = _mm_load_pd(b);
-		
+
 		_mm_store_pd(a, _mm_div_pd(_mm_add_pd(as, bs), cs));
-		
 
 		(*dervs)[i] = a[0];
 		(*dervs)[i + 1] = a[1];
+		/*(*dervs)[i] = (-vals[i-1]+vals[i+1])/(2.0*h);*/
 
 	}
 	//	(*dervs)[vals.size()-1] = (vals[vals.size()-3] - 4.0*vals[vals.size()-2] + 3.0*vals[vals.size()-1])/(2.0*h);
 
 	return dervs;
 }
+
+ImgData::Vpf_critpnt_t ImgData::Find_critical_points( Vpf_derivat_t dervs )
+{
+	Vpf_critpnt_t ret(new Vpf_critpnt_t::value_type);
+
+	for(size_t i = 1; i < static_cast<decltype( i )> (dervs->size()); ++i)
+	{
+		if((*dervs)[i - 1] >= 0 and (*dervs)[i] < 0)
+		{
+			ret->push_back(i);
+		}
+	}
+
+	return ret;
+}
+
+/*ImgData::Vpf_critpnt_t ImgData::Find_critical_points( Vpf_derivat_t dervs )
+{
+	Vpf_critpnt_t ret(new Vpf_critpnt_t::value_type);
+
+	QList<ImgData::Vpf_critpnt_t::value_type::value_type> tmp;
+
+		for ( int32_t i=dervs->size()-1; i > 1;  )
+		{
+			if ( dervs->at(i-1) > dervs->at(i) )
+			{
+				for ( ; i > 0  and dervs->at(i-1) > dervs->at(i); i-- );
+				tmp.push_back(i);
+			}
+			for ( ; i > 0 and dervs->at(i-1) <= dervs->at(i); i-- );
+		}
+
+		for ( int32_t i=1; i< dervs->size()-1 ;  )
+		{
+			if ( dervs->at(i-1) < dervs->at(i) )
+			{
+				for ( ; i < dervs->size()  and dervs->at(i-1) <= dervs->at(i); i++ );
+				if ( tmp.contains(i-1) )
+				{
+					ret->push_back(i-1);
+					std::cout << ret->back() << std::endl;
+				}
+			}
+			for ( ; i < dervs->size() and dervs->at(i-1) >= dervs->at(i); i++ );
+		}
+		
+
+	return ret;
+}*/

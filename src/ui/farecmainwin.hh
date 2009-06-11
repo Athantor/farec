@@ -94,6 +94,7 @@ class FarecMainWin : public QMainWindow
 		
 #ifdef DEBUG_KRZYS
 		void Test_vpf(ImgData::Vpf_dir);
+		void Test_vpf_eye(ImgData::Vpf_dir, const QRect &);
 #endif
 };
 

@@ -38,7 +38,7 @@
 #include <algorithm>
 #include <list>
 #include <cmath>
-//#include <emmintrin.h> //grads sse
+#include <emmintrin.h> //grads sse
 
 #include "ImgOp.hh"
 
@@ -65,12 +65,13 @@ class ImgData : public ImgOp
 			HOR, VERT
 		};
 
+		typedef shared_ptr<QVector<double> > Vpf_derivat_t; 
 		typedef shared_ptr<QVector<QVector<int64_t> > > gradarr_t;
 		typedef tuple<gradarr_t, gradarr_t> gradret_t;
 		typedef tuple<shared_ptr<QVector<int64_t> > , shared_ptr<QVector<int64_t> > , shared_ptr<QVector<
 				int64_t> > , shared_ptr<QVector<int64_t> > > histret_t; ///< RGBA histogram
 		typedef shared_ptr<std::list<QPair<QPoint, uint64_t> > > houghret_t; // (x,y), val
-		typedef shared_ptr<tuple<QVector<int64_t> , Vpf_dir, int32_t, double> > Vpf_t; // vals, dir, eye center coord (x or y depending on dir: v=x; h=y), maxval
+		typedef shared_ptr<tuple<Vpf_derivat_t::value_type , Vpf_dir, int32_t, double, Vpf_derivat_t> > Vpf_t; // vals, dir, eye center coord (x or y depending on dir: v=x; h=y), maxval
 
 
 		ImgData( QWidget *, const QImage& );
@@ -82,6 +83,8 @@ class ImgData : public ImgOp
 		houghret_t Hough_tm( size_t, size_t );
 
 		Vpf_t Vpf( const QRect&, Vpf_dir );
+	private:
+		static Vpf_derivat_t Approx_1st_derivat(const Vpf_t::value_type::head_type & );
 
 };
 

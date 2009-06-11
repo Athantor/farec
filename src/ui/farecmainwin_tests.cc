@@ -296,8 +296,6 @@ void FarecMainWin::Test_vpf( ImgData::Vpf_dir vd )
 	qpt.end();
 
 	Set_label_img(ui.PviewImgLbl, *outimg);
-	
-	
 }
 
 #endif

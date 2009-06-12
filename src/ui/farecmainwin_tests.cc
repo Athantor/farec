@@ -24,6 +24,8 @@
 
 #include "farecmainwin.hh"
 
+#include <iostream>
+
 void FarecMainWin::To_gray( bool )
 {
 	ImgPrep ip(this, *inimg);
@@ -229,14 +231,12 @@ void FarecMainWin::Test_vpf( ImgData::Vpf_dir vd )
 		return;
 	}
 
-	FeatExtract::cht_eyeloc_t el = FeatExtract(this, *inimg).Get_irises_from_cht(50);
-	const int16_t esize = el->get<2> () * 3.3;
-	const int16_t evsize = el->get<2> () * 1.6;
+	FeatExtract::eyewin_t ew = FeatExtract(this, *inimg).Make_eye_windows();
 	
 	outimg.reset(new QImage( *inimg ) );
 	
-	Test_vpf_eye(vd, QRect(el->get<0> () + QPoint(-esize, -evsize), el->get<0> () + QPoint(esize, evsize)));
-	Test_vpf_eye(vd, QRect(el->get<1> () + QPoint(-esize, -evsize), el->get<1> () + QPoint(esize, evsize)));
+	Test_vpf_eye(vd, ew->get<0>());
+	Test_vpf_eye(vd, ew->get<1>());
 
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
@@ -301,8 +301,7 @@ void FarecMainWin::Test_vpf_eye(ImgData::Vpf_dir vd, const QRect & reg)
 
 		qpt.setPen(QPen("blue"));
 		qpt.drawRect(reg);
-		//qpt.setPen(QPen("red"));
-		//qpt.drawEllipse(reg.x() + *coordx, reg.y() + ret->get<2> (), 10, 10);
+		
 
 		qpt.setPen(QPen("orange"));
 		for(size_t myi = 0; myi < static_cast<decltype(myi)>(ret->get<5> ()->size()); ++myi)
@@ -316,6 +315,16 @@ void FarecMainWin::Test_vpf_eye(ImgData::Vpf_dir vd, const QRect & reg)
 			{
 				qpt.drawLine(substcnd, reg.y() + ret->get<5> ()->at(myi), subspcnd, reg.y() + ret->get<5> ()->at(myi));
 			}
+		}
+		
+		qpt.setPen(QPen("red"));
+		if(ret->get<1> () == ImgData::Vpf_dir::VERT)
+		{
+			qpt.drawLine(startcnd, reg.top() - ret->get<2> (), stopcnd, reg.top() - ret->get<2> () );
+		}
+		else if(ret->get<1> () == ImgData::Vpf_dir::HOR)
+		{
+			qpt.drawLine(reg.left() - ret->get<2> (), startcnd, reg.left() - ret->get<2> (), stopcnd );
 		}
 
 		qpt.end();

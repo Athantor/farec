@@ -25,7 +25,6 @@
 ImgOp::ImgOp( QWidget * p, const QImage & qi ) :
 	pnt(p), cops(new CommonOps(p)), myimg(new QImage(qi))
 {
-
 }
 
 ImgOp::~ImgOp()

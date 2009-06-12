@@ -33,6 +33,8 @@
 #include <iterator>
 #include <cstdint>
 #include <cmath>
+#include <utility>
+#include <cstdlib>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -41,6 +43,8 @@
 #include "ImgData.hh"
 #include "ImgPrep.hh"
 
+#include "except/FENoData.hh"
+
 using boost::shared_ptr;
 using boost::tuple;
 using boost::make_tuple;
@@ -48,16 +52,24 @@ using boost::make_tuple;
 class FeatExtract : private ImgOp
 {
 	public:
-		
 		typedef shared_ptr<QRect> region_t;
-		typedef shared_ptr<tuple<QPoint, QPoint, uint16_t> > cht_eyeloc_t; // left, right, radius
-		
-		FeatExtract(QWidget *, const QImage&);
+		typedef shared_ptr<tuple<QPoint, QPoint, uint16_t> > cht_eyeloc_t; ///< left, right, radius
+		typedef tuple<QPoint, QPoint, QPoint, QPoint> eyeloc_t; ///< top, right, bottom, left
+		typedef shared_ptr<std::pair<eyeloc_t, eyeloc_t> > vpf_eyeloc_t; ///< left, right
+		typedef shared_ptr<tuple<QRect, QRect, cht_eyeloc_t> > eyewin_t; ///<< eye windows + CHT cache
+
+		FeatExtract( QWidget *, const QImage& );
 		virtual ~FeatExtract();
+
+		eyewin_t Make_eye_windows(size_t = ImgOp::CHT_CIRCNUM) const;
 		
-		region_t Get_face_from_grads();
-		cht_eyeloc_t Get_irises_from_cht(size_t);	
+		region_t Get_face_from_grads() const;
+		cht_eyeloc_t Get_irises_from_cht( size_t ) const;
+		vpf_eyeloc_t Get_eyes_from_vpf(size_t, size_t = ImgOp::CHT_CIRCNUM) const;
 		
+	private:
+		int32_t Vpf_search(const QPoint &, size_t, ImgData::Vpf_t) const;
+
 };
 
 #endif /* FEATEXTRACT_HH_ */

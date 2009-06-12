@@ -31,7 +31,7 @@ FeatExtract::~FeatExtract()
 {
 }
 
-FeatExtract::region_t FeatExtract::Get_face_from_grads()
+FeatExtract::region_t FeatExtract::Get_face_from_grads() const
 {
 	QVector<uint64_t> gx(myimg->height(), 0), gy(myimg->width(), 0);
 	region_t ret = region_t(new region_t::value_type);
@@ -71,34 +71,35 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads()
 	return ret;
 }
 
-FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum )
+FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum ) const
 {
-
 	typedef QList<tuple<QRegion, uint64_t, uint64_t, uint64_t> > buf_t; //reg, x, y, ctr
 
 	region_t facereg = Get_face_from_grads();
 
 	QImage tmpi = ImgPrep(pnt, *myimg).Batch_prepare(true)->copy(*facereg);
-	ImgData::gradret_t grd = ImgData(pnt, ImgPrep(pnt, *myimg).Batch_prepare(false)->copy(*facereg)).Make_gradients();
+	ImgData::gradret_t grd =
+			ImgData(pnt, ImgPrep(pnt, *myimg).Batch_prepare(false)->copy(*facereg)).Make_gradients();
 
 	QVector<double> gx = QVector<double> (tmpi.height(), 0.0);
-	uint64_t avg= 0;
+	uint64_t avg = 0;
 	for(int y = 0; y < tmpi.height(); ++y)
 	{
 		for(int x = 0; x < tmpi.width(); ++x)
 		{
 			gx[y] += ImgData::norm_rgb_val((*grd.get<0> ())[x][y]);
-			avg +=gx[y]; 
+			avg += gx[y];
 		}
 	}
 
 	std::fill(gx.begin(), gx.begin() + 3, 0);
 	std::fill(gx.end() - 3, gx.end(), 0);
-	
-	const size_t maxgradthd = avg / (tmpi.height() *tmpi.width() * 1.0) * 2.5 ;
-	
+
+	const size_t maxgradthd = avg / (tmpi.height() * tmpi.width() * 1.0) * 2.5;
+
 	//eye width is equal to five times of face width, and height is equal to ≈⅓ of its width;  
-	const size_t RAD = std::round((0.305 * (facereg -> width() / 5.0)) * (static_cast<double>(facereg ->width()) / facereg ->height()));
+	const size_t RAD = std::round((0.305 * (facereg -> width() / 5.0))
+			* (static_cast<double> (facereg ->width()) / facereg ->height()));
 	const float CLEARRAD = 2.5;
 
 	ImgData::houghret_t ht = ImgData(pnt, tmpi).Hough_tm(RAD, radsnum);
@@ -106,7 +107,8 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum )
 
 	for(auto it = ht->begin(); it != ht->end(); ++it)
 	{
-		if( (it->first.y()) < ( (facereg -> height() / 4.0) * 3) ) // if circle is in upper half of face region
+		if((it->first.y()) <= ((facereg -> height() / 5.0) * 3) and (it->first.y()) >= ((facereg -> height()
+				/ 5.0) * 1)) // if circle is in upper half of face region
 		{
 			bool hasit = false;
 			auto hit = buf.begin();
@@ -139,6 +141,10 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum )
 		}
 	}
 
+	if(buf.size() < 1)
+		throw FENoData(
+				QString("Amount of circles found by CHT is not sufficient: %1").arg(buf.size()).toStdString());
+
 	size_t pb1 = 0, pb2 = 0, pctr = 0;
 	for(auto it = buf.begin(); it != buf.end(); ++it)
 	{
@@ -157,15 +163,80 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum )
 	//makes pair with averaged 2 first max els
 	cht_eyeloc_t ret = cht_eyeloc_t(new cht_eyeloc_t::value_type(make_tuple(QPoint(buf[pb1].get<1> ()
 			/ buf[pb1].get<3> (), buf[pb1].get<2> () / buf[pb1].get<3> ()), QPoint(buf[pb2].get<1> ()
-			/ buf[pb2].get<3> (), buf[pb2].get<2> () / buf[pb2].get<3> ()), RAD)) );
-	
+			/ buf[pb2].get<3> (), buf[pb2].get<2> () / buf[pb2].get<3> ()), RAD)));
+
 	//make sure 0 has the left eye
-	if(ret->get<0>().x() < ret->get<1>().x())
-		std::swap(ret->get<1>(), ret->get<0>());
-	
+	if(ret->get<0> ().x() > ret->get<1> ().x())
+		std::swap(ret->get<1> (), ret->get<0> ());
+
 	//map to global
-	ret->get<0>() += QPoint( facereg->left()  , facereg->top());
-	ret->get<1>() += QPoint( facereg->left()  , facereg->top() );
-	
+	ret->get<0> () += QPoint(facereg->left(), facereg->top());
+	ret->get<1> () += QPoint(facereg->left(), facereg->top());
+
 	return ret;
+}
+
+FeatExtract::vpf_eyeloc_t FeatExtract::Get_eyes_from_vpf( size_t srchrng, size_t circs ) const
+{
+	vpf_eyeloc_t ret = vpf_eyeloc_t(new vpf_eyeloc_t::value_type(make_tuple(QPoint(), QPoint(), QPoint(),
+			QPoint()), make_tuple(QPoint(), QPoint(), QPoint(), QPoint())));
+
+	eyewin_t ew = Make_eye_windows(circs);
+	cht_eyeloc_t el = ew->get<2>();
+
+	return ret;
+}
+
+FeatExtract::eyewin_t FeatExtract::Make_eye_windows( size_t cn ) const
+{
+	cht_eyeloc_t el = Get_irises_from_cht(cn);
+
+	const int16_t esize = el->get<2> () * 3.3;
+	const int16_t evsize = el->get<2> () * 1.6;
+
+	eyewin_t ret = eyewin_t(new eyewin_t::value_type());
+	*ret = make_tuple(QRect(el->get<0> () + QPoint(-esize, -evsize), el->get<0> () + QPoint(esize, evsize)),
+			QRect(el->get<1> () + QPoint(-esize, -evsize), el->get<1> () + QPoint(esize, evsize)), el);
+
+	return ret;
+}
+
+int32_t FeatExtract::Vpf_search(const QPoint & cnt, size_t vic, ImgData::Vpf_t vpf) const
+{
+	ImgData::Vpf_dir vdir = vpf->get<1>();
+	
+	if(vdir != ImgData::Vpf_dir::HOR and vdir != ImgData::Vpf_dir::VERT)
+		throw FEInvalidParameter(__PRETTY_FUNCTION__ +  std::string(": Unknown direction"));
+	
+	ImgData::Vpf_critpnt_t cpnts = vpf->get<5>();
+	
+	QPoint apx(cnt);
+	int32_t *theval = (vdir == ImgData::Vpf_dir::HOR) ? &apx.ry() : &apx.rx();
+	
+	QVector<ImgData::Vpf_critpnt_t::value_type::value_type> tmp;
+	
+	for(auto it = cpnts->begin(); it != cpnts->end(); ++it)
+	{
+		if( (*it >= ((*theval) - vic )) and ((*it <= ((*theval) + vic )) ) )
+		{
+			tmp.push_back(*it);
+		}
+	}
+	
+	decltype(tmp) tmp1(tmp.size());
+	
+	//substracts approx coord from critical point's
+	std::transform(tmp.begin(), tmp.end(), tmp1.begin(), std::bind2nd(std::minus<ImgData::Vpf_critpnt_t::value_type::value_type>(), static_cast<ImgData::Vpf_critpnt_t::value_type::value_type>(*theval)));
+	//makes absolute values
+	std::transform(tmp1.begin(), tmp1.end(), tmp1.begin(), std::ptr_fun(static_cast<long int (*)(long int)>(std::abs)) );
+	//sort
+	std::sort(tmp1.begin(), tmp1.end());
+	
+	//take the smallest diff and check if it's present in crit points, converting it back to coords
+	if(tmp.contains( (*theval) + tmp[0] ))
+		return (*theval) + tmp[0];
+	else if(tmp.contains( (*theval) - tmp[0] ))
+		return (*theval) - tmp[0];
+	else //if not, return approx coord
+		return *theval;
 }

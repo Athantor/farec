@@ -38,7 +38,7 @@ using boost::shared_ptr;
 class ImgOp
 {
 	public:
-
+		const static size_t CHT_CIRCNUM = 50; 
 		typedef shared_ptr<QImage> ret_t;
 
 		virtual ~ImgOp();

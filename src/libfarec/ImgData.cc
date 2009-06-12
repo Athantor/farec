@@ -369,6 +369,7 @@ ImgData::Vpf_t ImgData::Vpf( const QRect& reg, Vpf_dir vd )
 	}
 
 	Vpf_t ret = Vpf_t(new Vpf_t::value_type(Vpf_t::value_type::head_type(stopcnd - startcnd), vd, 0));
+	ret->get<3> () =0;
 
 	for(i = startcnd; i < stopcnd; ++i)
 	{
@@ -471,7 +472,6 @@ ImgData::Vpf_critpnt_t ImgData::Find_critical_points( Vpf_derivat_t dervs )
 				if ( tmp.contains(i-1) )
 				{
 					ret->push_back(i-1);
-					std::cout << ret->back() << std::endl;
 				}
 			}
 			for ( ; i < dervs->size() and dervs->at(i-1) >= dervs->at(i); i++ );
@@ -480,3 +480,4 @@ ImgData::Vpf_critpnt_t ImgData::Find_critical_points( Vpf_derivat_t dervs )
 
 	return ret;
 }*/
+

@@ -6,6 +6,7 @@ INCLUDE(../CMakeCommons.txt)
 SET(libfarec_exc_SRC
 	except/FarecException
 	except/FEInvalidParameter
+	except/FENoData
 )
 
 SET(libfarec_SRC

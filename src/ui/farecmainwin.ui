@@ -148,6 +148,7 @@ p, li { white-space: pre-wrap; }
      </property>
      <addaction name="actionOczyHough"/>
      <addaction name="actionVPF"/>
+     <addaction name="actionOczyApprox"/>
     </widget>
     <widget class="QMenu" name="menuVPF">
      <property name="title">
@@ -332,6 +333,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionVPF">
    <property name="text">
     <string>VPF</string>
+   </property>
+  </action>
+  <action name="actionOczyApprox">
+   <property name="text">
+    <string>Approx</string>
    </property>
   </action>
  </widget>

@@ -176,17 +176,6 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum ) con
 	return ret;
 }
 
-FeatExtract::vpf_eyeloc_t FeatExtract::Get_eyes_from_vpf( size_t srchrng, size_t circs ) const
-{
-	vpf_eyeloc_t ret = vpf_eyeloc_t(new vpf_eyeloc_t::value_type(make_tuple(QPoint(), QPoint(), QPoint(),
-			QPoint()), make_tuple(QPoint(), QPoint(), QPoint(), QPoint())));
-
-	eyewin_t ew = Make_eye_windows(circs);
-	cht_eyeloc_t el = ew->get<2>();
-
-	return ret;
-}
-
 FeatExtract::eyewin_t FeatExtract::Make_eye_windows( size_t cn ) const
 {
 	cht_eyeloc_t el = Get_irises_from_cht(cn);
@@ -201,42 +190,101 @@ FeatExtract::eyewin_t FeatExtract::Make_eye_windows( size_t cn ) const
 	return ret;
 }
 
-int32_t FeatExtract::Vpf_search(const QPoint & cnt, size_t vic, ImgData::Vpf_t vpf) const
+FeatExtract::vpf_eyeloc_t FeatExtract::Get_eyes_from_vpf( size_t srchrng, size_t circs ) const
 {
-	ImgData::Vpf_dir vdir = vpf->get<1>();
-	
+	vpf_eyeloc_t ret = vpf_eyeloc_t(new vpf_eyeloc_t::value_type(vpf_eyeloc_t::value_type::first_type(),
+			vpf_eyeloc_t::value_type::second_type()));
+
+	eyewin_t ew = Make_eye_windows(circs);
+	cht_eyeloc_t el = ew->get<2> ();
+
+	ImgData id = ImgData(pnt, *ImgPrep(pnt, *ImgPrep(pnt, *myimg).To_gray()).Gaussian_blur(9));
+	ImgData::Vpf_t vpf[2][2] = { { id.Vpf(ew->get<0> (), ImgData::Vpf_dir::HOR), id.Vpf(ew->get<0> (),
+			ImgData::Vpf_dir::VERT) }, { id.Vpf(ew->get<1> (), ImgData::Vpf_dir::HOR), id.Vpf(ew->get<1> (),
+			ImgData::Vpf_dir::VERT) } };
+
+	Perform_vpf_search(ret->first, Make_approx_eye_pts(el->get<0> (), el->get<2> ()), vpf[0], srchrng, ew->get<0>());
+	Perform_vpf_search(ret->second, Make_approx_eye_pts(el->get<1> (), el->get<2> ()), vpf[1], srchrng, ew->get<0>());
+
+	return ret;
+}
+
+int32_t FeatExtract::Vpf_search( const QPoint & cnt, size_t vic, ImgData::Vpf_t vpf, int32_t off ) const
+{
+	ImgData::Vpf_dir vdir = vpf->get<1> ();
+
 	if(vdir != ImgData::Vpf_dir::HOR and vdir != ImgData::Vpf_dir::VERT)
-		throw FEInvalidParameter(__PRETTY_FUNCTION__ +  std::string(": Unknown direction"));
-	
-	ImgData::Vpf_critpnt_t cpnts = vpf->get<5>();
-	
+		throw FEInvalidParameter(__PRETTY_FUNCTION__ + std::string(": Unknown direction"));
+
+	ImgData::Vpf_critpnt_t cpnts = vpf->get<5> ();
+
 	QPoint apx(cnt);
-	int32_t *theval = (vdir == ImgData::Vpf_dir::HOR) ? &apx.ry() : &apx.rx();
-	
+	int32_t theval = (vdir == ImgData::Vpf_dir::HOR) ? apx.ry() : apx.rx();
+
 	QVector<ImgData::Vpf_critpnt_t::value_type::value_type> tmp;
-	
+
 	for(auto it = cpnts->begin(); it != cpnts->end(); ++it)
 	{
-		if( (*it >= ((*theval) - vic )) and ((*it <= ((*theval) + vic )) ) )
+		auto val = (*it+off);
+		if((val >= ((theval) - vic)) and ((val <= ((theval) + vic))))
 		{
-			tmp.push_back(*it);
+			tmp.push_back(val);
 		}
 	}
-	
+
 	decltype(tmp) tmp1(tmp.size());
-	
+
 	//substracts approx coord from critical point's
-	std::transform(tmp.begin(), tmp.end(), tmp1.begin(), std::bind2nd(std::minus<ImgData::Vpf_critpnt_t::value_type::value_type>(), static_cast<ImgData::Vpf_critpnt_t::value_type::value_type>(*theval)));
+	std::transform(tmp.begin(), tmp.end(), tmp1.begin(), std::bind2nd(std::minus<
+			ImgData::Vpf_critpnt_t::value_type::value_type>(),
+			static_cast<ImgData::Vpf_critpnt_t::value_type::value_type> (theval)));
 	//makes absolute values
-	std::transform(tmp1.begin(), tmp1.end(), tmp1.begin(), std::ptr_fun(static_cast<long int (*)(long int)>(std::abs)) );
-	//sort
+	std::transform(tmp1.begin(), tmp1.end(), tmp1.begin(), std::ptr_fun(
+			static_cast<long int(*)( long int )> (std::abs)));
+	//sort to take smallest difference from approx
 	std::sort(tmp1.begin(), tmp1.end());
-	
+
 	//take the smallest diff and check if it's present in crit points, converting it back to coords
-	if(tmp.contains( (*theval) + tmp[0] ))
-		return (*theval) + tmp[0];
-	else if(tmp.contains( (*theval) - tmp[0] ))
-		return (*theval) - tmp[0];
-	else //if not, return approx coord
-		return *theval;
+	if(tmp.size() > 0 and tmp.contains((theval) + tmp1[0]))
+	{
+		return (theval) + tmp1[0];
+	}
+	else if(tmp.size() > 0 and tmp.contains((theval) - tmp1[0]))
+	{
+		return theval - tmp1[0];
+	}
+	else
+	{
+		//if not, return approx coord
+		return theval;
+	}
+}
+
+shared_ptr<FeatExtract::eyeloc_t> FeatExtract::Make_approx_eye_pts( const QPoint& ctr, size_t rad ) const
+{
+	shared_ptr<eyeloc_t> ret = decltype(ret)(new eyeloc_t());
+
+	ret->push_back(QPoint(ctr.x(), ctr.y() - rad)); //top
+	ret->push_back(QPoint(ctr.x(), ctr.y() + rad)); //btm
+	ret->push_back(QPoint(ctr.x() - rad, ctr.y())); //i left
+	ret->push_back(QPoint(ctr.x() + rad, ctr.y())); //i right
+	ret->push_back(QPoint(ctr.x() - rad * 2, ctr.y())); //e left
+	ret->push_back(QPoint(ctr.x() + 2 * rad, ctr.y())); //e left
+
+	return ret;
+}
+
+void FeatExtract::Perform_vpf_search( eyeloc_t& dst, shared_ptr<eyeloc_t> src, ImgData::Vpf_t* vpf,
+		size_t vic, const eyewin_t::value_type::head_type& reg ) const
+{
+	
+	int32_t offt = reg.top();
+	int32_t offl = reg.left();
+	
+	dst.push_back(QPoint(src->at(0).x(), Vpf_search(src->at(0), vic, vpf[0], offt)));
+	dst.push_back(QPoint(src->at(1).x(), Vpf_search(src->at(1), vic, vpf[0], offt)));
+	dst.push_back(QPoint(Vpf_search(src->at(2), vic, vpf[1], offl), src->at(2).y()));
+	dst.push_back(QPoint(Vpf_search(src->at(3), vic, vpf[1], offl), src->at(3).y()));
+	dst.push_back(QPoint(Vpf_search(src->at(4), vic, vpf[1], offl), src->at(4).y()));
+	dst.push_back(QPoint(Vpf_search(src->at(5), vic, vpf[1], offl), src->at(5).y()));
 }

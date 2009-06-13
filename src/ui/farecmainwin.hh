@@ -35,6 +35,7 @@
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/cast.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "ui_farecmainwin.h"
 
@@ -74,6 +75,8 @@ class FarecMainWin : public QMainWindow
 		void Test_avg(bool);
 		void Test_face_reg(bool);
 		void Test_eyes_cht(bool);
+		void Test_eyes_vpf(bool);
+		void Test_eyes_apx(bool);
 		void Test_Vpf_hori(bool);
 		void Test_Vpf_vert(bool);
 #endif
@@ -95,6 +98,8 @@ class FarecMainWin : public QMainWindow
 #ifdef DEBUG_KRZYS
 		void Test_vpf(ImgData::Vpf_dir);
 		void Test_vpf_eye(ImgData::Vpf_dir, const QRect &, ImgData&);
+		
+		void Draw_eye_shape(shared_ptr<FeatExtract::eyeloc_t>*, QPainter &, FeatExtract::cht_eyeloc_t) ;
 #endif
 };
 

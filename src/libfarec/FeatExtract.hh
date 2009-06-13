@@ -54,21 +54,23 @@ class FeatExtract : private ImgOp
 	public:
 		typedef shared_ptr<QRect> region_t;
 		typedef shared_ptr<tuple<QPoint, QPoint, uint16_t> > cht_eyeloc_t; ///< left, right, radius
-		typedef tuple<QPoint, QPoint, QPoint, QPoint> eyeloc_t; ///< top, right, bottom, left
+		typedef QVector<QPoint> eyeloc_t; ///< top, bottom, iris left, iris right, eye left, eye right
 		typedef shared_ptr<std::pair<eyeloc_t, eyeloc_t> > vpf_eyeloc_t; ///< left, right
 		typedef shared_ptr<tuple<QRect, QRect, cht_eyeloc_t> > eyewin_t; ///<< eye windows + CHT cache
 
 		FeatExtract( QWidget *, const QImage& );
 		virtual ~FeatExtract();
 
-		eyewin_t Make_eye_windows(size_t = ImgOp::CHT_CIRCNUM) const;
-		
+		eyewin_t Make_eye_windows( size_t = ImgOp::CHT_CIRCNUM ) const;
+		shared_ptr<eyeloc_t> Make_approx_eye_pts( const QPoint&, size_t ) const;
+
 		region_t Get_face_from_grads() const;
 		cht_eyeloc_t Get_irises_from_cht( size_t ) const;
-		vpf_eyeloc_t Get_eyes_from_vpf(size_t, size_t = ImgOp::CHT_CIRCNUM) const;
-		
+		vpf_eyeloc_t Get_eyes_from_vpf( size_t, size_t = ImgOp::CHT_CIRCNUM ) const;
+
 	private:
-		int32_t Vpf_search(const QPoint &, size_t, ImgData::Vpf_t) const;
+		int32_t Vpf_search( const QPoint &, size_t, ImgData::Vpf_t,int32_t ) const;
+		void Perform_vpf_search( eyeloc_t&, shared_ptr<eyeloc_t> , ImgData::Vpf_t*, size_t, const eyewin_t::value_type::head_type& ) const;
 
 };
 

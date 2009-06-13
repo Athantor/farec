@@ -23,8 +23,29 @@
 #include "ImgOp.hh"
 
 ImgOp::ImgOp( QWidget * p, const QImage & qi ) :
-	pnt(p), cops(new CommonOps(p)), myimg(new QImage(qi))
+	pnt(p), cops(new CommonOps(p)), myimg(new QImage(qi)), dopreps(true)
 {
+}
+
+ImgOp::ImgOp(const ImgOp & oth)
+{
+	pnt = oth.pnt;
+	cops.reset(new CommonOps(pnt));
+	myimg = decltype(myimg)(new QImage(*oth.myimg));
+	dopreps = oth.dopreps;
+}
+
+ImgOp& ImgOp::operator=(const ImgOp& oth)
+{
+	if(this == &oth)
+		return *this;
+	
+	pnt = oth.pnt;
+	cops.reset(new CommonOps(pnt));
+	myimg = decltype(myimg)(new QImage(*oth.myimg));
+	dopreps = oth.dopreps;
+	
+	return *this;
 }
 
 ImgOp::~ImgOp()
@@ -34,4 +55,14 @@ ImgOp::~ImgOp()
 void ImgOp::Change_img( const QImage& qi )
 {
 	myimg.reset(new QImage(qi));
+}
+
+bool ImgOp::Get_do_preps() const
+{
+	return dopreps;
+}
+
+void ImgOp::Set_do_preps(bool dp)
+{
+	dopreps = dp;
 }

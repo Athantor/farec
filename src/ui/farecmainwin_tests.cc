@@ -231,20 +231,21 @@ void FarecMainWin::Test_vpf( ImgData::Vpf_dir vd )
 		return;
 	}
 
+	ImgData id = ImgData(this, *ImgPrep(this, *ImgPrep(this, *inimg).To_gray()).Gaussian_blur(9));
 	FeatExtract::eyewin_t ew = FeatExtract(this, *inimg).Make_eye_windows();
 	
 	outimg.reset(new QImage( *inimg ) );
 	
-	Test_vpf_eye(vd, ew->get<0>());
-	Test_vpf_eye(vd, ew->get<1>());
+	Test_vpf_eye(vd, ew->get<0>(), id);
+	Test_vpf_eye(vd, ew->get<1>(), id);
 
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
-void FarecMainWin::Test_vpf_eye(ImgData::Vpf_dir vd, const QRect & reg)
+void FarecMainWin::Test_vpf_eye(ImgData::Vpf_dir vd, const QRect & reg, ImgData& id)
 {
 	
-	ImgData::Vpf_t ret = ImgData(this, *ImgPrep(this, *ImgPrep(this, *inimg).To_gray()).Gaussian_blur(9)).Vpf(reg, vd);
+	ImgData::Vpf_t ret = id.Vpf(reg, vd);
 	
 		double scale_dev = 0;
 		uint32_t startcnd = 0, stopcnd = 0, substcnd = 0, subspcnd = 0, divval = 1, *coordx = 0, *coordy = 0;

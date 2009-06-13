@@ -44,13 +44,19 @@ class ImgOp
 		virtual ~ImgOp();
 
 		void Change_img(const QImage&);
+		
+		void Set_do_preps(bool dp);
+		bool Get_do_preps() const;
 
 	protected:
 		ImgOp() = delete;
 		ImgOp(QWidget *, const QImage&);
+		ImgOp(const ImgOp &);
+		ImgOp& operator=(const ImgOp&);
 		QWidget *pnt;
 		scoped_ptr<CommonOps> cops;
 		ret_t myimg;
+		bool dopreps;
 
 };
 

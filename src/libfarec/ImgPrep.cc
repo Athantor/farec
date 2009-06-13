@@ -349,68 +349,67 @@ ImgPrep::ret_t ImgPrep::Gaussian_blur( uint8_t ksize ) const
 	}
 
 	BOOST_FOREACH(QVector<uint64_t> vct, kern)
+{	BOOST_FOREACH (uint64_t vval, vct)
 	{
-		BOOST_FOREACH	(uint64_t vval, vct)
-		{
-			sum += vval;
-		}
+		sum += vval;
 	}
+}
 
-	int64_t px[3];
-	for(size_t y = 0; y < static_cast<size_t>(myimg -> height()); y++)
+int64_t px[3];
+for(size_t y = 0; y < static_cast<size_t>(myimg -> height()); y++)
+{
+	for(size_t x = 0; x < static_cast<size_t>(myimg -> width()); x++)
 	{
-		for(size_t x = 0; x < static_cast<size_t>(myimg -> width()); x++)
+		QRgb currpx = reinterpret_cast<QRgb *> (myimg -> scanLine(y))[x];
+
+		std::fill(px, px + 3, 0);
+		if((y < (ksize - KERNMID)) or ((y + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> height())))
 		{
-			QRgb currpx = reinterpret_cast<QRgb *> (myimg -> scanLine(y))[x];
+			px[0] = qRed(currpx);
+			px[1] = qGreen(currpx);
+			px[2] = qBlue(currpx);
+		}
+		else if((x < (ksize - KERNMID)) or ((x + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> width())))
+		{
+			px[0] = qRed(currpx);
+			px[1] = qGreen(currpx);
+			px[2] = qBlue(currpx);
+		}
+		else
+		{
 
-			std::fill(px, px + 3, 0);
-			if((y < (ksize - KERNMID)) or ((y + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> height())))
+			for(int16_t i = -static_cast<int64_t>(KERNMID); i <= static_cast<int64_t>(KERNMID); i++)
 			{
-				px[0] = qRed(currpx);
-				px[1] = qGreen(currpx);
-				px[2] = qBlue(currpx);
-			}
-			else if((x < (ksize - KERNMID)) or ((x + (ksize - KERNMID)) >= static_cast<size_t>(myimg -> width())))
-			{
-				px[0] = qRed(currpx);
-				px[1] = qGreen(currpx);
-				px[2] = qBlue(currpx);
-			}
-			else
-			{
-
-				for(int16_t i = -static_cast<int64_t>(KERNMID); i <= static_cast<int64_t>(KERNMID); i++)
+				for(int16_t j = -static_cast<int64_t>(KERNMID); j <= static_cast<int64_t>(KERNMID); j++)
 				{
-					for(int16_t j = -static_cast<int64_t>(KERNMID); j <= static_cast<int64_t>(KERNMID); j++)
-					{
-						px[0] += qRed(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[j + KERNMID][i
-						+ KERNMID];
-						px[1] += qGreen(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
-						* kern[j + KERNMID][i + KERNMID];
-						px[2] += qBlue(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
-						* kern[j + KERNMID][i + KERNMID];
-					}
+					px[0] += qRed(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i]) * kern[j + KERNMID][i
+					+ KERNMID];
+					px[1] += qGreen(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
+					* kern[j + KERNMID][i + KERNMID];
+					px[2] += qBlue(reinterpret_cast<QRgb *> (myimg -> scanLine(y + j))[x + i])
+					* kern[j + KERNMID][i + KERNMID];
 				}
-
-				std::transform(px, px + 3, px, std::bind2nd(std::divides<double>(), sum));
 			}
 
-			uint8_t pxvals[3];
-			std::copy(px, px + 3, pxvals);
+			std::transform(px, px + 3, px, std::bind2nd(std::divides<double>(), sum));
+		}
 
-			reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxvals[0], pxvals[1], pxvals[2]).rgb();
+		uint8_t pxvals[3];
+		std::copy(px, px + 3, pxvals);
 
-			ctr++;
-			if(ctr % 1000 == 0)
-			{
-				cops->Get_pdialog()->setValue(ctr);
-			}
+		reinterpret_cast<QRgb *> (rr -> scanLine(y))[x] = QColor(pxvals[0], pxvals[1], pxvals[2]).rgb();
+
+		ctr++;
+		if(ctr % 1000 == 0)
+		{
+			cops->Get_pdialog()->setValue(ctr);
 		}
 	}
+}
 
-	cops->Stop_processing();
+cops->Stop_processing();
 
-	return rr;
+return rr;
 }
 
 ImgPrep::ret_t ImgPrep::Median_filter() const
@@ -473,4 +472,68 @@ ImgPrep::ret_t ImgPrep::Median_filter() const
 	cops->Stop_processing();
 
 	return rr;
+}
+
+ImgPrep::ret_t ImgPrep::Contrast( int8_t chg ) const
+{
+	ret_t rr = ret_t(new QImage(*myimg));
+
+	cops->Start_processing(QString::fromUtf8("Zmiana kontrastu"), (rr->height()) * (rr->width()) + 256);
+	size_t pctr = 256;
+
+	auto lut = ImgPrep::Make_LUT( chg );
+
+	cops->Get_pdialog()->setValue(pctr);
+	
+	for(int y = 0; y < myimg -> height(); y++)
+	{
+		QRgb * px = reinterpret_cast<decltype( px )> (myimg -> scanLine(y));
+		QRgb * pxbuf = reinterpret_cast<decltype( pxbuf )> (rr -> scanLine(y));
+
+		for(int x = 0; x < myimg -> width(); x++)
+		{
+			pxbuf[x] = QColor(lut->at(qRed(px[x])), lut->at(qGreen(px[x])), lut->at(qBlue(px[x]))).rgb();
+
+			pctr++;
+			if(pctr % 5000 == 0)
+			{
+				cops->Get_pdialog()->setValue(pctr);
+			}
+		}
+	}
+
+	cops->Stop_processing();
+	return rr;
+}
+
+shared_ptr<QVector<uint8_t> > ImgPrep::Make_LUT( int8_t chg ) const
+{
+	const uint8_t I_MAX = 255;
+	shared_ptr<QVector<uint8_t> > lut(new QVector<uint8_t> (I_MAX+1, 0));
+
+	for(size_t i = 0; i < static_cast<decltype( i )> (lut->size()); ++i)
+	{
+		//int64_t tmpl = 0.9 * (i - (I_MAX / 2)) + (I_MAX / 2);
+		double delta = 127.*(chg)/100;
+		double a = 255./(255. - delta*2);
+		double b = a*(0 - delta);
+
+		
+		int64_t tmpl = a*i + b;
+
+		if(tmpl < 0)
+		{
+			(*lut)[i] = 0;
+		}
+		else if(tmpl > I_MAX)
+		{
+			(*lut)[i] = I_MAX;
+		}
+		else
+		{
+			(*lut)[i] = tmpl;
+		}
+	}
+
+	return lut;
 }

@@ -34,6 +34,24 @@ void FarecMainWin::To_gray( bool )
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
+void FarecMainWin::Contrast( bool )
+{
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
+
+	bool ok = false;
+	int8_t sz = QInputDialog::getInt(this, "Kontrast", QString::fromUtf8(
+			"Kontrast"), 50, -127, 100, 10, &ok);
+
+	if(ok)
+	{
+		outimg.reset(new QImage(*ImgPrep(this, *inimg).Contrast(sz)));
+		Set_label_img(ui.PviewImgLbl, *outimg);
+	}
+}
+
 void FarecMainWin::Test_sobel( bool )
 {
 	outimg.reset(new QImage(*(ImgPrep(this, *inimg).Sobel_ed())));

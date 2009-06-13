@@ -55,6 +55,7 @@ class ImgPrep : public ImgOp
 		//color
 		ret_t To_gray() const;
 		ret_t Otsu_bin() const;
+		ret_t Contrast(int8_t) const;
 		
 		//details
 		ret_t Average_bin_blur(double) const;
@@ -63,7 +64,8 @@ class ImgPrep : public ImgOp
 		
 		//edge det
 		ret_t Sobel_ed() const;
-		
+	private:
+		shared_ptr<QVector<uint8_t> > Make_LUT(int8_t) const;
 
 };
 

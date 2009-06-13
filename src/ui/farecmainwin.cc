@@ -54,6 +54,7 @@ void FarecMainWin::Connect_slots()
 
 	connect(ui.actionAutoprep, SIGNAL(triggered(bool)), this, SLOT(Test_autoprep(bool)));
 	connect(ui.actionNa_szaro, SIGNAL(triggered(bool)), this, SLOT(To_gray(bool)));
+	connect(ui.actionKontrast, SIGNAL(triggered(bool)), this, SLOT(Contrast(bool)));
 	connect(ui.actionSobel, SIGNAL(triggered(bool)), this, SLOT(Test_sobel(bool)));
 	connect(ui.actionOtsu, SIGNAL(triggered(bool)), this, SLOT(Test_otsu(bool)));
 	connect(ui.actionGauss, SIGNAL(triggered(bool)), this, SLOT(Test_gauss(bool)));
@@ -84,7 +85,8 @@ void FarecMainWin::Populate_toolbar()
 	ui.OpstoolBar->addAction(ui.actionAutoprep);
 	ui.OpstoolBar->addSeparator();
 	ui.OpstoolBar->addAction(ui.actionNa_szaro);
-	ui.OpstoolBar->addAction(ui.actionNa_szaro);
+	ui.OpstoolBar->addAction(ui.actionKontrast);
+	ui.OpstoolBar->addSeparator();
 	ui.OpstoolBar->addAction(ui.actionSobel);
 	ui.OpstoolBar->addAction(ui.actionOtsu);
 	ui.OpstoolBar->addAction(ui.actionGauss);

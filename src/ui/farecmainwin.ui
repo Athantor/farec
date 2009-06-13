@@ -160,6 +160,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionAutoprep"/>
     <addaction name="separator"/>
     <addaction name="actionNa_szaro"/>
+    <addaction name="actionKontrast"/>
+    <addaction name="separator"/>
     <addaction name="actionSobel"/>
     <addaction name="actionOtsu"/>
     <addaction name="actionGauss"/>
@@ -344,6 +346,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionNos">
    <property name="text">
     <string>Nos</string>
+   </property>
+  </action>
+  <action name="actionKontrast">
+   <property name="text">
+    <string>Kontrast</string>
    </property>
   </action>
  </widget>

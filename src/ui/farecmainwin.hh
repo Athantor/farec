@@ -67,6 +67,7 @@ class FarecMainWin : public QMainWindow
 #ifdef DEBUG_KRZYS
 		void Test_autoprep(bool);
 		void To_gray( bool );
+		void Contrast(bool);
 		void Test_sobel( bool );
 		void Test_otsu(bool);
 		void Test_gauss(bool);

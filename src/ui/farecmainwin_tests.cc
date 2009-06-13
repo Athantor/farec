@@ -273,7 +273,7 @@ void FarecMainWin::Draw_eye_shape( shared_ptr<FeatExtract::eyeloc_t> *ael, QPain
 				* 60, 360 * 60);
 		
 		qpt.save();
-		qpt.setPen(QPen(QBrush("cyan"), 1, Qt::DashLine));
+		qpt.setPen(QPen(QBrush("pink"), 1, Qt::DashLine));
 		qpt.drawLine(ael[i]->at(0), ael[i]->at(2) );				
 		qpt.drawLine(ael[i]->at(2), ael[i]->at(1) );
 		qpt.drawLine(ael[i]->at(1), ael[i]->at(3) );
@@ -304,7 +304,7 @@ void FarecMainWin::Test_eyes_vpf( bool )
 	}
 
 	bool ok = false;
-	uint64_t sz = QInputDialog::getInt(this, "Oczy apx", QString::fromUtf8("Max okolice punktu px"), 0, 1,
+	uint64_t sz = QInputDialog::getInt(this, "Oczy vpf", QString::fromUtf8("Max okolice punktu px\n(-1: auto)"), -1, -1,
 			999, 1, &ok);
 
 	if(ok)
@@ -441,6 +441,29 @@ void FarecMainWin::Test_vpf_eye( ImgData::Vpf_dir vd, const QRect & reg, ImgData
 	}
 
 	qpt.end();
+}
+
+void FarecMainWin::Test_nos(bool)
+{
+	
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
+	
+	FeatExtract::noseloc_t nl =  FeatExtract(this, *inimg).Get_nose_from_grads();
+	outimg.reset(new QImage(*inimg));
+
+	QPainter qpt(outimg.get());
+	qpt.setPen(QPen("red"));
+	
+	
+	qpt.drawEllipse(nl->get<0>(),2,2);
+	qpt.drawEllipse(nl->get<1>(),2,2);
+	
+	qpt.end();
+	
+	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
 #endif

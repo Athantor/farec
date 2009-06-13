@@ -147,6 +147,11 @@ void Graph::Set_data( QVector<double> * d )
 	data.reset(d);
 }
 
+void Graph::Set_data( shared_ptr<QVector<double> > d )
+{
+	data = d;
+}
+
 void Graph::Set_brush( const QBrush& b )
 {
 	mybrush.reset(new QBrush(b));

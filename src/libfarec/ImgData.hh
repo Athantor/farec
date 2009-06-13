@@ -43,6 +43,7 @@
 #include "ImgOp.hh"
 
 using boost::tuple;
+using boost::make_tuple;
 using boost::scoped_ptr;
 using boost::shared_ptr;
 
@@ -69,6 +70,7 @@ class ImgData : public ImgOp
 		typedef shared_ptr<QVector<size_t> > Vpf_critpnt_t; 
 		typedef shared_ptr<QVector<QVector<int64_t> > > gradarr_t;
 		typedef tuple<gradarr_t, gradarr_t> gradret_t;
+		typedef shared_ptr< tuple<shared_ptr<QVector<double> >, shared_ptr<QVector<double> > > > dirgrads_t;
 		typedef tuple<shared_ptr<QVector<int64_t> > , shared_ptr<QVector<int64_t> > , shared_ptr<QVector<
 				int64_t> > , shared_ptr<QVector<int64_t> > > histret_t; ///< RGBA histogram
 		typedef shared_ptr<std::list<QPair<QPoint, uint64_t> > > houghret_t; // (x,y), val
@@ -79,6 +81,7 @@ class ImgData : public ImgOp
 		virtual ~ImgData();
 
 		gradret_t Make_gradients() const;
+		dirgrads_t Make_directional_gradients() const;
 		histret_t Make_histogram() const;
 
 		houghret_t Hough_tm( size_t, size_t );

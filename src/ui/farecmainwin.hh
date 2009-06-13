@@ -79,6 +79,7 @@ class FarecMainWin : public QMainWindow
 		void Test_eyes_apx(bool);
 		void Test_Vpf_hori(bool);
 		void Test_Vpf_vert(bool);
+		void Test_nos(bool);
 #endif
 
 	private:

@@ -190,13 +190,22 @@ FeatExtract::eyewin_t FeatExtract::Make_eye_windows( size_t cn ) const
 	return ret;
 }
 
-FeatExtract::vpf_eyeloc_t FeatExtract::Get_eyes_from_vpf( size_t srchrng, size_t circs ) const
+FeatExtract::vpf_eyeloc_t FeatExtract::Get_eyes_from_vpf( int32_t vic, size_t circs ) const
 {
 	vpf_eyeloc_t ret = vpf_eyeloc_t(new vpf_eyeloc_t::value_type(vpf_eyeloc_t::value_type::first_type(),
 			vpf_eyeloc_t::value_type::second_type()));
-
+	
 	eyewin_t ew = Make_eye_windows(circs);
 	cht_eyeloc_t el = ew->get<2> ();
+	
+	size_t srchrng = 1;
+	if(vic < 0)
+	{
+		srchrng = round(el->get<2>() / 3.5);
+	} 
+	else{
+		srchrng = vic;
+	}
 
 	ImgData id = ImgData(pnt, *ImgPrep(pnt, *ImgPrep(pnt, *myimg).To_gray()).Gaussian_blur(9));
 	ImgData::Vpf_t vpf[2][2] = { { id.Vpf(ew->get<0> (), ImgData::Vpf_dir::HOR), id.Vpf(ew->get<0> (),
@@ -287,4 +296,65 @@ void FeatExtract::Perform_vpf_search( eyeloc_t& dst, shared_ptr<eyeloc_t> src, I
 	dst.push_back(QPoint(Vpf_search(src->at(3), vic, vpf[1], offl), src->at(3).y()));
 	dst.push_back(QPoint(Vpf_search(src->at(4), vic, vpf[1], offl), src->at(4).y()));
 	dst.push_back(QPoint(Vpf_search(src->at(5), vic, vpf[1], offl), src->at(5).y()));
+}
+
+
+FeatExtract::region_t FeatExtract::Get_nostrils(region_t tfr, vpf_eyeloc_t tvel) const
+{
+	
+	
+	decltype(tfr) fr(tfr);
+	decltype(tvel) vel(tvel);
+	
+	if(not tfr )
+	{
+		fr = Get_face_from_grads();
+	}
+	
+	if(not tvel)
+	{
+		vel = Get_eyes_from_vpf();
+	}
+	
+	uint32_t hhgt = (vel->first.at(5).x() - vel->first.at(4).x()) * 7; //head height is equal to 7 widths of the eye
+	
+	
+	region_t ret = region_t(new region_t::value_type(QPoint(vel->first.at(3).x(), vel->first.at(1).y() + ((hhgt / 5.0) * 0.7) ), QPoint(vel->second.at(2).x(), vel->first.at(1).y() + ((hhgt / 5.0) * 1.65))));
+	return ret;
+}
+
+#include <iostream>
+
+FeatExtract::noseloc_t FeatExtract::Get_nose_from_grads() const
+{
+	noseloc_t ret = FeatExtract::noseloc_t(new FeatExtract::noseloc_t::value_type());
+	
+	region_t reg = Get_face_from_grads();
+	vpf_eyeloc_t vel = Get_eyes_from_vpf();
+	region_t nreg = Get_nostrils(reg, vel);
+	
+	QImage noseimg(*ImgPrep(pnt, myimg->copy(*nreg)).Batch_prepare(true) );
+	ImgData::dirgrads_t dg = ImgData(pnt, noseimg).Make_directional_gradients();
+	
+	size_t tmp_y = std::distance(dg->get<0>()->begin(), std::max_element(dg->get<0>()->begin(), dg->get<0>()->end()) );
+	/*size_t tmp_lx = std::distance(dg->get<1>()->begin(), std::max_element(dg->get<1>()->begin(), dg->get<1>()->begin() + (noseimg.width() / 2) ) );
+	size_t tmp_rx = std::distance(dg->get<1>()->begin() + (noseimg.width() / 2), std::max_element(dg->get<1>()->begin() + (noseimg.width() / 2), dg->get<1>()->end() ) );*/
+	
+	QRgb * px = reinterpret_cast<decltype( px )> (noseimg . scanLine(tmp_y));
+	size_t tmp_lx = 0, tmp_rx =  (noseimg.width() );
+	for(; tmp_lx < (noseimg.width() / 2); ++tmp_lx )
+	{
+		if(qRed(px[tmp_lx]) != 255)
+			break;
+	}
+	
+	for(; tmp_rx > (noseimg.width() / 2); --tmp_rx )
+	{
+		if(qRed(px[tmp_rx]) != 255)
+			break;
+	}
+	
+	ret->get<0>() = QPoint(nreg->x() +tmp_lx, nreg->y() + tmp_y);
+	ret->get<1>() = QPoint(nreg->x() +tmp_rx , nreg->y() + tmp_y);
+	return ret;
 }

@@ -41,28 +41,13 @@ void GradientDisplay::Disp_grads()
 	if(not static_cast<bool> (theimg))
 		return;
 
-	ImgData::gradret_t grd = ImgData(this, *theimg).Make_gradients();
-	QVector<double> *gx = new QVector<double> (theimg->height(), 0.0), *gy = new QVector<double> (
-			theimg->width(), 0.0);
-
+	
 	cops->Start_processing("Przetwarzanie gradientów", theimg -> height() * theimg -> width());
+	
+	ImgData::dirgrads_t dg = ImgData(this, *theimg).Make_directional_gradients();
 
-	for(int y = 0; y < theimg -> height(); ++y)
-	{
-		for(int x = 0; x < theimg -> width(); ++x)
-		{
-			(*gx)[y] += ImgData::norm_rgb_val((*grd.get<0> ())[x][y]);
-			(*gy)[x] += ImgData::norm_rgb_val((*grd.get<1> ())[x][y]);
-		}
-	}
-
-	std::fill(gx->begin(), gx->begin() + 3, 0);
-	std::fill(gy->begin(), gy->begin() + 3, 0);
-	std::fill(gx->end() - 3, gx->end(), 0);
-	std::fill(gy->end() - 3, gy->end(), 0);
-
-	ui.vgrad -> Set_data(gy);
-	ui.hgrad -> Set_data(gx);
+	ui.vgrad -> Set_data(dg->get<1>());
+	ui.hgrad -> Set_data(dg->get<0>());
 
 	cops->Stop_processing();
 }

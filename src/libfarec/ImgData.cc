@@ -168,6 +168,31 @@ ImgData::gradret_t ImgData::Make_gradients() const
 	return boost::make_tuple(gx, gy);
 }
 
+ImgData::dirgrads_t ImgData::Make_directional_gradients() const
+{
+	
+	dirgrads_t ret = dirgrads_t(new dirgrads_t::value_type(make_tuple(new dirgrads_t::value_type::head_type::value_type(
+			myimg->height(), 0.0), new dirgrads_t::value_type::head_type::value_type(myimg->width(), 0.0))));
+	
+	gradret_t grd = Make_gradients();
+
+	for(int32_t y = 0; y < myimg -> height(); ++y)
+	{
+		for(int32_t x = 0; x < myimg -> width(); ++x)
+		{
+			(*ret->get<0>())[y] += ImgData::norm_rgb_val((*grd.get<0> ())[x][y]);
+			(*ret->get<1>())[x] += ImgData::norm_rgb_val((*grd.get<1> ())[x][y]);
+		}
+	}
+
+	std::fill(ret->get<0>()->begin(), ret->get<0>()->begin() + 3, 0);
+	std::fill(ret->get<1>()->begin(),ret->get<1>()->begin() + 3, 0);
+	std::fill(ret->get<0>()->end() - 3, ret->get<0>()->end(), 0);
+	std::fill(ret->get<1>()->end() - 3, ret->get<1>()->end(), 0);
+
+	return ret;
+}
+
 ImgData::histret_t ImgData::Make_histogram() const
 {
 	cops->Start_processing(QString::fromUtf8("Obliczanie histogramów"), myimg->height() * myimg->width());
@@ -369,7 +394,7 @@ ImgData::Vpf_t ImgData::Vpf( const QRect& reg, Vpf_dir vd )
 	}
 
 	Vpf_t ret = Vpf_t(new Vpf_t::value_type(Vpf_t::value_type::head_type(stopcnd - startcnd), vd, 0));
-	ret->get<3> () =0;
+	ret->get<3> () = 0;
 
 	for(i = startcnd; i < stopcnd; ++i)
 	{
@@ -449,35 +474,35 @@ ImgData::Vpf_critpnt_t ImgData::Find_critical_points( Vpf_derivat_t dervs )
 }
 
 /*ImgData::Vpf_critpnt_t ImgData::Find_critical_points( Vpf_derivat_t dervs )
-{
-	Vpf_critpnt_t ret(new Vpf_critpnt_t::value_type);
+ {
+ Vpf_critpnt_t ret(new Vpf_critpnt_t::value_type);
 
-	QList<ImgData::Vpf_critpnt_t::value_type::value_type> tmp;
+ QList<ImgData::Vpf_critpnt_t::value_type::value_type> tmp;
 
-		for ( int32_t i=dervs->size()-1; i > 1;  )
-		{
-			if ( dervs->at(i-1) > dervs->at(i) )
-			{
-				for ( ; i > 0  and dervs->at(i-1) > dervs->at(i); i-- );
-				tmp.push_back(i);
-			}
-			for ( ; i > 0 and dervs->at(i-1) <= dervs->at(i); i-- );
-		}
+ for ( int32_t i=dervs->size()-1; i > 1;  )
+ {
+ if ( dervs->at(i-1) > dervs->at(i) )
+ {
+ for ( ; i > 0  and dervs->at(i-1) > dervs->at(i); i-- );
+ tmp.push_back(i);
+ }
+ for ( ; i > 0 and dervs->at(i-1) <= dervs->at(i); i-- );
+ }
 
-		for ( int32_t i=1; i< dervs->size()-1 ;  )
-		{
-			if ( dervs->at(i-1) < dervs->at(i) )
-			{
-				for ( ; i < dervs->size()  and dervs->at(i-1) <= dervs->at(i); i++ );
-				if ( tmp.contains(i-1) )
-				{
-					ret->push_back(i-1);
-				}
-			}
-			for ( ; i < dervs->size() and dervs->at(i-1) >= dervs->at(i); i++ );
-		}
-		
+ for ( int32_t i=1; i< dervs->size()-1 ;  )
+ {
+ if ( dervs->at(i-1) < dervs->at(i) )
+ {
+ for ( ; i < dervs->size()  and dervs->at(i-1) <= dervs->at(i); i++ );
+ if ( tmp.contains(i-1) )
+ {
+ ret->push_back(i-1);
+ }
+ }
+ for ( ; i < dervs->size() and dervs->at(i-1) >= dervs->at(i); i++ );
+ }
+ 
 
-	return ret;
-}*/
+ return ret;
+ }*/
 

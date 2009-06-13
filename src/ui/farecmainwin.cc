@@ -66,6 +66,7 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionOczyApprox, SIGNAL(triggered(bool)), this, SLOT(Test_eyes_apx(bool)));
 	connect(ui.actionHori, SIGNAL(triggered(bool)), this, SLOT(Test_Vpf_hori(bool)));
 	connect(ui.actionVert, SIGNAL(triggered(bool)), this, SLOT(Test_Vpf_vert(bool)));
+	connect(ui.actionNos, SIGNAL(triggered(bool)), this, SLOT(Test_nos(bool)));
 	
 #else
 	ui.menuOpsy->setEnabled(false);
@@ -95,6 +96,8 @@ void FarecMainWin::Populate_toolbar()
 	ui.OpstoolBar->addAction(ui.actionOczyHough);
 	ui.OpstoolBar->addAction(ui.actionVPF);
 	ui.OpstoolBar->addAction(ui.actionOczyApprox);
+	ui.OpstoolBar->addSeparator();
+	ui.OpstoolBar->addAction(ui.actionNos);
 #else
 	ui.OpstoolBar->setVisible(false);
 #endif

@@ -34,8 +34,10 @@
 #include <functional>
 
 #include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 using boost::scoped_ptr;
+using boost::shared_ptr;
 
 class Graph : public QFrame
 {
@@ -64,6 +66,7 @@ class Graph : public QFrame
 		const QWidget * Get_buddy() const;
 		void Set_buddy( QWidget * );
 		void Set_data( QVector<double> * );
+		void Set_data( shared_ptr<QVector<double> > );
 		void Set_brush( const QBrush& );
 		void Set_gdir( Graph_dir );
 		void Set_pen( const QPen& );
@@ -77,7 +80,7 @@ class Graph : public QFrame
 	protected:
 		Graph_dir mydir;
 		QWidget * buddy;
-		scoped_ptr<QVector<double> > data;
+		shared_ptr<QVector<double> > data;
 		scoped_ptr<QPen> mypen;
 		scoped_ptr<QPen> avgpen;
 		scoped_ptr<QBrush> mybrush;

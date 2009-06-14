@@ -301,8 +301,6 @@ void FeatExtract::Perform_vpf_search( eyeloc_t& dst, shared_ptr<eyeloc_t> src, I
 
 FeatExtract::region_t FeatExtract::Get_nostrils(region_t tfr, vpf_eyeloc_t tvel) const
 {
-	
-	
 	decltype(tfr) fr(tfr);
 	decltype(tvel) vel(tvel);
 	
@@ -317,7 +315,6 @@ FeatExtract::region_t FeatExtract::Get_nostrils(region_t tfr, vpf_eyeloc_t tvel)
 	}
 	
 	uint32_t hhgt = (vel->first.at(5).x() - vel->first.at(4).x()) * 7; //head height is equal to 7 widths of the eye
-	
 	
 	region_t ret = region_t(new region_t::value_type(QPoint(vel->first.at(3).x(), vel->first.at(1).y() + ((hhgt / 5.0) * 0.7) ), QPoint(vel->second.at(2).x(), vel->first.at(1).y() + ((hhgt / 5.0) * 1.65))));
 	return ret;
@@ -342,13 +339,13 @@ FeatExtract::noseloc_t FeatExtract::Get_nose_from_grads() const
 	
 	QRgb * px = reinterpret_cast<decltype( px )> (noseimg . scanLine(tmp_y));
 	size_t tmp_lx = 0, tmp_rx =  (noseimg.width() );
-	for(; tmp_lx < (noseimg.width() / 2); ++tmp_lx )
+	for(; tmp_lx < static_cast<decltype(tmp_lx)>((noseimg.width() / 2)); ++tmp_lx )
 	{
 		if(qRed(px[tmp_lx]) != 255)
 			break;
 	}
 	
-	for(; tmp_rx > (noseimg.width() / 2); --tmp_rx )
+	for(; tmp_rx > static_cast<decltype(tmp_rx)>((noseimg.width() / 2)); --tmp_rx )
 	{
 		if(qRed(px[tmp_rx]) != 255)
 			break;
@@ -356,5 +353,66 @@ FeatExtract::noseloc_t FeatExtract::Get_nose_from_grads() const
 	
 	ret->get<0>() = QPoint(nreg->x() +tmp_lx, nreg->y() + tmp_y);
 	ret->get<1>() = QPoint(nreg->x() +tmp_rx , nreg->y() + tmp_y);
+	return ret;
+}
+
+FeatExtract::region_t FeatExtract::Get_mouth(region_t tfr, region_t tnr, vpf_eyeloc_t tvel) const
+{
+	decltype(tfr) fr(tfr);
+	decltype(tnr) nr(tnr);
+	decltype(tvel) vel(tvel);
+	
+	if(not tfr )
+	{
+		fr = Get_face_from_grads();
+	}
+	
+	if(not tvel)
+	{
+		vel = Get_eyes_from_vpf();
+	}
+	
+	if(not nr )
+	{
+		nr = Get_nostrils(fr, vel);
+	}
+	
+	const size_t EWTH = vel->first.at(5).x() - vel->first.at(4).x();
+	
+	QImage mimg( *ImgPrep(pnt, myimg->copy(QRect(fr->left(), nr->top(), fr->width(), fr->bottom() - nr->top() -3 ) )).To_gray() );
+	ImgData::dirgrads_t dg = ImgData(pnt, mimg).Make_directional_gradients();
+	
+	size_t y = nr->top() + std::distance(dg->get<0>()->begin(), std::max_element(dg->get<0>()->begin(), dg->get<0>()->end()) );
+	
+	region_t ret = region_t(new region_t::value_type(QPoint(vel->first.at(3).x(), y - EWTH/1.9  ), QPoint(vel->second.at(2).x(), y + EWTH / 1.5)));
+	return ret;
+}
+
+#include <iostream>
+
+FeatExtract::mouthloc_t FeatExtract::Get_mouth_from_grads() const
+{
+	mouthloc_t ret = mouthloc_t(new mouthloc_t::value_type);
+	
+	region_t reg = Get_face_from_grads();
+	vpf_eyeloc_t vel = Get_eyes_from_vpf();
+	region_t nreg = Get_nostrils(reg, vel);
+	
+	region_t mreg = Get_mouth(reg, nreg, vel);
+	size_t midy =  mreg-> top() + (( vel->first.at(5).x() - vel->first.at(4).x()) / 1.9);
+	
+	QImage mimg( *ImgPrep(pnt, myimg->copy(*mreg) ).To_gray() );
+	ImgData::dirgrads_t dg = ImgData(pnt, mimg).Make_directional_gradients();
+	
+	size_t left = std::distance(dg->get<1>()->begin(), std::max_element(dg->get<1>()->begin(), dg->get<1>()->begin() + ( mreg->width() / 2)  ));
+	size_t right = std::distance( dg->get<1>()->begin() + ( mreg->width() / 2), std::max_element( dg->get<1>()->begin() + ( mreg->width() / 2), dg->get<1>()->end() ));
+	
+	size_t nleft =  mreg->left() + left;
+	size_t nright = mreg->left() + reg->left() + ( mreg->width() / 2) + right;
+	
+	ret->get<0>() = QPoint(nleft, midy);
+	ret->get<1>() = QPoint(nleft + ((nright - nleft) / 2.0), midy);
+	ret->get<2>() = QPoint(nright, midy);
+	
 	return ret;
 }

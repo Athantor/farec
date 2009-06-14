@@ -35,6 +35,7 @@ ImgPrep::ret_t ImgPrep::Batch_prepare( bool full ) const
 {
 	ret_t rr = ImgPrep(pnt, *myimg).To_gray();
 	rr = ImgPrep(pnt, *rr).Gaussian_blur(5);
+	rr = ImgPrep(pnt, *rr).Contrast(3);
 	rr = ImgPrep(pnt, *rr).Sobel_ed();
 	if(full)
 	{

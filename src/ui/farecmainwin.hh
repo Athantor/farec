@@ -81,6 +81,7 @@ class FarecMainWin : public QMainWindow
 		void Test_Vpf_hori(bool);
 		void Test_Vpf_vert(bool);
 		void Test_nos(bool);
+		void Test_usta(bool);
 #endif
 
 	private:

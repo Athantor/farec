@@ -474,13 +474,42 @@ void FarecMainWin::Test_nos(bool)
 
 	QPainter qpt(outimg.get());
 	qpt.setPen(QPen("red"));
-	
+	qpt.setBrush(qpt.pen().color());
 	
 	qpt.drawEllipse(nl->get<0>(),2,2);
 	qpt.drawEllipse(nl->get<1>(),2,2);
 	
 	qpt.end();
 	
+	Set_label_img(ui.PviewImgLbl, *outimg);
+}
+
+void FarecMainWin::Test_usta(bool)
+{
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
+	
+	FeatExtract::mouthloc_t ml =  FeatExtract(this, *inimg).Get_mouth_from_grads();
+	outimg.reset(new QImage(*inimg));
+
+	QPainter qpt(outimg.get());
+	qpt.setPen(QPen("red"));
+	
+	qpt.setBrush(qpt.pen().color());
+	qpt.drawEllipse(ml->get<0>(),2,2);
+	qpt.setPen(QPen("lime"));
+	qpt.setBrush(qpt.pen().color());
+	qpt.drawEllipse(ml->get<1>(),2,2);
+	qpt.setPen(QPen("yellow"));
+		qpt.setBrush(qpt.pen().color());
+	qpt.drawEllipse(ml->get<2>(),2,2);
+	
+	
+	
+	qpt.end();
+		
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 

@@ -173,6 +173,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionTwarz"/>
     <addaction name="menuOczy"/>
     <addaction name="actionNos"/>
+    <addaction name="actionUsta"/>
    </widget>
    <widget class="QMenu" name="menuObrazy">
     <property name="title">
@@ -351,6 +352,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionKontrast">
    <property name="text">
     <string>Kontrast</string>
+   </property>
+  </action>
+  <action name="actionUsta">
+   <property name="text">
+    <string>Usta</string>
    </property>
   </action>
  </widget>

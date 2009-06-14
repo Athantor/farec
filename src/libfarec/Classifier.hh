@@ -121,7 +121,7 @@ class Classifier : private ImgOp
 		};
 
 		//                       type      ratio   weight   start   end
-		typedef shared_ptr<tuple<segments, long double, long double, QPoint, QPoint> > segdata_t;
+		typedef shared_ptr<tuple<segments, double, double, QPoint, QPoint> > segdata_t;
 		typedef QHash<segments, segdata_t> segments_t;
 
 		Classifier( QWidget *p, const QImage& );Classifier() = delete;
@@ -170,7 +170,7 @@ class Classifier : private ImgOp
 		}
 
 		void Prep_cache();
-		segdata_t Prep_data( segments, const QPoint&, const QPoint&, long double = DBL_MAX, long double = 1.0 ) const;
+		segdata_t Prep_data( segments, const QPoint&, const QPoint&, double = DBL_MAX, double = 1.0 ) const;
 };
 
 #endif /* CLASSIFIER_HH_ */

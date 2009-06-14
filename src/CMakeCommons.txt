@@ -1,6 +1,6 @@
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCC)
   
-  SET(CMAKE_CXX_FLAGS " -mtune=native $ENV{CXXFLAGS} --std=gnu++0x -Wall -Wextra -pedantic -pipe " )
+  SET(CMAKE_CXX_FLAGS " -mtune=native -msse2 $ENV{CXXFLAGS} --std=gnu++0x -Wall -Wextra -pedantic -pipe " )
   SET(CMAKE_CXX_FLAGS_DEBUG " -O0 -g3 -ggdb3 " )
   SET(CMAKE_CXX_FLAGS_RELEASE " -O2 " )
 

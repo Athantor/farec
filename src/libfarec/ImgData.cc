@@ -433,7 +433,7 @@ ImgData::Vpf_derivat_t ImgData::Approx_1st_derivat( const Vpf_t::value_type::hea
 	const double h = 1.0;
 	//	(*dervs)[0] = (-3.0*vals[0]+4.0*vals[1]-vals[2])/(2.0*h);
 
-	const Vpf_derivat_t::value_type::value_type c[2] __attribute__ ((aligned (16))) = { 2 * h, 2 * h };
+	/*const Vpf_derivat_t::value_type::value_type c[2] __attribute__ ((aligned (16))) = { 2 * h, 2 * h };
 	const __m128d cs = _mm_load_pd(c);
 	for(int32_t i = 1; i < vals.size() - 2; i += 2)
 	{
@@ -448,9 +448,15 @@ ImgData::Vpf_derivat_t ImgData::Approx_1st_derivat( const Vpf_t::value_type::hea
 
 		(*dervs)[i] = a[0];
 		(*dervs)[i + 1] = a[1];
-		/*(*dervs)[i] = (-vals[i-1]+vals[i+1])/(2.0*h);*/
+		(*dervs)[i] = (-vals[i-1]+vals[i+1])/(2.0*h);
+	}*/
 
-	}
+	for(int32_t i = 1; i < vals.size()-1; i ++)
+		{
+			(*dervs)[i] = (-vals[i-1]+vals[i+1])/(2.0*h);
+		}
+
+
 	//	(*dervs)[vals.size()-1] = (vals[vals.size()-3] - 4.0*vals[vals.size()-2] + 3.0*vals[vals.size()-1])/(2.0*h);
 
 	return dervs;

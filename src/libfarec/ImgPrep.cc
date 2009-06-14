@@ -112,7 +112,7 @@ ImgPrep::ret_t ImgPrep::Sobel_ed() const
 
 				//  sum = std::abs(sumx) + std::abs(sumy);
 				//sum = static_cast<int> (255 - std::sqrt(std::pow(sumx, 2.0) + std::pow(sumy, 2.0)));
-				sum = static_cast<int> (255 - std::hypot(static_cast<double> (sumx),
+				sum = static_cast<int> (255 - hypot(static_cast<double> (sumx),
 						static_cast<double> (sumy)));
 				sum = sum > 255 ? 255 : sum;
 				sum = sum < 0 ? 0 : sum;

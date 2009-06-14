@@ -99,7 +99,7 @@ void Classifier::Classify()
 
 	//
 	{
-		long double wdh = (((vel->first[5].x() - vel->first[4].x()) + (vel->second[5].x()
+		double wdh = (((vel->first[5].x() - vel->first[4].x()) + (vel->second[5].x()
 				- vel->second[4].x())) / 2.0) + (((vel->first[5].y() - vel->first[4].y())
 				+ (vel->second[5].y() - vel->second[4].y())) / 2.0);
 		the_segs[eye_wdh] = Prep_data(eye_wdh, vel->first[4], vel->first[5], wdh);
@@ -107,7 +107,7 @@ void Classifier::Classify()
 
 	//
 	{
-		long double hgt = ((vel->first[1].y() - vel->first[0].y())
+		double hgt = ((vel->first[1].y() - vel->first[0].y())
 				+ (vel->second[1].y() - vel->second[0].y())) / 2.0;
 		the_segs[eye_hgt] = Prep_data(eye_hgt, vel->first[0], vel->first[1], hgt);
 	}
@@ -341,7 +341,7 @@ void Classifier::Classify()
 }
 
 Classifier::segdata_t Classifier::Prep_data( segments sn, const QPoint& start, const QPoint& end,
-		long double val, long double wgt ) const
+		double val, double wgt ) const
 {
 	segdata_t ret = segdata_t(new segdata_t::value_type());
 

@@ -97,8 +97,8 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum ) con
 
 	const size_t maxgradthd = avg / (tmpi.height() * tmpi.width() * 1.0) * 2.5;
 
-	//eye width is equal to five times of face width, and height is equal to ≈⅓ of its width;  
-	const size_t RAD = std::round((0.305 * (facereg -> width() / 5.0))
+	//eye width is equal to five times of face width, and height is equal to ≈⅓ of its width;
+	const size_t RAD = round((0.305 * (facereg -> width() / 5.0))
 			* (static_cast<double> (facereg ->width()) / facereg ->height()));
 	const float CLEARRAD = 2.5;
 
@@ -133,7 +133,7 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum ) con
 			{
 				QPoint ctr = it->first;
 				const size_t off = (RAD * CLEARRAD) * M_SQRT2; // R
-				const size_t alen = std::hypot(static_cast<double> (off), static_cast<double> (off)); // a; Pythagorean theorem
+				const size_t alen = hypot(static_cast<double> (off), static_cast<double> (off)); // a; Pythagorean theorem
 
 				buf.push_back(make_tuple(QRegion(ctr.x() - off, ctr.y() - off, alen, alen, QRegion::Ellipse),
 						ctr.x() * mod, ctr.y() * mod, mod));

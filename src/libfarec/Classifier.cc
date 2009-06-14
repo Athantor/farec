@@ -94,6 +94,7 @@ void Classifier::Classify()
 	FeatExtract::fedge_t fedgem = any_cast<decltype( fedgem )> (cache[edgem]);
 
 	const QPoint btm(ml->get<1> ().x(), freg->bottom()); //  assumes that horiz half of face is under middle of the mouth
+	const QPoint top( (el->get<1>().x() + el->get<0>().x()) / 2.0, freg->top() ); //between the eyes
 
 	//---
 
@@ -336,7 +337,48 @@ void Classifier::Classify()
 	{
 		the_segs[rfacee_to_lfacem] = Prep_data(rfacee_to_lfacem, fedgee->get<0> (), fedgem->get<0> ());
 	}
+	//~~~
+	{
+		the_segs[lfacee_to_top] = Prep_data(lfacee_to_top, fedgee->get<0> (), top);
+	}
 	//
+	{
+		the_segs[rfacee_to_top] = Prep_data(rfacee_to_top, fedgee->get<1> (), top);
+	}
+	//
+	{
+		the_segs[lfacem_to_top] = Prep_data(lfacem_to_top, fedgem->get<0> (), top);
+	}
+	//
+	{
+		the_segs[rfacem_to_top] = Prep_data(rfacem_to_top, fedgem->get<1> (), top);
+	}
+	//~~
+	{
+		the_segs[top_to_btm] = Prep_data(top_to_btm, btm, top);
+	}
+	//~~
+	{
+		the_segs[ctrleye_to_top] = Prep_data(ctrleye_to_top, el->get<0>(), top);
+	}
+	//
+	{
+		the_segs[top_to_btm] = Prep_data(top_to_btm, el->get<0>(), top);
+	}
+
+	//~~
+	{
+		the_segs[ctrmouth_to_top] = Prep_data(ctrmouth_to_top, ml->get<1>(), top);
+	}
+
+	//~~
+	{
+		the_segs[lnose_to_top] = Prep_data(lnose_to_top, nl->get<0>(), top);
+	}
+	//
+	{
+		the_segs[rnose_to_top] = Prep_data(rnose_to_top, nl->get<1>(), top);
+	}
 
 }
 

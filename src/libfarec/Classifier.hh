@@ -117,7 +117,23 @@ class Classifier : private ImgOp
 			lfacee_to_lfacem,
 			rfacee_to_rfacem,
 			lfacee_to_rfacem,
-			rfacee_to_lfacem
+			rfacee_to_lfacem,
+
+			lfacee_to_top,
+			rfacee_to_top,
+			lfacem_to_top,
+			rfacem_to_top,
+
+			top_to_btm,
+
+			ctrleye_to_top,
+			ctrreye_to_top,
+
+			ctrmouth_to_top,
+
+			lnose_to_top,
+			rnose_to_top
+
 		};
 
 		//                       type      ratio   weight   start   end

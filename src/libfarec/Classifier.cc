@@ -22,13 +22,42 @@
 
 #include "Classifier.hh"
 
-Classifier::Classifier()
-{
-	// TODO Auto-generated constructor stub
+#include <iostream>
 
+Classifier::Classifier( QWidget *p, const QImage& im ) :
+	ImgOp(p, im)
+{
+	cache[___CTL] = im.cacheKey();
 }
 
 Classifier::~Classifier()
 {
-	// TODO Auto-generated destructor stub
+}
+
+const Classifier::segments_t& Classifier::Get_segs() const
+{
+	return the_segs;
+}
+
+size_t Classifier::Make_base_segment_length()
+{
+	FeatExtract::cht_eyeloc_t el;
+
+	if(has_type(cht_el))
+	{
+		el = any_cast<decltype( el )> (cache[cht_el]);
+	}
+	else
+	{
+		el = FeatExtract(pnt, *myimg).Get_irises_from_cht(ImgData::CHT_CIRCNUM);
+		cache[cht_el] = el;
+	}
+
+	the_segs[_BASE] = segdata_t(new segdata_t::value_type(make_tuple(_BASE, el->get<1> ().x()
+			- el->get<0> ().x(), 1.0, el->get<1> (), el->get<0> ())));
+
+	std::cout << the_segs[_BASE]->get<1>() << std::endl; 
+	
+	return static_cast<size_t>(the_segs[_BASE]->get<1>()) ;
+	
 }

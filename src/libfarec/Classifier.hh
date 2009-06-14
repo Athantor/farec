@@ -23,11 +23,126 @@
 #ifndef CLASSIFIER_HH_
 #define CLASSIFIER_HH_
 
-class Classifier
+#include <QImage>
+#include <QHash>
+
+#include <boost/any.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
+
+#include "ImgOp.hh"
+#include "FeatExtract.hh"
+
+using boost::any;
+using boost::any_cast;
+using boost::tuple;
+using boost::make_tuple;
+
+class Classifier : private ImgOp
 {
 	public:
-		Classifier();
+
+		enum segments
+		{
+			_BASE = 0,
+			left_eye_wdh,
+			right_eye_wdh,
+			iris_wdh,
+			eye_hgt,
+			nose_wdh,
+			mouth_wdh,
+			face_wgh_at_mouth,
+			face_wdg_at_eyes,
+			inner_corners_leye_to_reye,
+			outer_corners_leye_to_reye,
+			ctrleye_to_lnose,
+			ctrleye_to_rnose,
+			ctrreye_to_lnose,
+			ctrreye_to_rnose,
+			ctrleye_to_lmouth,
+			ctrleye_to_ctrmouth,
+			ctrleye_to_rmouth,
+			ctrreye_to_lmouth,
+			ctrreye_to_ctrmouth,
+			ctrreye_to_rmouth,
+			ctrleye_to_lfacee,
+			ctrleye_to_rfacee,
+			ctrleye_to_lfacem,
+			ctrleye_to_rfacem,
+			ctrreye_to_lfacee,
+			ctrreye_to_rfacee,
+			ctrreye_to_lfacem,
+			ctrreye_to_rfacem,
+			ctrleye_to_face_btm,
+			ctrreye_to_face_btm,
+			lnose_to_rnose,
+			lnose_to_lmouth,
+			lnose_to_ctrmouth,
+			lnose_to_rmouth,
+			rnose_to_lmouth,
+			rnose_to_ctrmouth,
+			rnose_to_rmouth,
+			lnose_to_lfacem,
+			lnose_to_rfacem,
+			rnose_to_lfacem,
+			rnose_to_rfacem,
+			lnose_to_rfacee,
+			rnose_to_lfacee,
+			rnose_to_rfacee,
+			lmouth_to_rmouth,
+			ctrmouth_to_face_btm,
+			ctrmouth_to_lfacee,
+			ctrmouth_to_rfacee,
+			ctrmouth_to_rfacem,
+			ctrmouth_to_lfacem
+		};
+
+		//                       type      ratio   weight   start   end
+		typedef shared_ptr<tuple<segments, double, double, QPoint, QPoint> > segdata_t; 
+		typedef QHash<segments,segdata_t> segments_t;
+		
+		Classifier( QWidget *p, const QImage& );
+		Classifier() = delete;
+		Classifier(const Classifier&) = delete;
+		Classifier& operator=(const Classifier&) = delete;
 		virtual ~Classifier();
+		
+		const segments_t& Get_segs() const;
+
+		size_t Make_base_segment_length();
+	private:
+		enum cacheid
+		{
+			___CTL,
+			cht_el,
+			vpf,
+			vpf_el,
+			eyewin,
+			nosewin,
+			mouthwin,
+			noseloc,
+			mouthloc,
+			facereg,
+			grads,
+			dirgrads
+		};
+		
+		segments_t the_segs;
+		
+		QHash<cacheid, any> cache;
+		inline bool chkcache() const
+		{
+			if(not cache.contains(___CTL) or not myimg)
+				return false;
+
+			qint64 cv = any_cast<decltype( cv )> (cache[___CTL]);
+			return cv == myimg->cacheKey();
+		}
+
+		inline bool has_type( cacheid ci ) const
+		{
+			return (chkcache() and cache.contains(ci));
+		}
 };
 
 #endif /* CLASSIFIER_HH_ */

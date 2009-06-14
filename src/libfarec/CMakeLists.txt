@@ -15,7 +15,6 @@ SET(libfarec_SRC
 	ImgPrep
 	ImgData
 	Classifier
-	
 	FeatExtract
 )
 

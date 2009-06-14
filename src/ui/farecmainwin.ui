@@ -192,12 +192,27 @@ p, li { white-space: pre-wrap; }
      <addaction name="actionGradPvwWej_cie"/>
      <addaction name="actionGradPvwPodgl_d"/>
     </widget>
+    <widget class="QMenu" name="menuKlasyfikacja">
+     <property name="title">
+      <string>Klasyfikacja</string>
+     </property>
+     <addaction name="actionPoka_odcinki"/>
+    </widget>
     <addaction name="menuGradient"/>
+    <addaction name="menuKlasyfikacja"/>
+   </widget>
+   <widget class="QMenu" name="menuTwarz">
+    <property name="title">
+     <string>Twarz</string>
+    </property>
+    <addaction name="actionDodaj"/>
+    <addaction name="actionWyszukaj"/>
    </widget>
    <addaction name="menuPlik"/>
    <addaction name="menuObrazy"/>
    <addaction name="menuOpsy"/>
    <addaction name="menuNarz_dzia"/>
+   <addaction name="menuTwarz"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -222,7 +237,7 @@ p, li { white-space: pre-wrap; }
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
   </widget>
   <action name="actionOtw_rz">
@@ -357,6 +372,26 @@ p, li { white-space: pre-wrap; }
   <action name="actionUsta">
    <property name="text">
     <string>Usta</string>
+   </property>
+  </action>
+  <action name="actionKlasyfikacja">
+   <property name="text">
+    <string>Klasyfikacja</string>
+   </property>
+  </action>
+  <action name="actionDodaj">
+   <property name="text">
+    <string>Dodaj</string>
+   </property>
+  </action>
+  <action name="actionWyszukaj">
+   <property name="text">
+    <string>Wyszukaj</string>
+   </property>
+  </action>
+  <action name="actionPoka_odcinki">
+   <property name="text">
+    <string>Pokaż odcinki</string>
    </property>
   </action>
  </widget>

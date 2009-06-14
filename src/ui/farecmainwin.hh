@@ -41,6 +41,7 @@
 
 #include "libfarec/ImgPrep.hh"
 #include "libfarec/FeatExtract.hh"
+#include "libfarec/Classifier.hh"
 
 #include "GradientDisplay.hh"
 
@@ -63,6 +64,7 @@ class FarecMainWin : public QMainWindow
 		void Make_preview_the_source( bool );
 		void Show_grads_src( bool );
 		void Show_grads_pview( bool );
+		void Show_segments(bool);
 
 #ifdef DEBUG_KRZYS
 		void Test_autoprep( bool );

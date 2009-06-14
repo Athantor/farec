@@ -47,6 +47,7 @@ void FarecMainWin::Connect_slots()
 
 	connect(ui.actionGradPvwWej_cie, SIGNAL(triggered(bool)), this, SLOT(Show_grads_src(bool)));
 	connect(ui.actionGradPvwPodgl_d, SIGNAL(triggered(bool)), this, SLOT(Show_grads_pview(bool)));
+	connect(ui.actionPoka_odcinki, SIGNAL(triggered(bool)), this, SLOT(Show_segments(bool)));
 
 #ifdef DEBUG_KRZYS
 
@@ -81,6 +82,8 @@ void FarecMainWin::Populate_toolbar()
 
 	ui.toolBar -> addAction(ui.actionOtw_rz);
 	ui.toolBar -> addAction(ui.actionU_yj_podgl_du);
+	ui.OpstoolBar->addSeparator();
+	ui.toolBar -> addAction(ui.actionPoka_odcinki);
 
 #ifdef DEBUG_KRZYS
 	ui.OpstoolBar->addAction(ui.actionAutoprep);
@@ -219,4 +222,29 @@ void FarecMainWin::Make_preview_the_source( bool )
 	ui.PviewImgLbl->setPixmap(QPixmap());
 	outimg.reset();
 
+}
+
+void FarecMainWin::Show_segments( bool )
+{
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
+
+	Classifier cls(this, *inimg);
+	cls.Make_base_segment_length();
+
+	outimg.reset(new QImage(*inimg));
+
+	QPainter qpt(outimg.get());
+	qpt.setPen(QPen("red"));
+
+	for(auto it = cls.Get_segs().constBegin(); it != cls.Get_segs().constEnd(); ++it)
+	{
+		qpt.drawLine(it.value()->get<3> (), it.value()->get<4> ());
+	}
+
+	qpt.end();
+
+	Set_label_img(ui.PviewImgLbl, *outimg);
 }

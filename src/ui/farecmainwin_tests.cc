@@ -24,8 +24,6 @@
 
 #include "farecmainwin.hh"
 
-#include <iostream>
-
 void FarecMainWin::To_gray( bool )
 {
 	ImgPrep ip(this, *inimg);
@@ -42,8 +40,7 @@ void FarecMainWin::Contrast( bool )
 	}
 
 	bool ok = false;
-	int8_t sz = QInputDialog::getInt(this, "Kontrast", QString::fromUtf8(
-			"Kontrast"), 50, -127, 100, 10, &ok);
+	int8_t sz = QInputDialog::getInt(this, "Kontrast", QString::fromUtf8("Kontrast"), 50, -127, 100, 10, &ok);
 
 	if(ok)
 	{
@@ -289,16 +286,16 @@ void FarecMainWin::Draw_eye_shape( shared_ptr<FeatExtract::eyeloc_t> *ael, QPain
 				180 * 16);
 		qpt.drawArc(ael[i]->at(4).x(), ael[i]->at(0).y(), ael[i]->at(5).x() - ael[i]->at(4).x(), er * 2, 180
 				* 60, 360 * 60);
-		
+
 		qpt.save();
 		qpt.setPen(QPen(QBrush("pink"), 1, Qt::DashLine));
-		qpt.drawLine(ael[i]->at(0), ael[i]->at(2) );				
-		qpt.drawLine(ael[i]->at(2), ael[i]->at(1) );
-		qpt.drawLine(ael[i]->at(1), ael[i]->at(3) );
-		qpt.drawLine(ael[i]->at(3), ael[i]->at(0) );
-		
+		qpt.drawLine(ael[i]->at(0), ael[i]->at(2));
+		qpt.drawLine(ael[i]->at(2), ael[i]->at(1));
+		qpt.drawLine(ael[i]->at(1), ael[i]->at(3));
+		qpt.drawLine(ael[i]->at(3), ael[i]->at(0));
+
 		qpt.restore();
-		
+
 	}
 	qpt.restore();
 
@@ -309,8 +306,8 @@ void FarecMainWin::Draw_eye_shape( shared_ptr<FeatExtract::eyeloc_t> *ael, QPain
 	{
 		qpt.drawEllipse(el->get<0> (), el->get<2> (), el->get<2> ());
 		qpt.drawEllipse(el->get<1> (), el->get<2> (), el->get<2> ());
-	} 
-	
+	}
+
 	qpt.restore();
 }
 
@@ -322,8 +319,8 @@ void FarecMainWin::Test_eyes_vpf( bool )
 	}
 
 	bool ok = false;
-	uint64_t sz = QInputDialog::getInt(this, "Oczy vpf", QString::fromUtf8("Max okolice punktu px\n(-1: auto)"), -1, -1,
-			999, 1, &ok);
+	uint64_t sz = QInputDialog::getInt(this, "Oczy vpf", QString::fromUtf8(
+			"Max okolice punktu px\n(-1: auto)"), -1, -1, 999, 1, &ok);
 
 	if(ok)
 	{
@@ -461,55 +458,53 @@ void FarecMainWin::Test_vpf_eye( ImgData::Vpf_dir vd, const QRect & reg, ImgData
 	qpt.end();
 }
 
-void FarecMainWin::Test_nos(bool)
+void FarecMainWin::Test_nos( bool )
 {
-	
+
 	if(!static_cast<bool> (inimg) or inimg->isNull())
 	{
 		return;
 	}
-	
-	FeatExtract::noseloc_t nl =  FeatExtract(this, *inimg).Get_nose_from_grads();
+
+	FeatExtract::noseloc_t nl = FeatExtract(this, *inimg).Get_nose_from_grads();
 	outimg.reset(new QImage(*inimg));
 
 	QPainter qpt(outimg.get());
 	qpt.setPen(QPen("red"));
 	qpt.setBrush(qpt.pen().color());
-	
-	qpt.drawEllipse(nl->get<0>(),2,2);
-	qpt.drawEllipse(nl->get<1>(),2,2);
-	
+
+	qpt.drawEllipse(nl->get<0> (), 2, 2);
+	qpt.drawEllipse(nl->get<1> (), 2, 2);
+
 	qpt.end();
-	
+
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 
-void FarecMainWin::Test_usta(bool)
+void FarecMainWin::Test_usta( bool )
 {
 	if(!static_cast<bool> (inimg) or inimg->isNull())
 	{
 		return;
 	}
-	
-	FeatExtract::mouthloc_t ml =  FeatExtract(this, *inimg).Get_mouth_from_grads();
+
+	FeatExtract::mouthloc_t ml = FeatExtract(this, *inimg).Get_mouth_from_grads();
 	outimg.reset(new QImage(*inimg));
 
 	QPainter qpt(outimg.get());
 	qpt.setPen(QPen("red"));
-	
+
 	qpt.setBrush(qpt.pen().color());
-	qpt.drawEllipse(ml->get<0>(),2,2);
+	qpt.drawEllipse(ml->get<0> (), 2, 2);
 	qpt.setPen(QPen("lime"));
 	qpt.setBrush(qpt.pen().color());
-	qpt.drawEllipse(ml->get<1>(),2,2);
+	qpt.drawEllipse(ml->get<1> (), 2, 2);
 	qpt.setPen(QPen("yellow"));
-		qpt.setBrush(qpt.pen().color());
-	qpt.drawEllipse(ml->get<2>(),2,2);
-	
-	
-	
+	qpt.setBrush(qpt.pen().color());
+	qpt.drawEllipse(ml->get<2> (), 2, 2);
+
 	qpt.end();
-		
+
 	Set_label_img(ui.PviewImgLbl, *outimg);
 }
 

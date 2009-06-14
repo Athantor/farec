@@ -485,7 +485,7 @@ ImgPrep::ret_t ImgPrep::Contrast( int8_t chg ) const
 	auto lut = ImgPrep::Make_LUT( chg );
 
 	cops->Get_pdialog()->setValue(pctr);
-	
+
 	for(int y = 0; y < myimg -> height(); y++)
 	{
 		QRgb * px = reinterpret_cast<decltype( px )> (myimg -> scanLine(y));
@@ -510,17 +510,16 @@ ImgPrep::ret_t ImgPrep::Contrast( int8_t chg ) const
 shared_ptr<QVector<uint8_t> > ImgPrep::Make_LUT( int8_t chg ) const
 {
 	const uint8_t I_MAX = 255;
-	shared_ptr<QVector<uint8_t> > lut(new QVector<uint8_t> (I_MAX+1, 0));
+	shared_ptr<QVector<uint8_t> > lut(new QVector<uint8_t> (I_MAX + 1, 0));
 
 	for(size_t i = 0; i < static_cast<decltype( i )> (lut->size()); ++i)
 	{
 		//int64_t tmpl = 0.9 * (i - (I_MAX / 2)) + (I_MAX / 2);
-		double delta = 127.*(chg)/100;
-		double a = 255./(255. - delta*2);
-		double b = a*(0 - delta);
+		double delta = 127. * (chg) / 100;
+		double a = 255. / (255. - delta * 2);
+		double b = a * (0 - delta);
 
-		
-		int64_t tmpl = a*i + b;
+		int64_t tmpl = a * i + b;
 
 		if(tmpl < 0)
 		{

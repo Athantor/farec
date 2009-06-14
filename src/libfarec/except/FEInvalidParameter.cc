@@ -28,6 +28,6 @@ FEInvalidParameter::FEInvalidParameter( const std::string& wat ) :
 
 }
 
-FEInvalidParameter::~FEInvalidParameter() throw()
+FEInvalidParameter::~FEInvalidParameter() throw ()
 {
 }

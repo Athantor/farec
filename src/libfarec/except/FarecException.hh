@@ -26,14 +26,14 @@
 #include <stdexcept>
 #include <string>
 
-class FarecException :public std::runtime_error
+class FarecException : public std::runtime_error
 {
 	public:
-		virtual ~FarecException() throw();
+		virtual ~FarecException() throw ();
 	protected:
 		FarecException() = delete;
-		FarecException(const std::string&);
-	
+		FarecException( const std::string& );
+
 };
 
 #endif /* FARECEXCEPTION_HH_ */

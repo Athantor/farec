@@ -50,22 +50,22 @@ class ImgPrep : public ImgOp
 		ImgPrep( QWidget *, const QImage & );
 		virtual ~ImgPrep();
 
-		ret_t Batch_prepare(bool) const;
-		
+		ret_t Batch_prepare( bool ) const;
+
 		//color
 		ret_t To_gray() const;
 		ret_t Otsu_bin() const;
-		ret_t Contrast(int8_t) const;
-		
+		ret_t Contrast( int8_t ) const;
+
 		//details
-		ret_t Average_bin_blur(double) const;
-		ret_t Gaussian_blur(uint8_t) const;
+		ret_t Average_bin_blur( double ) const;
+		ret_t Gaussian_blur( uint8_t ) const;
 		ret_t Median_filter() const;
-		
+
 		//edge det
 		ret_t Sobel_ed() const;
 	private:
-		shared_ptr<QVector<uint8_t> > Make_LUT(int8_t) const;
+		shared_ptr<QVector<uint8_t> > Make_LUT( int8_t ) const;
 
 };
 

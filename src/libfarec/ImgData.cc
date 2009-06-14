@@ -359,8 +359,6 @@ ImgData::houghret_t ImgData::Hough_tm( size_t rad, size_t cics )
 	return res;
 }
 
-#include <iostream>
-
 ImgData::Vpf_t ImgData::Vpf( const QRect& reg, Vpf_dir vd )
 {
 	double sum = 0, mean = 0;

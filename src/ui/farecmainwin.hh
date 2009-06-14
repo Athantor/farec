@@ -59,29 +59,29 @@ class FarecMainWin : public QMainWindow
 		void Load_file( bool );
 
 	private slots:
-		void Resize_labels_imgs(int, int);
+		void Resize_labels_imgs( int, int );
 		void Make_preview_the_source( bool );
-		void Show_grads_src(bool) ;
-		void Show_grads_pview(bool) ;
+		void Show_grads_src( bool );
+		void Show_grads_pview( bool );
 
 #ifdef DEBUG_KRZYS
-		void Test_autoprep(bool);
+		void Test_autoprep( bool );
 		void To_gray( bool );
-		void Contrast(bool);
+		void Contrast( bool );
 		void Test_sobel( bool );
-		void Test_otsu(bool);
-		void Test_gauss(bool);
-		void Test_median(bool);
-		void Test_hough(bool);
-		void Test_avg(bool);
-		void Test_face_reg(bool);
-		void Test_eyes_cht(bool);
-		void Test_eyes_vpf(bool);
-		void Test_eyes_apx(bool);
-		void Test_Vpf_hori(bool);
-		void Test_Vpf_vert(bool);
-		void Test_nos(bool);
-		void Test_usta(bool);
+		void Test_otsu( bool );
+		void Test_gauss( bool );
+		void Test_median( bool );
+		void Test_hough( bool );
+		void Test_avg( bool );
+		void Test_face_reg( bool );
+		void Test_eyes_cht( bool );
+		void Test_eyes_vpf( bool );
+		void Test_eyes_apx( bool );
+		void Test_Vpf_hori( bool );
+		void Test_Vpf_vert( bool );
+		void Test_nos( bool );
+		void Test_usta( bool );
 #endif
 
 	private:
@@ -89,20 +89,20 @@ class FarecMainWin : public QMainWindow
 
 		void Connect_slots();
 		void Populate_toolbar();
-		
-		void Set_label_img( QLabel *, QImage & , bool = false);
 
-		void Show_grads(QImage *) ;
-		
-		virtual void resizeEvent(QResizeEvent *);
+		void Set_label_img( QLabel *, QImage &, bool = false );
+
+		void Show_grads( QImage * );
+
+		virtual void resizeEvent( QResizeEvent * );
 
 		scoped_ptr<QImage> inimg, outimg;
-		
+
 #ifdef DEBUG_KRZYS
-		void Test_vpf(ImgData::Vpf_dir);
-		void Test_vpf_eye(ImgData::Vpf_dir, const QRect &, ImgData&);
-		
-		void Draw_eye_shape(shared_ptr<FeatExtract::eyeloc_t>*, QPainter &, FeatExtract::cht_eyeloc_t) ;
+		void Test_vpf( ImgData::Vpf_dir );
+		void Test_vpf_eye( ImgData::Vpf_dir, const QRect &, ImgData& );
+
+		void Draw_eye_shape( shared_ptr<FeatExtract::eyeloc_t>*, QPainter &, FeatExtract::cht_eyeloc_t );
 #endif
 };
 

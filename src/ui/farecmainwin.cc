@@ -69,8 +69,7 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionVert, SIGNAL(triggered(bool)), this, SLOT(Test_Vpf_vert(bool)));
 	connect(ui.actionNos, SIGNAL(triggered(bool)), this, SLOT(Test_nos(bool)));
 	connect(ui.actionUsta, SIGNAL(triggered(bool)), this, SLOT(Test_usta(bool)));
-	
-	
+
 #else
 	ui.menuOpsy->setEnabled(false);
 #endif

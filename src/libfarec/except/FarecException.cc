@@ -22,11 +22,11 @@
 
 #include "FarecException.hh"
 
-FarecException::FarecException(const std::string& wat) :
+FarecException::FarecException( const std::string& wat ) :
 	std::runtime_error(wat)
 {
 }
 
-FarecException::~FarecException() throw()
+FarecException::~FarecException() throw ()
 {
-} 
+}

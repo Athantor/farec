@@ -24,9 +24,9 @@
 
 #include "FarecApp.hh"
 
-int main(int c, char ** v)
+int main( int c, char ** v )
 {
-	FarecApp fa(c,v);
+	FarecApp fa(c, v);
 	return fa.exec();
 
 }

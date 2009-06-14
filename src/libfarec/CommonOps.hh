@@ -61,8 +61,8 @@ class CommonOps
 
 #ifdef DEBUG_KRZYS
 		std::stack<shared_ptr<timeval> > times;
-		
-		inline static double tv2sec(const timeval& tv)
+
+		inline static double tv2sec( const timeval& tv )
 		{
 			return tv.tv_sec + (tv.tv_usec * 1e-6);
 		}

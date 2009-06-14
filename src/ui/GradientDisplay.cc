@@ -41,13 +41,12 @@ void GradientDisplay::Disp_grads()
 	if(not static_cast<bool> (theimg))
 		return;
 
-	
 	cops->Start_processing("Przetwarzanie gradientów", theimg -> height() * theimg -> width());
-	
+
 	ImgData::dirgrads_t dg = ImgData(this, *theimg).Make_directional_gradients();
 
-	ui.vgrad -> Set_data(dg->get<1>());
-	ui.hgrad -> Set_data(dg->get<0>());
+	ui.vgrad -> Set_data(dg->get<1> ());
+	ui.hgrad -> Set_data(dg->get<0> ());
 
 	cops->Stop_processing();
 }

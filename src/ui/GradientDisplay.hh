@@ -55,11 +55,11 @@ class GradientDisplay : public QDialog, private ImgOp
 		Ui::GradientDisplayClass ui;
 		scoped_ptr<QImage> theimg;
 
-		void Setup_lbl(int32_t);
+		void Setup_lbl( int32_t );
 		void Setup_gph();
 		void Disp_grads();
 	protected:
-		virtual void resizeEvent ( QResizeEvent * );
+		virtual void resizeEvent( QResizeEvent * );
 };
 
 #endif // GRADIENTDISPLAY_H

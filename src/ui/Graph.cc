@@ -59,7 +59,7 @@ void Graph::paintEvent( QPaintEvent * )
 	QPainter pnr(this);
 
 	pnr.save();
-	
+
 	pnr.setBrush(Get_brush());
 	pnr.setPen(Get_pen());
 	pnr.setBackground(Get_brush());
@@ -69,7 +69,6 @@ void Graph::paintEvent( QPaintEvent * )
 
 	if(static_cast<bool> (data) and data->size() > 0)
 	{
-		
 
 		switch(mydir)
 		{
@@ -109,10 +108,10 @@ void Graph::paintEvent( QPaintEvent * )
 		if(avgshow)
 		{
 			pnr.save();
-			
+
 			pnr.setPen(*avgpen);
 			pnr.drawLine(0, avg / data-> size(), data-> size() * idxmod * mod, avg / data-> size());
-			
+
 			pnr.restore();
 		}
 

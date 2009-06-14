@@ -52,7 +52,7 @@ class ImgOp
 		ImgOp() = delete;
 		ImgOp(QWidget *, const QImage&);
 		ImgOp(const ImgOp &);
-		ImgOp& operator=(const ImgOp&);
+		ImgOp& operator=( const ImgOp& );
 		QWidget *pnt;
 		scoped_ptr<CommonOps> cops;
 		ret_t myimg;

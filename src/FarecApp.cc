@@ -30,5 +30,4 @@ FarecApp::FarecApp( int& c, char ** v ) :
 
 FarecApp::~FarecApp()
 {
-	// TODO Auto-generated destructor stub
 }

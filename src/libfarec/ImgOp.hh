@@ -43,7 +43,7 @@ class ImgOp
 
 		virtual ~ImgOp();
 
-		void Change_img(const QImage&);
+		virtual void Change_img(const QImage&);
 		
 		void Set_do_preps(bool dp);
 		bool Get_do_preps() const;

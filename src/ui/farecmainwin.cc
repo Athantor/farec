@@ -232,15 +232,18 @@ void FarecMainWin::Show_segments( bool )
 	}
 
 	Classifier cls(this, *inimg);
-	cls.Make_base_segment_length();
+	cls.Classify();
 
 	outimg.reset(new QImage(*inimg));
 
 	QPainter qpt(outimg.get());
-	qpt.setPen(QPen("red"));
-
+	time_t seed;
+	time(&seed);
+	srand(seed);
+	
 	for(auto it = cls.Get_segs().constBegin(); it != cls.Get_segs().constEnd(); ++it)
 	{
+		qpt.setPen(QPen(QBrush(QColor(frand(255), frand(255), frand(255))), 2));
 		qpt.drawLine(it.value()->get<3> (), it.value()->get<4> ());
 	}
 

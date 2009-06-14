@@ -37,6 +37,8 @@
 #include <boost/cast.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <time.h>
+
 #include "ui_farecmainwin.h"
 
 #include "libfarec/ImgPrep.hh"
@@ -47,6 +49,11 @@
 
 using boost::scoped_ptr;
 using boost::polymorphic_downcast;
+
+inline uint64_t frand( uint64_t max = RAND_MAX )
+{
+  return static_cast<double> (rand()) / ((static_cast<double> (RAND_MAX) + 1.0) / (static_cast<double> (max)));
+}
 
 class FarecMainWin : public QMainWindow
 {

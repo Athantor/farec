@@ -422,3 +422,51 @@ FeatExtract::mouthloc_t FeatExtract::Get_mouth_from_grads() const
 
 	return ret;
 }
+
+FeatExtract::fedge_t FeatExtract::Get_face_edge_at(int32_t y, region_t fr) const
+{
+	fedge_t ret = fedge_t(new fedge_t::value_type());
+	decltype(fr) freg(fr);
+	
+	if(not freg)
+		freg = Get_face_from_grads();
+
+	QImage etmpi( *ImgPrep(pnt, myimg->copy(freg->left(), y-5, freg->width(), 5) ).Batch_prepare(true) );
+	
+	int32_t left = -1, right = -1;
+	QRgb * px = reinterpret_cast<decltype( px )> (etmpi . scanLine(3));
+	
+	for(int32_t i = 0; i < etmpi.width()/10; ++i)
+	{
+		if(qRed(px[i]) == 0)
+		{
+			left = i;
+			break;
+		}
+	}
+	if(left < 0)
+	{
+		//throw FENoData(QString::fromUtf8("Can't find left face edge @y = %1").arg(y).toStdString());
+		left = freg->left();
+	}
+	
+	for(int32_t i = etmpi.width(); i > etmpi.width()/10 * 9; --i)
+	{
+		if(qRed(px[i]) == 0)
+		{
+			right = i;
+			break;
+		}
+	}
+	
+	if(right < 0)
+	{
+		//throw FENoData(QString::fromUtf8("Can't find right face edge @y = %1").arg(y).toStdString());
+		right = freg->width();
+	}
+	
+	ret->get<0>() = QPoint(freg->left() + left, y);
+	ret->get<1>() = QPoint(freg->left() + right, y);
+	
+	return ret;
+}

@@ -59,6 +59,7 @@ class FeatExtract : private ImgOp
 		typedef shared_ptr<tuple<QRect, QRect, cht_eyeloc_t> > eyewin_t; ///<< eye windows + CHT cache
 		typedef shared_ptr<tuple<QPoint, QPoint> > noseloc_t;
 		typedef shared_ptr<tuple<QPoint, QPoint, QPoint> > mouthloc_t; ///<left mid right
+		typedef shared_ptr<tuple<QPoint, QPoint> > fedge_t ; ///< face edge t;
 
 		FeatExtract( QWidget *, const QImage& );
 		virtual ~FeatExtract();
@@ -74,6 +75,8 @@ class FeatExtract : private ImgOp
 		vpf_eyeloc_t Get_eyes_from_vpf( int32_t = -1, size_t = ImgOp::CHT_CIRCNUM ) const;
 		noseloc_t Get_nose_from_grads() const;
 		mouthloc_t Get_mouth_from_grads() const;
+		fedge_t Get_face_edge_at(int32_t, region_t = region_t()) const;
+		
 
 	private:
 		int32_t Vpf_search( const QPoint &, size_t, ImgData::Vpf_t, int32_t ) const;

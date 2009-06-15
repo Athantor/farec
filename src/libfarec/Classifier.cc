@@ -42,8 +42,8 @@ size_t Classifier::Make_base_segment_length()
 {
 	FeatExtract::cht_eyeloc_t el = any_cast<decltype( el )> (cache[cht_el]);
 
-	the_segs[_BASE] = segdata_t(new segdata_t::value_type(make_tuple(_BASE, veclen(el->get<0> (),
-			el->get<1> ()), 1.0, el->get<1> (), el->get<0> ())));
+	the_segs[_BASE] = segdata_t(new segdata_t::value_type(make_tuple(_BASE, el->get<1> ().x()
+			- el->get<0> ().x(), 1.0, el->get<1> (), el->get<0> ())));
 
 #ifdef DEBUG_KRZYS
 	std::cout << "ref len: " << the_segs[_BASE]->get<1> () << std::endl;

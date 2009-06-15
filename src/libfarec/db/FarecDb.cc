@@ -36,6 +36,7 @@ bool FarecDb::open( const QString & uname, const QString & pass, const QString &
 {
 	dbconn.setConnectOptions("connect_timeout=20");
 	
+	dbconn.setDatabaseName("farec");
 	dbconn.setHostName(host);
 	dbconn.setPort(port);
 	

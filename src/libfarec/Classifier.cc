@@ -42,10 +42,12 @@ size_t Classifier::Make_base_segment_length()
 {
 	FeatExtract::cht_eyeloc_t el = any_cast<decltype( el )> (cache[cht_el]);
 
-	the_segs[_BASE] = segdata_t(new segdata_t::value_type(make_tuple(_BASE, el->get<1> ().x()
-			- el->get<0> ().x(), 1.0, el->get<1> (), el->get<0> ())));
+	the_segs[_BASE] = segdata_t(new segdata_t::value_type(make_tuple(_BASE, veclen(el->get<0> (),
+			el->get<1> ()), 1.0, el->get<1> (), el->get<0> ())));
 
-	std::cout << the_segs[_BASE]->get<1> () << std::endl;
+#ifdef DEBUG_KRZYS
+	std::cout << "ref len: " << the_segs[_BASE]->get<1> () << std::endl;
+#endif
 
 	return static_cast<size_t> (the_segs[_BASE]->get<1> ());
 
@@ -94,22 +96,22 @@ void Classifier::Classify()
 	FeatExtract::fedge_t fedgem = any_cast<decltype( fedgem )> (cache[edgem]);
 
 	const QPoint btm(ml->get<1> ().x(), freg->bottom()); //  assumes that horiz half of face is under middle of the mouth
-	const QPoint top( (el->get<1>().x() + el->get<0>().x()) / 2.0, freg->top() ); //between the eyes
+	const QPoint top((el->get<1> ().x() + el->get<0> ().x()) / 2.0, freg->top()); //between the eyes
 
 	//---
 
 	//
 	{
-		double wdh = (((vel->first[5].x() - vel->first[4].x()) + (vel->second[5].x()
-				- vel->second[4].x())) / 2.0) + (((vel->first[5].y() - vel->first[4].y())
+		double wdh = (((vel->first[5].x() - vel->first[4].x()) + (vel->second[5].x() - vel->second[4].x()))
+				/ 2.0) + (((vel->first[5].y() - vel->first[4].y())
 				+ (vel->second[5].y() - vel->second[4].y())) / 2.0);
 		the_segs[eye_wdh] = Prep_data(eye_wdh, vel->first[4], vel->first[5], wdh);
 	}
 
 	//
 	{
-		double hgt = ((vel->first[1].y() - vel->first[0].y())
-				+ (vel->second[1].y() - vel->second[0].y())) / 2.0;
+		double hgt = ((vel->first[1].y() - vel->first[0].y()) + (vel->second[1].y() - vel->second[0].y()))
+				/ 2.0;
 		the_segs[eye_hgt] = Prep_data(eye_hgt, vel->first[0], vel->first[1], hgt);
 	}
 
@@ -359,38 +361,39 @@ void Classifier::Classify()
 	}
 	//~~
 	{
-		the_segs[ctrleye_to_top] = Prep_data(ctrleye_to_top, el->get<0>(), top);
+		the_segs[ctrleye_to_top] = Prep_data(ctrleye_to_top, el->get<0> (), top);
 	}
 	//
 	{
-		the_segs[top_to_btm] = Prep_data(top_to_btm, el->get<0>(), top);
+		the_segs[top_to_btm] = Prep_data(top_to_btm, el->get<0> (), top);
 	}
 
 	//~~
 	{
-		the_segs[ctrmouth_to_top] = Prep_data(ctrmouth_to_top, ml->get<1>(), top);
+		the_segs[ctrmouth_to_top] = Prep_data(ctrmouth_to_top, ml->get<1> (), top);
 	}
 
 	//~~
 	{
-		the_segs[lnose_to_top] = Prep_data(lnose_to_top, nl->get<0>(), top);
+		the_segs[lnose_to_top] = Prep_data(lnose_to_top, nl->get<0> (), top);
 	}
 	//
 	{
-		the_segs[rnose_to_top] = Prep_data(rnose_to_top, nl->get<1>(), top);
+		the_segs[rnose_to_top] = Prep_data(rnose_to_top, nl->get<1> (), top);
 	}
 
 }
 
-Classifier::segdata_t Classifier::Prep_data( segments sn, const QPoint& start, const QPoint& end,
-		double val, double wgt ) const
+Classifier::segdata_t Classifier::Prep_data( segments sn, const QPoint& start, const QPoint& end, double val,
+		double wgt ) const
 {
 	segdata_t ret = segdata_t(new segdata_t::value_type());
 
 	ret->get<0> () = sn;
 	if(val == DBL_MAX)
 	{
-		ret->get<1> () = ((end.x() - start.x()) + (end.y() - start.y())) / the_segs[_BASE]->get<1> ();
+		//ret->get<1> () = ((end.x() - start.x()) + (end.y() - start.y())) / the_segs[_BASE]->get<1> ();
+		ret->get<1> () = veclen(start, end) / the_segs[_BASE]->get<1> ();
 	}
 	else
 	{

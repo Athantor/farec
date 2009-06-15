@@ -187,6 +187,10 @@ class Classifier : private ImgOp
 
 		void Prep_cache();
 		segdata_t Prep_data( segments, const QPoint&, const QPoint&, double = DBL_MAX, double = 1.0 ) const;
+		static inline double veclen(const QPoint & start, const QPoint& end)
+		{
+			return hypot( (end.x() - start.x()) * 1.0, (end.y() - start.y()) * 1.0 );
+		}
 };
 
 #endif /* CLASSIFIER_HH_ */

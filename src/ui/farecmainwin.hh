@@ -101,6 +101,7 @@ class FarecMainWin : public QMainWindow
 	private:
 		Ui::FarecMainWinClass ui;
 		FarecDb fdb;
+		QLabel *db_sb_lbl;
 
 		void Connect_slots();
 		void Populate_toolbar();

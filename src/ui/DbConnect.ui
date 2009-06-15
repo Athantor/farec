@@ -9,12 +9,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>216</height>
+    <width>338</width>
+    <height>183</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Połączenie</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/icons/network-disconnect.png</normaloff>:/icons/network-disconnect.png</iconset>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
@@ -169,6 +173,8 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

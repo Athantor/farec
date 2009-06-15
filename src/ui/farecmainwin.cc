@@ -23,7 +23,7 @@
 #include "farecmainwin.hh"
 
 FarecMainWin::FarecMainWin( QWidget *parent ) :
-	QMainWindow(parent), inimg(new QImage), outimg(new QImage)
+	QMainWindow(parent), db_sb_lbl(new QLabel(this)), inimg(new QImage), outimg(new QImage)
 {
 	ui.setupUi(this);
 
@@ -78,15 +78,19 @@ void FarecMainWin::Connect_slots()
 	ui.menuOpsy->setEnabled(false);
 #endif
 
+	ui.statusbar->addPermanentWidget(db_sb_lbl);
+	db_sb_lbl->setPixmap(ui.actionDbRoz_cz->icon().pixmap(16, ui.statusbar->height()));
+	db_sb_lbl->setToolTip(QString::fromUtf8("Nie połączono z BD"));
+
 }
 
 void FarecMainWin::Populate_toolbar()
 {
 
-	ui.toolBar -> addAction(ui.actionOtw_rz);
-	ui.toolBar -> addAction(ui.actionU_yj_podgl_du);
+	ui.ActionsToolbar -> addAction(ui.actionOtw_rz);
+	ui.ActionsToolbar -> addAction(ui.actionU_yj_podgl_du);
 	ui.OpstoolBar->addSeparator();
-	ui.toolBar -> addAction(ui.actionPoka_odcinki);
+	ui.ActionsToolbar -> addAction(ui.actionPoka_odcinki);
 
 #ifdef DEBUG_KRZYS
 	ui.OpstoolBar->addAction(ui.actionAutoprep);
@@ -111,6 +115,9 @@ void FarecMainWin::Populate_toolbar()
 #else
 	ui.OpstoolBar->setVisible(false);
 #endif
+
+	ui.DbToolbar->addAction(ui.actionDbPo_cz);
+	ui.DbToolbar->addAction(ui.actionDbRoz_cz);
 
 }
 
@@ -240,9 +247,7 @@ void FarecMainWin::Show_segments( bool )
 	outimg.reset(new QImage(*inimg));
 
 	QPainter qpt(outimg.get());
-	time_t seed;
-	time(&seed);
-	srand(seed);
+	srand(time(0));
 
 	for(auto it = cls.Get_segs().constBegin(); it != cls.Get_segs().constEnd(); ++it)
 	{
@@ -268,6 +273,12 @@ void FarecMainWin::Connect_to_db( bool )
 			ui.actionDbPo_cz -> setEnabled(false);
 			ui.actionDbPo_cz -> setChecked(true);
 			ui.actionDbRoz_cz -> setChecked(false);
+
+			db_sb_lbl->setPixmap(ui.actionDbPo_cz->icon().pixmap(16, ui.statusbar->height()));
+			db_sb_lbl->setToolTip(
+					QString::fromUtf8("Połączono z: %1://%2@%3:%4/%5").arg(fdb.Get_dbconn().driverName()).arg(fdb.Get_dbconn().userName()).arg(
+							fdb.Get_dbconn().hostName()).arg(fdb.Get_dbconn().port()).arg(fdb.Get_dbconn().databaseName()));
+
 		}
 		else
 		{
@@ -285,9 +296,12 @@ void FarecMainWin::Connect_to_db( bool )
 void FarecMainWin::Disconnect_from_db( bool )
 {
 	fdb.close();
-	
+
 	ui.actionDbPo_cz -> setChecked(false);
 	ui.actionDbRoz_cz -> setChecked(false);
 	ui.actionDbRoz_cz -> setEnabled(false);
 	ui.actionDbPo_cz -> setEnabled(true);
+	
+	db_sb_lbl->setPixmap(ui.actionDbRoz_cz->icon().pixmap(16, ui.statusbar->height()));
+	db_sb_lbl->setToolTip(QString::fromUtf8("Nie połączono z BD"));
 }

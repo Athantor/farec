@@ -3,5 +3,7 @@
         <file>icons/document-open.png</file>
         <file>icons/system-switch-user.png</file>
         <file>icons/face-smile.png</file>
+        <file>icons/network-disconnect.png</file>
+        <file>icons/network-connect.png</file>
     </qresource>
 </RCC>

@@ -28,6 +28,7 @@
 #include <QString>
 #include <QDir>
 #include <QMessageBox>
+#include <QSqlError>
 
 #ifdef DEBUG_KRZYS
 #include <QInputDialog>
@@ -44,8 +45,10 @@
 #include "libfarec/ImgPrep.hh"
 #include "libfarec/FeatExtract.hh"
 #include "libfarec/Classifier.hh"
+#include "libfarec/db/FarecDb.hh"
 
 #include "GradientDisplay.hh"
+#include "DbConnect.hh"
 
 using boost::scoped_ptr;
 using boost::polymorphic_downcast;
@@ -65,6 +68,8 @@ class FarecMainWin : public QMainWindow
 
 	public slots:
 		void Load_file( bool );
+		void Connect_to_db( bool );
+		void Disconnect_from_db(bool);
 
 	private slots:
 		void Resize_labels_imgs( int, int );
@@ -95,6 +100,7 @@ class FarecMainWin : public QMainWindow
 
 	private:
 		Ui::FarecMainWinClass ui;
+		FarecDb fdb;
 
 		void Connect_slots();
 		void Populate_toolbar();

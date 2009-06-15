@@ -10,6 +10,7 @@ SET(farec_ui_SRCS
   ui/farecmainwin
   ui/GradientDisplay
   ui/Graph
+  ui/DbConnect
 )
 
 SET(farec_SRCS
@@ -32,12 +33,14 @@ ENDIF()
 SET(farec_UIS
 	ui/farecmainwin.ui
 	ui/GradientDisplay.ui
+	ui/DbConnect.ui
 )
 
 SET(farec_MOCS_H
 	ui/farecmainwin.hh
 	ui/GradientDisplay.hh
 	ui/Graph.hh
+	ui/DbConnect.hh
 )
 
 SET(farec_RC

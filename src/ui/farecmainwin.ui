@@ -208,11 +208,19 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionDodaj"/>
     <addaction name="actionWyszukaj"/>
    </widget>
+   <widget class="QMenu" name="menuBD">
+    <property name="title">
+     <string>BD</string>
+    </property>
+    <addaction name="actionDbPo_cz"/>
+    <addaction name="actionDbRoz_cz"/>
+   </widget>
    <addaction name="menuPlik"/>
    <addaction name="menuObrazy"/>
    <addaction name="menuOpsy"/>
    <addaction name="menuNarz_dzia"/>
    <addaction name="menuTwarz"/>
+   <addaction name="menuBD"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -392,6 +400,25 @@ p, li { white-space: pre-wrap; }
   <action name="actionPoka_odcinki">
    <property name="text">
     <string>Pokaż odcinki</string>
+   </property>
+  </action>
+  <action name="actionDbPo_cz">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Połącz</string>
+   </property>
+  </action>
+  <action name="actionDbRoz_cz">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Rozłącz</string>
    </property>
   </action>
  </widget>

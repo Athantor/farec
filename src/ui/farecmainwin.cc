@@ -49,6 +49,9 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionGradPvwPodgl_d, SIGNAL(triggered(bool)), this, SLOT(Show_grads_pview(bool)));
 	connect(ui.actionPoka_odcinki, SIGNAL(triggered(bool)), this, SLOT(Show_segments(bool)));
 
+	connect(ui.actionDbPo_cz, SIGNAL(triggered(bool)), this, SLOT(Connect_to_db(bool)));
+	connect(ui.actionDbRoz_cz, SIGNAL(triggered(bool)), this, SLOT(Disconnect_from_db(bool)));
+
 #ifdef DEBUG_KRZYS
 
 	ui.menuOpsy->setEnabled(true);
@@ -240,7 +243,7 @@ void FarecMainWin::Show_segments( bool )
 	time_t seed;
 	time(&seed);
 	srand(seed);
-	
+
 	for(auto it = cls.Get_segs().constBegin(); it != cls.Get_segs().constEnd(); ++it)
 	{
 		qpt.setPen(QPen(QBrush(QColor(frand(255), frand(255), frand(255))), 2));
@@ -250,4 +253,41 @@ void FarecMainWin::Show_segments( bool )
 	qpt.end();
 
 	Set_label_img(ui.PviewImgLbl, *outimg);
+}
+
+void FarecMainWin::Connect_to_db( bool )
+{
+	scoped_ptr<DbConnect> dbc(new DbConnect(fdb, this));
+	dbc->exec();
+	if(dbc->result() == 1)
+	{
+		if(fdb.Get_dbconn().isOpen() and fdb.Get_dbconn().isValid() and fdb.Get_dbconn().lastError().type()
+				== 0)
+		{
+			ui.actionDbRoz_cz -> setEnabled(true);
+			ui.actionDbPo_cz -> setEnabled(false);
+			ui.actionDbPo_cz -> setChecked(true);
+			ui.actionDbRoz_cz -> setChecked(false);
+		}
+		else
+		{
+			QMessageBox::critical(this, QString::fromUtf8("Błąd połączenia"), QString::fromUtf8(
+					"Błąd połączenia z BD:\n%1").arg(fdb.Get_dbconn().lastError().text()));
+
+			ui.actionDbPo_cz -> setChecked(false);
+			ui.actionDbRoz_cz -> setChecked(false);
+			ui.actionDbRoz_cz -> setEnabled(false);
+			ui.actionDbPo_cz -> setEnabled(true);
+		}
+	}
+}
+
+void FarecMainWin::Disconnect_from_db( bool )
+{
+	fdb.close();
+	
+	ui.actionDbPo_cz -> setChecked(false);
+	ui.actionDbRoz_cz -> setChecked(false);
+	ui.actionDbRoz_cz -> setEnabled(false);
+	ui.actionDbPo_cz -> setEnabled(true);
 }

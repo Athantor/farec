@@ -10,6 +10,7 @@ PersonAdder::PersonAdder( Person& p, Mode m, QWidget *parent ) :
 	connect(ui.DelImgTbn, SIGNAL(pressed ()), this, SLOT(Clear_image()));
 
 	connect(ui.buttonBox, SIGNAL(accepted ()), this, SLOT(Fill_data()));
+	connect(ui.buttonBox, SIGNAL(rejected ()), this, SLOT(reject()));
 
 	Fill_fields();
 
@@ -27,7 +28,15 @@ void PersonAdder::Fill_data()
 	psn.setSurname(ui.snameLe->text());
 	psn.setAddr(ui.AddrLe->text());
 	psn.setComments(ui.CmtPte->document()->toPlainText());
-	psn.setImg(ui.PicLbl->pixmap()->toImage());
+
+	if(ui.PicLbl->pixmap() and not ui.PicLbl->pixmap()->isNull())
+	{
+		psn.setImg(ui.PicLbl->pixmap()->toImage());
+	}
+
+	emit
+	accepted();
+	done(1);
 }
 
 void PersonAdder::Fill_fields()
@@ -37,7 +46,7 @@ void PersonAdder::Fill_fields()
 		ui.UuidLe->setText(QUuid::createUuid());
 		ui.IdLe->setText("0");
 	}
-	else
+	else if(mode == Mode::Edit)
 	{
 		ui.UuidLe->setText(psn.getUuid());
 		ui.IdLe->setText(QString::number(psn.getId()));

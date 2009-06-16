@@ -36,15 +36,14 @@ void DbConnect::Open_conn()
 
 	parentWidget()->setCursor(Qt::WaitCursor);
 	setCursor(Qt::WaitCursor);
-	
+
 	ui.statusLbl->setVisible(true);
 	update();
 	repaint();
 
 	fdb.open(ui.login->currentText(), ui.pass->text(), ui.host->currentText(), ui.port->value());
 
-	emit
-	accepted();
+	emit accepted();
 
 	setCursor(Qt::ArrowCursor);
 	parentWidget()->setCursor(Qt::ArrowCursor);

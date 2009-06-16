@@ -24,6 +24,7 @@ SET(libfarec_SRC
 
 SET(libfarec_db_SRC
 	db/FarecDb
+	db/Person
 )
 
 SET(libfarec_MOCS_H

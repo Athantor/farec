@@ -130,6 +130,10 @@ p, li { white-space: pre-wrap; }
      <property name="title">
       <string>&amp;Zapisz</string>
      </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/icons/document-save.png</normaloff>:/icons/document-save.png</iconset>
+     </property>
      <addaction name="actionWej_cie"/>
      <addaction name="actionPodgl_d"/>
     </widget>
@@ -207,6 +211,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionDodaj"/>
     <addaction name="actionWyszukaj"/>
+    <addaction name="actionW_a_ciel"/>
    </widget>
    <widget class="QMenu" name="menuBD">
     <property name="title">
@@ -265,7 +270,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Otwórz</string>
+    <string>&amp;Otwórz…</string>
    </property>
    <property name="statusTip">
     <string>Otwiera plik z obrazem</string>
@@ -300,12 +305,12 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionWej_cie">
    <property name="text">
-    <string>Wejście</string>
+    <string>Wejście…</string>
    </property>
   </action>
   <action name="actionPodgl_d">
    <property name="text">
-    <string>Podgląd</string>
+    <string>Podgląd…</string>
    </property>
   </action>
   <action name="action_Wyj_cie">
@@ -325,12 +330,12 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionGradPvwWej_cie">
    <property name="text">
-    <string>Wejście</string>
+    <string>Wejście…</string>
    </property>
   </action>
   <action name="actionGradPvwPodgl_d">
    <property name="text">
-    <string>Podgląd</string>
+    <string>Podgląd…</string>
    </property>
   </action>
   <action name="actionHough">
@@ -438,6 +443,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Rozłącz</string>
+   </property>
+  </action>
+  <action name="actionW_a_ciel">
+   <property name="text">
+    <string>Właściel…</string>
    </property>
   </action>
  </widget>

@@ -38,6 +38,8 @@ class FarecDb
 		bool open(const QString &, const QString&, const QString&, uint16_t);
 		void close();
 		
+		
+		
 		const QSqlDatabase& Get_dbconn() const;
 		
 	private:

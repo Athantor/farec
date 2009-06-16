@@ -45,10 +45,13 @@
 #include "libfarec/ImgPrep.hh"
 #include "libfarec/FeatExtract.hh"
 #include "libfarec/Classifier.hh"
+
 #include "libfarec/db/FarecDb.hh"
+#include "libfarec/db/Person.hh"
 
 #include "GradientDisplay.hh"
 #include "DbConnect.hh"
+#include "PersonAdder.hh"
 
 using boost::scoped_ptr;
 using boost::polymorphic_downcast;
@@ -70,6 +73,7 @@ class FarecMainWin : public QMainWindow
 		void Load_file( bool );
 		void Connect_to_db( bool );
 		void Disconnect_from_db(bool);
+		void Add_person(bool);
 
 	private slots:
 		void Resize_labels_imgs( int, int );

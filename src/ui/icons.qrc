@@ -5,5 +5,7 @@
         <file>icons/face-smile.png</file>
         <file>icons/network-disconnect.png</file>
         <file>icons/network-connect.png</file>
+        <file>icons/document-save.png</file>
+        <file>icons/edit-delete.png</file>
     </qresource>
 </RCC>

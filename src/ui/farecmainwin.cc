@@ -52,6 +52,9 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionDbPo_cz, SIGNAL(triggered(bool)), this, SLOT(Connect_to_db(bool)));
 	connect(ui.actionDbRoz_cz, SIGNAL(triggered(bool)), this, SLOT(Disconnect_from_db(bool)));
 
+	connect(ui.actionW_a_ciel, SIGNAL(triggered(bool)), this, SLOT(Add_person(bool)));
+	
+	
 #ifdef DEBUG_KRZYS
 
 	ui.menuOpsy->setEnabled(true);
@@ -304,4 +307,12 @@ void FarecMainWin::Disconnect_from_db( bool )
 	
 	db_sb_lbl->setPixmap(ui.actionDbRoz_cz->icon().pixmap(16, ui.statusbar->height()));
 	db_sb_lbl->setToolTip(QString::fromUtf8("Nie połączono z BD"));
+}
+
+
+void FarecMainWin::Add_person(bool)
+{
+	Person pn;
+	PersonAdder pa(pn, PersonAdder::New, this);
+	pa.exec();
 }

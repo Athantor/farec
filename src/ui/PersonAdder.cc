@@ -56,6 +56,12 @@ void PersonAdder::Fill_fields()
 		ui.CmtPte->document()->setPlainText(psn.getComments());
 		ui.PicLbl->setPixmap(QPixmap::fromImage(QImage(psn.getImg()).scaled(ui.PicLbl->width(),
 				ui.PicLbl->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+
+		if(not psn.getImg().isNull())
+		{
+			ui.SaveImgTbn->setEnabled(true);
+			ui.DelImgTbn->setEnabled(true);
+		}
 	}
 }
 
@@ -73,6 +79,14 @@ void PersonAdder::Load_image()
 			ui.PicLbl->setPixmap(QPixmap::fromImage(QImage(tmp).scaled(ui.PicLbl->width(),
 					ui.PicLbl->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 			lastpath = QDir(path).absolutePath();
+
+			ui.SaveImgTbn->setEnabled(true);
+			ui.DelImgTbn->setEnabled(true);
+		}
+		else
+		{
+			ui.SaveImgTbn->setEnabled(false);
+			ui.DelImgTbn->setEnabled(false);
 		}
 	}
 }
@@ -120,5 +134,8 @@ void PersonAdder::Clear_image()
 		ui.PicLbl->setText("<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px;"
 			" margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:28pt; "
 			" font-weight:600;\">-</span></p>");
+
+		ui.SaveImgTbn->setEnabled(false);
+		ui.DelImgTbn->setEnabled(false);
 	}
 }

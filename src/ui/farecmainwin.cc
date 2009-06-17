@@ -54,8 +54,7 @@ void FarecMainWin::Connect_slots()
 
 	connect(ui.actionDodajTwarz, SIGNAL(triggered(bool)), this, SLOT(Add_face(bool)));
 	connect(ui.actionW_a_ciel, SIGNAL(triggered(bool)), this, SLOT(Add_person(bool)));
-	
-	
+
 #ifdef DEBUG_KRZYS
 
 	ui.menuOpsy->setEnabled(true);
@@ -245,15 +244,28 @@ void FarecMainWin::Show_segments( bool )
 		return;
 	}
 
-	Classifier cls(this, *inimg);
-	cls.Classify();
+	Show_segments();
+	
+}
 
+void FarecMainWin::Show_segments( shared_ptr<Classifier> cls )
+{
+	if(not cls)
+	{
+		cls = shared_ptr<Classifier> (new Classifier(this, *inimg));
+	}
+
+	if(cls->Get_segs().size() < 1)
+	{
+		cls->Classify();
+	}
+	
 	outimg.reset(new QImage(*inimg));
 
 	QPainter qpt(outimg.get());
 	srand(time(0));
 
-	for(auto it = cls.Get_segs().constBegin(); it != cls.Get_segs().constEnd(); ++it)
+	for(auto it = cls->Get_segs().constBegin(); it != cls->Get_segs().constEnd(); ++it)
 	{
 		qpt.setPen(QPen(QBrush(QColor(frand(255), frand(255), frand(255))), 2));
 		qpt.drawLine(it.value()->get<3> (), it.value()->get<4> ());
@@ -279,9 +291,10 @@ void FarecMainWin::Connect_to_db( bool )
 			ui.actionDbRoz_cz -> setChecked(false);
 
 			db_sb_lbl->setPixmap(ui.actionDbPo_cz->icon().pixmap(16, ui.statusbar->height()));
-			db_sb_lbl->setToolTip(
-					QString::fromUtf8("Połączono z: %1://%2@%3:%4/%5").arg(fdb.Get_dbconn().driverName()).arg(fdb.Get_dbconn().userName()).arg(
-							fdb.Get_dbconn().hostName()).arg(fdb.Get_dbconn().port()).arg(fdb.Get_dbconn().databaseName()));
+			db_sb_lbl->setToolTip(QString::fromUtf8("Połączono z: %1://%2@%3:%4/%5").arg(
+					fdb.Get_dbconn().driverName()).arg(fdb.Get_dbconn().userName()).arg(
+					fdb.Get_dbconn().hostName()).arg(fdb.Get_dbconn().port()).arg(
+					fdb.Get_dbconn().databaseName()));
 
 		}
 		else
@@ -305,22 +318,20 @@ void FarecMainWin::Disconnect_from_db( bool )
 	ui.actionDbRoz_cz -> setChecked(false);
 	ui.actionDbRoz_cz -> setEnabled(false);
 	ui.actionDbPo_cz -> setEnabled(true);
-	
+
 	db_sb_lbl->setPixmap(ui.actionDbRoz_cz->icon().pixmap(16, ui.statusbar->height()));
 	db_sb_lbl->setToolTip(QString::fromUtf8("Nie połączono z BD"));
 }
 
-
-void FarecMainWin::Add_person(bool)
+void FarecMainWin::Add_person( bool )
 {
 	Persons(fdb, this).exec();
 }
 
-
-void FarecMainWin::Add_face(bool)
+void FarecMainWin::Add_face( bool )
 {
 	Person pn;
 	PersonChooser pc(pn, fdb, this);
 	pc.exec();
-	
+
 }

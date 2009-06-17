@@ -116,6 +116,7 @@ class FarecMainWin : public QMainWindow
 		void Set_label_img( QLabel *, QImage &, bool = false );
 
 		void Show_grads( QImage * );
+		void Show_segments(shared_ptr<Classifier> = shared_ptr<Classifier>() );
 
 		virtual void resizeEvent( QResizeEvent * );
 

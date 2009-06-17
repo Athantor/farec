@@ -12,6 +12,7 @@ SET(farec_ui_SRCS
   ui/Graph
   ui/DbConnect
   ui/PersonAdder
+  ui/Persons
 )
 
 SET(farec_SRCS
@@ -36,6 +37,7 @@ SET(farec_UIS
 	ui/GradientDisplay.ui
 	ui/DbConnect.ui
 	ui/PersonAdder.ui
+	ui/Persons.ui
 )
 
 SET(farec_MOCS_H
@@ -44,6 +46,7 @@ SET(farec_MOCS_H
 	ui/Graph.hh
 	ui/DbConnect.hh
 	ui/PersonAdder.hh
+	ui/Persons.hh
 )
 
 SET(farec_RC

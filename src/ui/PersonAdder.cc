@@ -13,6 +13,8 @@ PersonAdder::PersonAdder( Person& p, Mode m, QWidget *parent ) :
 	connect(ui.buttonBox, SIGNAL(rejected ()), this, SLOT(reject()));
 
 	Fill_fields();
+	
+	setResult(-1);
 
 }
 

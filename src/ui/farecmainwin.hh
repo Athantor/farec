@@ -51,7 +51,7 @@
 
 #include "GradientDisplay.hh"
 #include "DbConnect.hh"
-#include "PersonAdder.hh"
+#include "Persons.hh"
 
 using boost::scoped_ptr;
 using boost::polymorphic_downcast;

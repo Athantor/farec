@@ -312,7 +312,6 @@ void FarecMainWin::Disconnect_from_db( bool )
 
 void FarecMainWin::Add_person(bool)
 {
-	Person pn;
-	PersonAdder pa(pn, PersonAdder::New, this);
-	pa.exec();
+	
+	Persons(fdb, this).exec();
 }

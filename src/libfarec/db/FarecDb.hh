@@ -38,7 +38,10 @@ class FarecDb
 		bool open(const QString &, const QString&, const QString&, uint16_t);
 		void close();
 		
-		
+		operator QSqlDatabase&()
+		{
+			return dbconn;
+		}
 		
 		const QSqlDatabase& Get_dbconn() const;
 		

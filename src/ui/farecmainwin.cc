@@ -333,5 +333,23 @@ void FarecMainWin::Add_face( bool )
 	Person pn;
 	PersonChooser pc(pn, fdb, this);
 	pc.exec();
+	
+	if(pc.result() < 0)
+	{
+		return;
+	}
+	
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
 
+	shared_ptr<Classifier> cls(new Classifier(this, *inimg));
+	cls->Classify();
+	
+	fdb.Insert_facedata(cls->Get_segs(), pn.getId());
+	
+	Show_segments(cls);
+	
+	
 }

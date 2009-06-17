@@ -24,8 +24,16 @@
 #define FARECDB_HH_
 
 #include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 #include <QString>
+#include <QMessageBox>
+#include <QUuid>
+#include <QVariant>
 
+#include <cstdint>
+
+#include "libfarec/Classifier.hh"
 
 class FarecDb
 {
@@ -37,6 +45,8 @@ class FarecDb
 	
 		bool open(const QString &, const QString&, const QString&, uint16_t);
 		void close();
+		
+		bool Insert_facedata(const Classifier::segments_t&, uint64_t );
 		
 		operator QSqlDatabase&()
 		{

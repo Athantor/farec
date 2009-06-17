@@ -52,6 +52,7 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionDbPo_cz, SIGNAL(triggered(bool)), this, SLOT(Connect_to_db(bool)));
 	connect(ui.actionDbRoz_cz, SIGNAL(triggered(bool)), this, SLOT(Disconnect_from_db(bool)));
 
+	connect(ui.actionDodajTwarz, SIGNAL(triggered(bool)), this, SLOT(Add_face(bool)));
 	connect(ui.actionW_a_ciel, SIGNAL(triggered(bool)), this, SLOT(Add_person(bool)));
 	
 	
@@ -312,6 +313,14 @@ void FarecMainWin::Disconnect_from_db( bool )
 
 void FarecMainWin::Add_person(bool)
 {
-	
 	Persons(fdb, this).exec();
+}
+
+
+void FarecMainWin::Add_face(bool)
+{
+	Person pn;
+	PersonChooser pc(pn, fdb, this);
+	pc.exec();
+	
 }

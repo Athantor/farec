@@ -17,7 +17,7 @@ class PersonAdder : public QDialog
 
 		enum Mode
 		{
-			New, Edit
+			New, Edit, View
 		};
 
 		PersonAdder( Person&, Mode, QWidget *parent = 0 );

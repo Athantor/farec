@@ -45,11 +45,15 @@ void PersonAdder::Fill_fields()
 {
 	if(mode == Mode::New)
 	{
+		this->setWindowTitle(QString::fromUtf8("Nowy wpis"));
+		
 		ui.UuidLe->setText(QUuid::createUuid());
 		ui.IdLe->setText("0");
 	}
-	else if(mode == Mode::Edit)
+	else if(mode == Mode::Edit or mode == Mode::View)
 	{
+		this->setWindowTitle(QString::fromUtf8("Edycja"));
+		
 		ui.UuidLe->setText(psn.getUuid());
 		ui.IdLe->setText(QString::number(psn.getId()));
 		ui.NameLe->setText(psn.getName());
@@ -59,10 +63,27 @@ void PersonAdder::Fill_fields()
 		ui.PicLbl->setPixmap(QPixmap::fromImage(QImage(psn.getImg()).scaled(ui.PicLbl->width(),
 				ui.PicLbl->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation)));
 
-		if(not psn.getImg().isNull())
+		if(mode == Mode::Edit and not psn.getImg().isNull())
 		{
 			ui.SaveImgTbn->setEnabled(true);
 			ui.DelImgTbn->setEnabled(true);
+		}
+		
+		if(mode == Mode::View)
+		{
+			this->setWindowTitle(QString::fromUtf8("Podgląd"));
+			
+			ui.LoadImgTbn->setEnabled(false);
+			ui.DelImgTbn->setEnabled(false);
+			
+			ui.NameLe->setReadOnly(true);
+			ui.snameLe->setReadOnly(true);
+			ui.AddrLe->setReadOnly(true);
+			ui.CmtPte->setReadOnly(true);
+			ui.UuidLe->setReadOnly(true);
+			
+			ui.buttonBox->buttons()[1]->setVisible(false);
+			
 		}
 	}
 }

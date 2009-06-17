@@ -209,8 +209,9 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Twarz</string>
     </property>
-    <addaction name="actionDodaj"/>
+    <addaction name="actionDodajTwarz"/>
     <addaction name="actionWyszukaj"/>
+    <addaction name="separator"/>
     <addaction name="actionW_a_ciel"/>
    </widget>
    <widget class="QMenu" name="menuBD">
@@ -314,6 +315,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_Wyj_cie">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/window-close.png</normaloff>:/icons/window-close.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Wyjście</string>
    </property>
@@ -403,12 +408,20 @@ p, li { white-space: pre-wrap; }
     <string>Klasyfikacja</string>
    </property>
   </action>
-  <action name="actionDodaj">
+  <action name="actionDodajTwarz">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/list-add-user.png</normaloff>:/icons/list-add-user.png</iconset>
+   </property>
    <property name="text">
-    <string>Dodaj</string>
+    <string>Dodaj…</string>
    </property>
   </action>
   <action name="actionWyszukaj">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/edit-find-user.png</normaloff>:/icons/edit-find-user.png</iconset>
+   </property>
    <property name="text">
     <string>Wyszukaj</string>
    </property>
@@ -446,6 +459,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionW_a_ciel">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/user-group-new.png</normaloff>:/icons/user-group-new.png</iconset>
+   </property>
    <property name="text">
     <string>Właściel…</string>
    </property>

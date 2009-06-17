@@ -52,6 +52,7 @@
 #include "GradientDisplay.hh"
 #include "DbConnect.hh"
 #include "Persons.hh"
+#include "PersonChooser.hh"
 
 using boost::scoped_ptr;
 using boost::polymorphic_downcast;
@@ -74,6 +75,8 @@ class FarecMainWin : public QMainWindow
 		void Connect_to_db( bool );
 		void Disconnect_from_db(bool);
 		void Add_person(bool);
+		
+		void Add_face(bool);
 
 	private slots:
 		void Resize_labels_imgs( int, int );

@@ -53,8 +53,8 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads() const
 	const size_t XOFF = 3, YOFF = 3;
 	
 	{ // x block
-		auto stit = gx.begin() + XOFF;
-		ret->setTop(std::distance(stit, std::max_element(stit, stit + (myimg -> height() / 6))));
+		auto stit = gx.begin() + XOFF*5;
+		ret->setTop(std::distance(stit, std::max_element(stit, stit + static_cast<int>((myimg -> height() / 5.5)))));
 
 		stit = gx.begin() + static_cast<int>(((myimg -> height() / 7) * 6.5));
 		ret->setBottom(std::distance(stit, std::max_element(stit, gx.end() - XOFF)) + std::distance(gx.begin(),

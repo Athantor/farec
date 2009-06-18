@@ -50,21 +50,23 @@ FeatExtract::region_t FeatExtract::Get_face_from_grads() const
 		}
 	}
 
+	const size_t XOFF = 3, YOFF = 3;
+	
 	{ // x block
-		auto stit = gx.begin() + 5;
+		auto stit = gx.begin() + XOFF;
 		ret->setTop(std::distance(stit, std::max_element(stit, stit + (myimg -> height() / 6))));
 
-		stit = gx.begin() + ((myimg -> height() / 6) * 5);
-		ret->setBottom(std::distance(stit, std::max_element(stit, gx.end() - 5)) + std::distance(gx.begin(),
+		stit = gx.begin() + static_cast<int>(((myimg -> height() / 7) * 6.5));
+		ret->setBottom(std::distance(stit, std::max_element(stit, gx.end() - XOFF)) + std::distance(gx.begin(),
 				stit));
 	}
 
 	{ //y block
-		auto stit = gy.begin() + 3;
+		auto stit = gy.begin() + YOFF;
 		ret->setLeft(std::distance(stit, std::max_element(stit, gy.begin() + (myimg -> width() / 5))));
 
 		stit = gy.begin() + ((myimg -> width() / 3) * 2);
-		ret->setRight(std::distance(stit, std::max_element(stit, gy.end() - 3)) + std::distance(gy.begin(),
+		ret->setRight(std::distance(stit, std::max_element(stit, gy.end() - YOFF)) + std::distance(gy.begin(),
 				stit));
 	}
 
@@ -98,9 +100,9 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum ) con
 	const size_t maxgradthd = avg / (tmpi.height() * tmpi.width() * 1.0) * 2.5;
 
 	//eye width is equal to five times of face width, and height is equal to ≈⅓ of its width;
-	const size_t RAD = round((0.305 * (facereg -> width() / 5.0))
+	const size_t RAD = floor((0.305 * (facereg -> width() / 5.0))
 			* (static_cast<double> (facereg ->width()) / facereg ->height()));
-	const float CLEARRAD = 2.5;
+	const float CLEARRAD = 4.5;
 
 	ImgData::houghret_t ht = ImgData(pnt, tmpi).Hough_tm(RAD, radsnum);
 	buf_t buf;

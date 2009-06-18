@@ -77,6 +77,7 @@ class FarecMainWin : public QMainWindow
 		void Add_person(bool);
 		
 		void Add_face(bool);
+		void Search_face(bool);
 
 	private slots:
 		void Resize_labels_imgs( int, int );

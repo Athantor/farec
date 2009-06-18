@@ -210,7 +210,7 @@ p, li { white-space: pre-wrap; }
      <string>Twarz</string>
     </property>
     <addaction name="actionDodajTwarz"/>
-    <addaction name="actionWyszukaj"/>
+    <addaction name="actionWyszukajTwarz"/>
     <addaction name="separator"/>
     <addaction name="actionW_a_ciel"/>
    </widget>
@@ -417,7 +417,7 @@ p, li { white-space: pre-wrap; }
     <string>Dodaj…</string>
    </property>
   </action>
-  <action name="actionWyszukaj">
+  <action name="actionWyszukajTwarz">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/icons/edit-find-user.png</normaloff>:/icons/edit-find-user.png</iconset>

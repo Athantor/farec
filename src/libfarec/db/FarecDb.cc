@@ -75,7 +75,7 @@ bool FarecDb::Insert_facedata( const Classifier::segments_t& segs, uint64_t pers
 	}
 
 	if(not quer.exec("SELECT COUNT(*), MAX(\"ID\") FROM \"Data_series\";") or not quer.first()
-			or (quer.value(0).toInt() > 0 and not (serid = quer.value(1)).isValid()) )
+			or (quer.value(0).toInt() > 0 and not (serid = quer.value(1)).isValid()))
 	{
 		QMessageBox::critical(0, QString::fromUtf8("Błąd"), QString::fromUtf8("Błąd zapisu do DB:\n%1").arg(
 				quer.lastError().text()));
@@ -84,7 +84,8 @@ bool FarecDb::Insert_facedata( const Classifier::segments_t& segs, uint64_t pers
 		return false;
 	}
 
-	quer.prepare("INSERT INTO \"Face_data\" (\"Type\", \"Data\", \"Data_serie\") VALUES ( (SELECT \"ID\" FROM \"Segments\" WHERE \"Farecprog_id\" = ?) , ?, ? ) ");
+	quer.prepare(
+			"INSERT INTO \"Face_data\" (\"Type\", \"Data\", \"Data_serie\") VALUES ( (SELECT \"ID\" FROM \"Segments\" WHERE \"Farecprog_id\" = ?) , ?, ? ) ");
 
 	for(Classifier::segments_t::const_iterator it = segs.begin(); it != segs.end(); it++)
 	{
@@ -105,7 +106,7 @@ bool FarecDb::Insert_facedata( const Classifier::segments_t& segs, uint64_t pers
 		dbconn.rollback();
 		return false;
 	}
-	
+
 	//QMessageBox::critical(0, QString::fromUtf8("Błąd"), QString::fromUtf8("id:\n%1\n%2\n%3 - %4 - %5").arg(serid.toInt()).arg(segs.size()).arg(ft.size()).arg(fd.size()).arg(fds.size()));
 
 	quer.prepare("INSERT INTO \"Ppl_faces\" (\"Person\", \"Data_serie\" ) VALUES ( ? , ?) ");
@@ -121,5 +122,66 @@ bool FarecDb::Insert_facedata( const Classifier::segments_t& segs, uint64_t pers
 		return false;
 	}
 
-	dbconn.commit();
+	return dbconn.commit();
+}
+
+FarecDb::searchres_t FarecDb::Find_faces( const Classifier::segments_t& segs, double tol )
+{
+	searchres_t ret(new searchres_t::value_type);
+	searchres_t::value_type totsum, score;
+
+	QSqlQuery que(dbconn);
+
+	que.prepare(
+			"SELECT fd.\"Data_serie\" AS ds, s.\"Farecprog_id\" AS fpid, CAST(\"Data\" AS text) AS dt, CAST(\"Data\" - (\"Data\" * ?) AS TEXT) AS dtmin,  CAST(\"Data\" + "
+				"(\"Data\" * ?) AS TEXT) AS dtmax  FROM \"Face_data\" fd LEFT JOIN \"Segments\" s ON s.\"ID\" = fd.\"Type\" ;");
+	que.bindValue(0, tol);
+	que.bindValue(1, tol);
+
+	if(not que.exec())
+	{
+		QMessageBox::critical(0, QString::fromUtf8("Błąd"), QString::fromUtf8("Błąd odczytu z DB:\n%1").arg(
+				que.lastError().text()));
+
+		return searchres_t();
+	}
+
+	while(que.next())
+	{
+		const Classifier::segments wat = static_cast<decltype(wat)>(que.value(1).toInt());
+		const uint64_t theds = que.value(0).toULongLong();
+		const double theval = segs[wat]->get<1>();
+	
+		if(not totsum.contains(theds))
+		{
+			totsum[theds] = 0;
+		}
+		
+		
+		if(wat != Classifier::_BASE )
+		{
+			
+			totsum[theds] += theval;
+			
+			if(not score.contains(theds))
+			{
+				score[theds] = 0;
+			}
+			
+			if(theval > que.value(3).toDouble() and theval < que.value(4).toDouble())
+			{
+				score[theds] += que.value(2).toDouble();
+			}
+		}
+	}
+	
+	/*
+	 * Decresing score value for from total because this way skipping lines is penalized, since lower score is better 
+	 */
+	for(searchres_t::value_type::iterator it = score.begin(); it != score.end(); it++)
+	{
+		(*ret)[it.key()] = std::abs(totsum[it.key()] - *it);
+	}
+	
+	return ret;
 }

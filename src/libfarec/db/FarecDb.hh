@@ -30,14 +30,22 @@
 #include <QMessageBox>
 #include <QUuid>
 #include <QVariant>
+#include <QHash>
 
 #include <cstdint>
+#include <cmath>
+
+#include <boost/shared_ptr.hpp>
 
 #include "libfarec/Classifier.hh"
+
+using boost::shared_ptr;
 
 class FarecDb
 {
 	public:
+		typedef shared_ptr<QHash<uint64_t, double> > searchres_t;
+		
 		FarecDb();
 		virtual ~FarecDb();
 		
@@ -47,6 +55,7 @@ class FarecDb
 		void close();
 		
 		bool Insert_facedata(const Classifier::segments_t&, uint64_t );
+		searchres_t Find_faces(const Classifier::segments_t&, double);
 		
 		operator QSqlDatabase&()
 		{

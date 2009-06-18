@@ -11,7 +11,6 @@ PersonChooser::PersonChooser( Person & p, FarecDb &d, QWidget *parent ) :
 	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(Fill_data()));
 	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	
-	
 	setResult(-1);
 }
 

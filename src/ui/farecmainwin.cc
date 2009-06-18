@@ -22,6 +22,10 @@
 
 #include "farecmainwin.hh"
 
+
+#include <iostream>
+
+
 FarecMainWin::FarecMainWin( QWidget *parent ) :
 	QMainWindow(parent), db_sb_lbl(new QLabel(this)), inimg(new QImage), outimg(new QImage)
 {
@@ -53,6 +57,7 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionDbRoz_cz, SIGNAL(triggered(bool)), this, SLOT(Disconnect_from_db(bool)));
 
 	connect(ui.actionDodajTwarz, SIGNAL(triggered(bool)), this, SLOT(Add_face(bool)));
+	connect(ui.actionWyszukajTwarz, SIGNAL(triggered(bool)), this, SLOT(Search_face(bool)));
 	connect(ui.actionW_a_ciel, SIGNAL(triggered(bool)), this, SLOT(Add_person(bool)));
 
 #ifdef DEBUG_KRZYS
@@ -245,9 +250,9 @@ void FarecMainWin::Show_segments( bool )
 	}
 
 	Show_segments();
-	
-}
 
+}
+ 
 void FarecMainWin::Show_segments( shared_ptr<Classifier> cls )
 {
 	if(not cls)
@@ -259,7 +264,7 @@ void FarecMainWin::Show_segments( shared_ptr<Classifier> cls )
 	{
 		cls->Classify();
 	}
-	
+
 	outimg.reset(new QImage(*inimg));
 
 	QPainter qpt(outimg.get());
@@ -333,12 +338,12 @@ void FarecMainWin::Add_face( bool )
 	Person pn;
 	PersonChooser pc(pn, fdb, this);
 	pc.exec();
-	
-	if(pc.result() < 0)
+
+	if(pc.result() < 1)
 	{
 		return;
 	}
-	
+
 	if(!static_cast<bool> (inimg) or inimg->isNull())
 	{
 		return;
@@ -346,10 +351,38 @@ void FarecMainWin::Add_face( bool )
 
 	shared_ptr<Classifier> cls(new Classifier(this, *inimg));
 	cls->Classify();
-	
+
 	fdb.Insert_facedata(cls->Get_segs(), pn.getId());
-	
+
 	Show_segments(cls);
-	
-	
+
+}
+
+void FarecMainWin::Search_face( bool )
+{
+	if(!static_cast<bool> (inimg) or inimg->isNull())
+	{
+		return;
+	}
+
+	bool ok = false;
+	double tol = QInputDialog::getDouble(this, "Tolerancja", QString::fromUtf8(
+			"Procent w jakim wartości mogą odbiegać od wzorca:"), 10.0, 0, 100, 3, &ok);
+
+	if(ok)
+	{
+
+		shared_ptr<Classifier> cls(new Classifier(this, *inimg));
+		cls->Classify();
+
+		FarecDb::searchres_t srch = fdb.Find_faces(cls->Get_segs(), tol);
+		
+		for(auto it = srch->begin(); it != srch -> end(); ++it)
+		{
+			std::cout << "!" << it.key() << ": " << *it << std::endl;
+		}
+		
+		
+		Show_segments(cls);
+	}
 }

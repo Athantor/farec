@@ -384,12 +384,12 @@ FeatExtract::region_t FeatExtract::Get_mouth( region_t tfr, region_t tnr, vpf_ey
 
 	const size_t EWTH = vel->first.at(5).x() - vel->first.at(4).x();
 
-	QImage mimg(*ImgPrep(pnt, myimg->copy(QRect(fr->left(), nr->top(), fr->width(), fr->bottom() - nr->top()
+	QImage mimg(*ImgPrep(pnt, myimg->copy(QRect(fr->left(), nr->top()+ (EWTH /2.0) , fr->width(), ( fr->bottom() - (EWTH /2.0)) - (nr->top()+ (EWTH /2.0))
 			- 3))).To_gray());
 	ImgData::dirgrads_t dg = ImgData(pnt, mimg).Make_directional_gradients();
 
 	size_t y = nr->top() + std::distance(dg->get<0> ()->begin(), std::max_element(dg->get<0> ()->begin(),
-			dg->get<0> ()->end()));
+			dg->get<0> ()->end())) + (EWTH /2.0);
 
 	region_t ret = region_t(new region_t::value_type(QPoint(vel->first.at(3).x(), y - EWTH / 1.9), QPoint(
 			vel->second.at(2).x(), y + EWTH / 1.5)));

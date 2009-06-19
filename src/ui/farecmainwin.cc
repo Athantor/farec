@@ -22,9 +22,7 @@
 
 #include "farecmainwin.hh"
 
-
 #include <iostream>
-
 
 FarecMainWin::FarecMainWin( QWidget *parent ) :
 	QMainWindow(parent), db_sb_lbl(new QLabel(this)), inimg(new QImage), outimg(new QImage)
@@ -46,6 +44,11 @@ void FarecMainWin::Connect_slots()
 	connect(ui.splitter_2, SIGNAL(splitterMoved ( int, int )), this, SLOT( Resize_labels_imgs(int, int) ));
 
 	connect(ui.actionOtw_rz, SIGNAL(triggered(bool)), this, SLOT(Load_file(bool)));
+	
+	connect(ui.actionZapiszWej_cie, SIGNAL(triggered(bool)), this, SLOT(Save_file_in(bool)));
+	connect(ui.actionZapiszPodgl_d, SIGNAL(triggered(bool)), this, SLOT(Save_file_out(bool)));
+
+	connect(ui.action_Wyj_cie, SIGNAL(triggered()), this, SLOT(close()));
 
 	connect(ui.actionU_yj_podgl_du, SIGNAL(triggered(bool)), this, SLOT(Make_preview_the_source(bool)));
 
@@ -252,7 +255,7 @@ void FarecMainWin::Show_segments( bool )
 	Show_segments();
 
 }
- 
+
 void FarecMainWin::Show_segments( shared_ptr<Classifier> cls )
 {
 	if(not cls)
@@ -376,13 +379,56 @@ void FarecMainWin::Search_face( bool )
 		cls->Classify();
 
 		FarecDb::searchres_t srch = fdb.Find_faces(cls->Get_segs(), tol);
-		
+
 		for(auto it = srch->begin(); it != srch -> end(); ++it)
 		{
 			std::cout << "!" << it.key() << ": " << *it << std::endl;
 		}
-		
-		
+
 		Show_segments(cls);
 	}
+}
+
+void FarecMainWin::Save_file_in( bool )
+{
+	Save_file(false);
+}
+
+void FarecMainWin::Save_file_out( bool )
+{
+	Save_file(true);
+}
+
+void FarecMainWin::Save_file( bool output )
+{
+	QString fn = QFileDialog::getSaveFileName(this, QString::fromUtf8("Wybór pliku"), QDir::home().absoluteFilePath("farec-out.png"), 
+			"Obrazy PNG (*.png);;Wszystko (*) ");
+	
+	if(not fn.isNull())
+	{
+		bool ret = true;
+		
+		QString suff = fn.toLower().endsWith(".png") ? "" : ".png";
+
+		if(output)
+		{
+			if(outimg and not outimg->isNull())
+			{
+				ret = outimg->save(fn + suff, "png", 0);
+			}
+		}
+		else
+		{
+			if(inimg and not inimg->isNull())
+			{
+				ret = inimg->save(fn + suff, "png", 0);
+			}
+		}
+		
+		if(not ret)
+		{
+			QMessageBox::critical(this, QString::fromUtf8("Bład"), QString::fromUtf8("Błąd zapisu pliku do:\n%1").arg(fn + suff));
+		}
+	}
+
 }

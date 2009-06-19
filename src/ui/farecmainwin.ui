@@ -134,8 +134,8 @@ p, li { white-space: pre-wrap; }
       <iconset resource="icons.qrc">
        <normaloff>:/icons/document-save.png</normaloff>:/icons/document-save.png</iconset>
      </property>
-     <addaction name="actionWej_cie"/>
-     <addaction name="actionPodgl_d"/>
+     <addaction name="actionZapiszWej_cie"/>
+     <addaction name="actionZapiszPodgl_d"/>
     </widget>
     <addaction name="actionOtw_rz"/>
     <addaction name="menuZapisz"/>
@@ -304,12 +304,12 @@ p, li { white-space: pre-wrap; }
     <string>Użyj podglądu</string>
    </property>
   </action>
-  <action name="actionWej_cie">
+  <action name="actionZapiszWej_cie">
    <property name="text">
     <string>Wejście…</string>
    </property>
   </action>
-  <action name="actionPodgl_d">
+  <action name="actionZapiszPodgl_d">
    <property name="text">
     <string>Podgląd…</string>
    </property>

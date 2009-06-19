@@ -100,7 +100,7 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum ) con
 	const size_t maxgradthd = avg / (tmpi.height() * tmpi.width() * 1.0) * 2.5;
 
 	//eye width is equal to five times of face width, and height is equal to ≈⅓ of its width;
-	const size_t RAD = floor((0.305 * (facereg -> width() / 5.0))
+	const size_t RAD = round((0.305 * (facereg -> width() / 5.0))
 			* (static_cast<double> (facereg ->width()) / facereg ->height()));
 	const float CLEARRAD = 4.5;
 

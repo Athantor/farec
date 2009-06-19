@@ -75,7 +75,8 @@ class FarecMainWin : public QMainWindow
 		void Connect_to_db( bool );
 		void Disconnect_from_db(bool);
 		void Add_person(bool);
-		
+		void Save_file_in(bool);
+		void Save_file_out(bool);
 		void Add_face(bool);
 		void Search_face(bool);
 
@@ -121,6 +122,8 @@ class FarecMainWin : public QMainWindow
 
 		virtual void resizeEvent( QResizeEvent * );
 
+		void Save_file(bool);
+		
 		scoped_ptr<QImage> inimg, outimg;
 
 #ifdef DEBUG_KRZYS

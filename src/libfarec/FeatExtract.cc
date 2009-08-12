@@ -187,7 +187,15 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum ) con
 
 FeatExtract::eyewin_t FeatExtract::Make_eye_windows( size_t cn ) const
 {
-	cht_eyeloc_t el = Get_irises_from_cht(cn);
+	cht_eyeloc_t el;
+	try
+	{
+		el = Get_irises_from_cht(cn);
+	}
+	catch(const FENoData &ex)
+	{
+		el = Get_irises_from_cht(cn * 2);
+	}
 
 	const int16_t esize = el->get<2> () * 3.3;
 	const int16_t evsize = el->get<2> () * 1.6;

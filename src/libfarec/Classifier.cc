@@ -56,7 +56,17 @@ size_t Classifier::Make_base_segment_length()
 void Classifier::Prep_cache()
 {
 	if(not has_type(cht_el))
-		cache[cht_el] = FeatExtract(pnt, *myimg).Get_irises_from_cht(ImgData::CHT_CIRCNUM);
+	{
+		try
+		{
+			cache[cht_el] = FeatExtract(pnt, *myimg).Get_irises_from_cht(ImgData::CHT_CIRCNUM);
+		}
+		catch(const FENoData& ex)
+		{
+			cache[cht_el] = FeatExtract(pnt, *myimg).Get_irises_from_cht(ImgData::CHT_CIRCNUM * 2);
+		}
+	}
+	
 	FeatExtract::cht_eyeloc_t el = any_cast<decltype( el )> (cache[cht_el]);
 
 	if(not has_type(vpf_el))

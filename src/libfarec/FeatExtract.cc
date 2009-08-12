@@ -20,6 +20,8 @@
  *      Author: athantor
  */
 
+#include <iostream>
+
 #include "FeatExtract.hh"
 
 FeatExtract::FeatExtract( QWidget * p, const QImage& im ) :
@@ -166,11 +168,16 @@ FeatExtract::cht_eyeloc_t FeatExtract::Get_irises_from_cht( size_t radsnum ) con
 	cht_eyeloc_t ret = cht_eyeloc_t(new cht_eyeloc_t::value_type(make_tuple(QPoint(buf[pb1].get<1> ()
 			/ buf[pb1].get<3> (), buf[pb1].get<2> () / buf[pb1].get<3> ()), QPoint(buf[pb2].get<1> ()
 			/ buf[pb2].get<3> (), buf[pb2].get<2> () / buf[pb2].get<3> ()), RAD)));
-
+	
 	//make sure 0 has the left eye
 	if(ret->get<0> ().x() > ret->get<1> ().x())
 		std::swap(ret->get<1> (), ret->get<0> ());
 
+	if( (buf.size() < 2) or (buf[0].get<0>().contains( QPoint( buf[1].get<1>(), buf[1].get<2>())) ) ) 
+	{
+		ret->get<1>() = QPoint( facereg->width() - ret->get<0>().x() , ret->get<0>().y() );
+	}
+	
 	//map to global
 	ret->get<0> () += QPoint(facereg->left(), facereg->top());
 	ret->get<1> () += QPoint(facereg->left(), facereg->top());

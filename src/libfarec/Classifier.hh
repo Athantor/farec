@@ -140,7 +140,8 @@ class Classifier : private ImgOp
 		typedef shared_ptr<tuple<segments, double, double, QPoint, QPoint> > segdata_t;
 		typedef QHash<segments, segdata_t> segments_t;
 
-		Classifier( QWidget *p, const QImage& );Classifier() = delete;
+		Classifier( QWidget *p, const QImage& );
+		Classifier() = delete;
 		Classifier(const Classifier&) = delete;
 		Classifier& operator=(const Classifier&) = delete;
 		virtual ~Classifier();

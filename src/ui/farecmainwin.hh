@@ -29,6 +29,8 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QCryptographicHash>
+#include <QBuffer>
 
 #ifdef DEBUG_KRZYS
 #include <QInputDialog>
@@ -111,6 +113,8 @@ class FarecMainWin : public QMainWindow
 		Ui::FarecMainWinClass ui;
 		FarecDb fdb;
 		QLabel *db_sb_lbl;
+		//     sha1         data
+		QHash<QString, shared_ptr<Classifier> > cache;
 
 		void Connect_slots();
 		void Populate_toolbar();
@@ -119,6 +123,8 @@ class FarecMainWin : public QMainWindow
 
 		void Show_grads( QImage * );
 		void Show_segments(shared_ptr<Classifier> = shared_ptr<Classifier>() );
+		
+		QString Make_img_sha1(bool = false);
 
 		virtual void resizeEvent( QResizeEvent * );
 

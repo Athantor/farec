@@ -60,13 +60,14 @@ class Person
 		void setSurname( QString surname );
 	protected:
 		uint64_t id;
-		QString name;
+		uint64_t status;
 		QString surname;
 		QString addr;
 		QString comments;
 		QUuid uuid;
 		QDateTime ptime;
-		uint64_t status;
+		
+		QString name;
 		QImage img;
 
 };

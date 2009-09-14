@@ -352,7 +352,9 @@ void FarecMainWin::Add_face( bool )
 		return;
 	}
 
+	
 	shared_ptr<Classifier> cls(new Classifier(this, *inimg));
+	
 	cls->Classify();
 
 	fdb.Insert_facedata(cls->Get_segs(), pn.getId());
@@ -367,6 +369,12 @@ void FarecMainWin::Search_face( bool )
 	{
 		return;
 	}
+	
+	if(not fdb.Get_dbconn().isOpen())
+	{
+		QMessageBox::critical(this, "SQL", QString::fromUtf8("Brak połączenia z bazą SQL"));
+		return;
+	}
 
 	bool ok = false;
 	double tol = QInputDialog::getDouble(this, "Tolerancja", QString::fromUtf8(
@@ -374,9 +382,22 @@ void FarecMainWin::Search_face( bool )
 
 	if(ok)
 	{
-
-		shared_ptr<Classifier> cls(new Classifier(this, *inimg));
-		cls->Classify();
+		shared_ptr<Classifier> cls;
+		QString sha1=Make_img_sha1(false);
+		auto chfnd = cache.find(sha1);
+		if( chfnd != cache.end() and 
+				QMessageBox::question(this,"Cache", 
+				QString::fromUtf8("Użyć wartości zapamiętanych?"), 
+				QMessageBox::Yes | QMessageBox::No ) == QMessageBox::Yes ) 
+		{
+			cls = chfnd.value();
+		} 
+		else 
+		{
+			cls.reset(new Classifier(this, *inimg));
+			cls->Classify();
+			cache[sha1] = cls;
+		}
 
 		FarecDb::searchres_t srch = fdb.Find_faces(cls->Get_segs(), tol);
 
@@ -431,4 +452,26 @@ void FarecMainWin::Save_file( bool output )
 		}
 	}
 
+}
+
+QString FarecMainWin::Make_img_sha1(bool outi)
+{
+	QImage *im = outi ? outimg.get() : inimg.get();
+	
+	if(im== NULL or im->isNull())
+	{
+		return QString();
+	}
+	
+	QByteArray ba;
+	QBuffer bf(&ba, this);
+	
+	bf.open(QIODevice::ReadWrite);
+	
+	im->save(&bf, "BMP", 0);
+	
+	bf.close();
+	
+	return QString(QCryptographicHash::hash(ba, QCryptographicHash::Sha1).toHex());
+	
 }

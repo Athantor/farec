@@ -260,7 +260,7 @@ void FarecMainWin::Show_segments( shared_ptr<Classifier> cls )
 {
 	if(not cls)
 	{
-		cls = shared_ptr<Classifier> (new Classifier(this, *inimg));
+		cls = Make_classifier();
 	}
 
 	if(cls->Get_segs().size() < 1)
@@ -352,10 +352,7 @@ void FarecMainWin::Add_face( bool )
 		return;
 	}
 
-	
-	shared_ptr<Classifier> cls(new Classifier(this, *inimg));
-	
-	cls->Classify();
+	shared_ptr<Classifier> cls = Make_classifier();
 
 	fdb.Insert_facedata(cls->Get_segs(), pn.getId());
 
@@ -382,22 +379,8 @@ void FarecMainWin::Search_face( bool )
 
 	if(ok)
 	{
-		shared_ptr<Classifier> cls;
-		QString sha1=Make_img_sha1(false);
-		auto chfnd = cache.find(sha1);
-		if( chfnd != cache.end() and 
-				QMessageBox::question(this,"Cache", 
-				QString::fromUtf8("Użyć wartości zapamiętanych?"), 
-				QMessageBox::Yes | QMessageBox::No ) == QMessageBox::Yes ) 
-		{
-			cls = chfnd.value();
-		} 
-		else 
-		{
-			cls.reset(new Classifier(this, *inimg));
-			cls->Classify();
-			cache[sha1] = cls;
-		}
+		shared_ptr<Classifier> cls = Make_classifier();
+		
 
 		FarecDb::searchres_t srch = fdb.Find_faces(cls->Get_segs(), tol);
 
@@ -454,7 +437,7 @@ void FarecMainWin::Save_file( bool output )
 
 }
 
-QString FarecMainWin::Make_img_sha1(bool outi)
+QString FarecMainWin::Make_img_sha1(bool outi) const
 {
 	QImage *im = outi ? outimg.get() : inimg.get();
 	
@@ -464,7 +447,7 @@ QString FarecMainWin::Make_img_sha1(bool outi)
 	}
 	
 	QByteArray ba;
-	QBuffer bf(&ba, this);
+	QBuffer bf(&ba);
 	
 	bf.open(QIODevice::ReadWrite);
 	
@@ -473,5 +456,34 @@ QString FarecMainWin::Make_img_sha1(bool outi)
 	bf.close();
 	
 	return QString(QCryptographicHash::hash(ba, QCryptographicHash::Sha1).toHex());
+}
+
+shared_ptr<Classifier> FarecMainWin::Make_classifier(bool outi)
+{
+	QImage *im = outi ? outimg.get() : inimg.get();
+	shared_ptr<Classifier> cls;
 	
+	if(im == NULL or im->isNull())
+	{
+		return cls;
+	}
+	
+	QString sha1=Make_img_sha1(false);
+	auto chfnd = cache.find(sha1);
+	
+	if( chfnd != cache.end() and 
+			QMessageBox::question(this,"Cache", 
+			QString::fromUtf8("Użyć wartości zapamiętanych?"), 
+			QMessageBox::Yes | QMessageBox::No ) == QMessageBox::Yes ) 
+	{
+		cls = chfnd.value(); 
+	} 
+	else 
+	{
+		cls.reset(new Classifier(this, *inimg));
+		cls->Classify();
+		cache[sha1] = cls;
+	}
+	
+	return cls;
 }

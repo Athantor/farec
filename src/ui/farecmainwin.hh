@@ -124,7 +124,8 @@ class FarecMainWin : public QMainWindow
 		void Show_grads( QImage * );
 		void Show_segments(shared_ptr<Classifier> = shared_ptr<Classifier>() );
 		
-		QString Make_img_sha1(bool = false);
+		QString Make_img_sha1(bool = false) const;
+		shared_ptr<Classifier> Make_classifier( bool = false);
 
 		virtual void resizeEvent( QResizeEvent * );
 

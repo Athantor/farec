@@ -374,6 +374,21 @@ void FarecMainWin::Search_face( bool )
 	}
 
 	bool ok = false;
+	QHash<QString, FarecDb::Srch_algo> amap;
+	QStringList sl;
+	sl << QString::fromUtf8("Średnia różnic") << QString::fromUtf8("Punkty"); 
+	
+	amap[sl[0]] = FarecDb::Srch_algo::Avg_diff;
+	amap[sl[1]] = FarecDb::Srch_algo::Score;
+	
+	//algo.setLabelText(QString::fromUtf8("Algorytm poszukiwania:"));
+	QString wat = QInputDialog::getItem(this, QString::fromUtf8("Algorytm poszukiwania:"), QString::fromUtf8("Algorytm poszukiwania:"), sl, 0, 0, &ok);
+
+	if(!ok)
+	{
+		return;
+	}
+	
 	double tol = QInputDialog::getDouble(this, "Tolerancja", QString::fromUtf8(
 			"Procent w jakim wartości mogą odbiegać od wzorca:"), 10.0, 0, 100, 3, &ok);
 
@@ -382,11 +397,14 @@ void FarecMainWin::Search_face( bool )
 		shared_ptr<Classifier> cls = Make_classifier();
 		
 
-		FarecDb::searchres_t srch = fdb.Find_faces(cls->Get_segs(), tol);
+		FarecDb::searchres_t srch = fdb.Find_faces(cls->Get_segs(), tol, amap[wat]);
 
-		for(auto it = srch->begin(); it != srch -> end(); ++it)
+		if(srch)
 		{
-			std::cout << "!" << it.key() << ": " << *it << std::endl;
+			for(auto it = srch->begin(); it != srch -> end(); ++it)
+			{
+				std::cout << "!" << it.key() << ": " << *it << std::endl;
+			}
 		}
 
 		Show_segments(cls);

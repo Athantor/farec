@@ -44,7 +44,14 @@ using boost::shared_ptr;
 class FarecDb
 {
 	public:
+		//                        ds        score
 		typedef shared_ptr<QHash<uint64_t, double> > searchres_t;
+		
+		enum class Srch_algo : unsigned char
+		{
+			Avg_diff,
+			Score
+		};
 		
 		FarecDb();
 		virtual ~FarecDb();
@@ -55,7 +62,7 @@ class FarecDb
 		void close();
 		
 		bool Insert_facedata(const Classifier::segments_t&, uint64_t );
-		searchres_t Find_faces(const Classifier::segments_t&, double);
+		searchres_t Find_faces(const Classifier::segments_t&, double, Srch_algo = Srch_algo::Score) const;
 		
 		operator QSqlDatabase&()
 		{
@@ -66,6 +73,9 @@ class FarecDb
 		
 	private:
 		QSqlDatabase dbconn;
+		
+		searchres_t Find_faces_avg( const Classifier::segments_t&, double ) const;
+		searchres_t Find_faces_score( const Classifier::segments_t&, double ) const;
 	
 };
 

@@ -125,7 +125,72 @@ bool FarecDb::Insert_facedata( const Classifier::segments_t& segs, uint64_t pers
 	return dbconn.commit();
 }
 
-FarecDb::searchres_t FarecDb::Find_faces( const Classifier::segments_t& segs, double tol )
+FarecDb::searchres_t FarecDb::Find_faces( const Classifier::segments_t& segs, double tol, Srch_algo algo) const
+{
+	if(algo == Srch_algo::Avg_diff)
+	{
+		return Find_faces_avg(segs, tol);
+	}
+	else if(algo == Srch_algo::Score)
+	{
+		return Find_faces_score(segs, tol);
+	}
+	else 
+	{
+		return searchres_t();
+	}
+}
+
+FarecDb::searchres_t FarecDb::Find_faces_avg( const Classifier::segments_t& segs, double tol ) const
+{
+	searchres_t ret(new searchres_t::value_type);
+	searchres_t::value_type tmp/*, tmp1*/;
+	QHash<uint64_t, uint64_t> ctr;
+	
+	QSqlQuery que(dbconn);
+	
+	if(not que.exec("SELECT fd.\"Data_serie\" AS ds, fd.\"Data\" AS dt, s.\"Farecprog_id\" AS sid FROM \"Face_data\" "
+		"AS fd LEFT JOIN \"Segments\" AS s ON fd.\"Type\" = s.\"ID\" "))
+	{
+		QMessageBox::critical(0, QString::fromUtf8("Błąd"), QString::fromUtf8("Błąd odczytu z DB:\n%1").arg(
+				que.lastError().text()));
+
+		return searchres_t();
+	}
+	
+	
+	
+	while(que.next())
+	{
+		double sval = segs[static_cast<Classifier::segments_t::key_type> (que.value(2).toInt())]->get<1> ();
+		double diff = sval - que.value(1).toDouble(0);
+		
+		tmp[que.value(0).toInt()] += abs(diff) < DBL_EPSILON ? 0 : std::abs(diff);
+		
+		
+		/*tmp1[que.value(0).toInt()]
+				+= segs[static_cast<Classifier::segments_t::key_type> (que.value(2).toInt())]->get<1> ();*/
+		
+		if(ctr.contains(que.value(0).toInt()))
+			ctr[que.value(0).toInt()]++;
+		else
+			ctr[que.value(0).toInt()] = 1;
+	}
+	
+	for(auto it = tmp.begin(); it != tmp.end(); ++it)
+	{
+		const double THEVAL =std::abs(it.value() /*/ ctr[it.key()]*/ ); 
+		if( THEVAL < tol  )
+		{
+			(*ret)[it.key()] = THEVAL;
+		}
+	}
+	
+	return ret;
+	
+}
+
+FarecDb::searchres_t FarecDb::Find_faces_score( const Classifier::segments_t& segs, double tol ) const
 {
 	searchres_t ret(new searchres_t::value_type);
 	searchres_t::value_type totsum, score;

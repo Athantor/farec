@@ -130,7 +130,7 @@ class FarecMainWin : public QMainWindow
 		virtual void resizeEvent( QResizeEvent * );
 
 		void Save_file(bool);
-		
+
 		scoped_ptr<QImage> inimg, outimg;
 
 #ifdef DEBUG_KRZYS

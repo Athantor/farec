@@ -159,13 +159,12 @@ FarecDb::searchres_t FarecDb::Find_faces_avg( const Classifier::segments_t& segs
 	}
 	
 	
-	
 	while(que.next())
 	{
 		double sval = segs[static_cast<Classifier::segments_t::key_type> (que.value(2).toInt())]->get<1> ();
 		double diff = sval - que.value(1).toDouble(0);
 		
-		tmp[que.value(0).toInt()] += abs(diff) < DBL_EPSILON ? 0 : std::abs(diff);
+		tmp[que.value(0).toInt()] += abs(static_cast<int64_t>(diff)) == 0 ? 0 : std::abs(diff);
 		
 		
 		/*tmp1[que.value(0).toInt()]
@@ -187,7 +186,6 @@ FarecDb::searchres_t FarecDb::Find_faces_avg( const Classifier::segments_t& segs
 	}
 	
 	return ret;
-	
 }
 
 FarecDb::searchres_t FarecDb::Find_faces_score( const Classifier::segments_t& segs, double tol ) const

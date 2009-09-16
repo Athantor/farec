@@ -8,6 +8,8 @@
 #include <QSqlRecord>
 #include <QSqlQuery>
 #include <QCloseEvent>
+#include <QByteArray>
+#include <QBuffer>
 
 #include "ui_Persons.h"
 
@@ -32,6 +34,7 @@ class Persons : public QDialog
 		void Reject_action();
 		
 		void Enable_btns(const QModelIndex & );
+		void Row_clicked(const QModelIndex &);
 
 	private:
 		Ui::PersonsClass ui;

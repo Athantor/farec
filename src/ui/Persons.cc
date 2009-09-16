@@ -30,7 +30,9 @@ Persons::Persons( QSqlDatabase& d, QWidget *parent ) :
 
 	connect(ui.tableTvw, SIGNAL(clicked ( const QModelIndex & )), this,
 			SLOT(Enable_btns(const QModelIndex &) ));
-
+	
+	connect(ui.tableTvw, SIGNAL(doubleClicked ( const QModelIndex & )), this,
+				SLOT(Row_clicked(const QModelIndex &) ));
 }
 
 Persons::~Persons()
@@ -141,6 +143,11 @@ void Persons::Enable_btns( const QModelIndex & )
 	ui.DelTbn->setEnabled(true);
 }
 
+void Persons::Row_clicked(const QModelIndex&)
+{
+	Edit_user();
+}
+
 void Persons::Edit_user()
 {
 	QSqlRecord qsr = qstm->record(ui.tableTvw->currentIndex().row());
@@ -153,13 +160,13 @@ void Persons::Edit_user()
 			"Name").toString(), qsr.value("Surname").toString(), qsr.value("Address").toString(), qsr.value(
 			"Comment").toString());
 
-	PersonAdder pa(pn, PersonAdder::Edit, this);
-
 	QImage tmp;
-	//Get_image_from_db(tmp, QString::number(pn.getId())); //doesn't work
+	Get_image_from_db(tmp, QString::number(pn.getId())); //doesn't work
 	pn.setImg(tmp);
 
+	PersonAdder pa(pn, PersonAdder::Edit, this);
 	pa.exec();
+	
 	if(pa.result() < 1)
 	{
 		return;
@@ -173,8 +180,7 @@ void Persons::Edit_user()
 				QString::fromUtf8("Błąd dodawaniu wpisu:\n%1").arg(mydb.lastError().text()));
 	}
 
-	//doesn't work
-	//Put_pikczur_into_db(QString::number(pn.getId()), pn.getImg());
+	Put_pikczur_into_db(QString::number(pn.getId()), pn.getImg());
 }
 
 void Persons::Del_user()
@@ -189,28 +195,46 @@ void Persons::Del_user()
 void Persons::Put_pikczur_into_db( const QString& id, const QImage& img, bool )
 {
 
-	if(img.isNull())
-		return;
-
 	QSqlQuery query(mydb);
-	query.prepare("SELECT COUNT(\"Person\") FROM \"Ppl_miniphotos\" WHERE \"Person\" = ?");
+	
+	if(img.isNull())
+	{
+		query.prepare("DELETE FROM \"Ppl_miniphotos\" WHERE \"Person\" = ?");
+	} else {
+		query.prepare("SELECT COUNT(\"Person\") FROM \"Ppl_miniphotos\" WHERE \"Person\" = ?");
+		
+	}
 	query.bindValue(0, id);
-
-	if(not query.exec() or not query.first())
+	
+		
+	if(not query.exec() or (not img.isNull() and not query.first()) )
 	{
 		QMessageBox::critical(this, QString::fromUtf8("Błąd"), QString::fromUtf8(
 				"Błąd podczas dodawania zdjęcia do DB:\n%1").arg(query.lastError().text()));
 
 		return;
 	}
+	
+	if(img.isNull())
+	{
+		return;
+	}
 
+	QByteArray qba;
+	QBuffer qb(&qba);
+	
+	qb.open(QIODevice::WriteOnly);
+	img.save(&qb, "PNG", 0);
+	qb.close();
+	
+	
 	if(query.value(0) == 0)
 	{
 		QSqlQuery insq(mydb);
 		insq.prepare(
 				"INSERT INTO \"Ppl_miniphotos\" (\"Person\", \"time\", \"photo\") VALUES (?, NOW(), ? );");
 		insq.bindValue(0, id);
-		insq.bindValue(1, QVariant(img.bits()).toString(), QSql::In | QSql::Binary);
+		insq.bindValue(1, QString(qba.toBase64()));
 
 		if(not insq.exec())
 		{
@@ -223,17 +247,17 @@ void Persons::Put_pikczur_into_db( const QString& id, const QImage& img, bool )
 	else
 	{
 		QSqlQuery insq(mydb);
-		insq.prepare("UPDATE \"Ppl_miniphotos\" SET \"Person\" = ?, \"photo\" = ?, \"time\" = NOW();");
+		insq.prepare("UPDATE \"Ppl_miniphotos\" SET \"Person\" = ?, \"photo\" = '?', \"time\" = NOW();");
 		insq.bindValue(0, id);
-		insq.bindValue(1, img, QSql::In | QSql::Binary);
-
+		insq.bindValue(1, QString(qba.toBase64()));
+		
 		if(not insq.exec())
 		{
 			QMessageBox::critical(this, QString::fromUtf8("Błąd"), QString::fromUtf8(
 					"Błąd podczas dodawania zdjęcia do DB:\n%1").arg(insq.lastError().text()));
 
 			return;
-		}
+		}	
 	}
 
 }
@@ -252,6 +276,6 @@ void Persons::Get_image_from_db( QImage& im, const QString& id )
 	else
 	{
 		if(query.first())
-			im = query.value(0).value<QImage> ();
+			im = QImage::fromData(QByteArray::fromBase64( query.value(0).toByteArray() ));
 	}
 }

@@ -160,5 +160,6 @@ void PersonAdder::Clear_image()
 
 		ui.SaveImgTbn->setEnabled(false);
 		ui.DelImgTbn->setEnabled(false);
+		psn.setImg(QImage());
 	}
 }

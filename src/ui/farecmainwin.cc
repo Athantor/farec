@@ -63,6 +63,10 @@ void FarecMainWin::Connect_slots()
 	connect(ui.actionWyszukajTwarz, SIGNAL(triggered(bool)), this, SLOT(Search_face(bool)));
 	connect(ui.actionW_a_ciel, SIGNAL(triggered(bool)), this, SLOT(Add_person(bool)));
 
+	connect(ui.actionO_Qt, SIGNAL(triggered(bool)), QApplication::instance(), SLOT(aboutQt  ()));
+	connect(ui.actionO, SIGNAL(triggered(bool)), this, SLOT(About_dlg(bool)));
+	
+	
 #ifdef DEBUG_KRZYS
 
 	ui.menuOpsy->setEnabled(true);
@@ -409,6 +413,14 @@ void FarecMainWin::Search_face( bool )
 
 		Show_segments(cls);
 	}
+}
+
+void FarecMainWin::About_dlg(bool)
+{
+	AboutDialog::Show_me("FaRec", " ver. 1.0.", 
+			QString::fromUtf8("© <a href='mailto:krzysztofkundzicz@gmail.com'>"
+					"Krzysztof Kundzicz</a>; 2009; "
+					"Licensed under <a href='http://www.gnu.org/licenses/gpl-3.0.txt'>GPLv3</a>."), this);
 }
 
 void FarecMainWin::Save_file_in( bool )

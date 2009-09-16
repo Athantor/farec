@@ -221,12 +221,20 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionDbPo_cz"/>
     <addaction name="actionDbRoz_cz"/>
    </widget>
+   <widget class="QMenu" name="menuPomoc">
+    <property name="title">
+     <string>Pomoc</string>
+    </property>
+    <addaction name="actionO_Qt"/>
+    <addaction name="actionO"/>
+   </widget>
    <addaction name="menuPlik"/>
    <addaction name="menuObrazy"/>
    <addaction name="menuOpsy"/>
    <addaction name="menuNarz_dzia"/>
    <addaction name="menuTwarz"/>
    <addaction name="menuBD"/>
+   <addaction name="menuPomoc"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="ActionsToolbar">
@@ -465,6 +473,16 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Właściel…</string>
+   </property>
+  </action>
+  <action name="actionO_Qt">
+   <property name="text">
+    <string>O Qt…</string>
+   </property>
+  </action>
+  <action name="actionO">
+   <property name="text">
+    <string>O aplikacji…</string>
    </property>
   </action>
  </widget>

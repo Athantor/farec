@@ -55,6 +55,7 @@
 #include "DbConnect.hh"
 #include "Persons.hh"
 #include "PersonChooser.hh"
+#include "AboutDialog.hh"
 
 using boost::scoped_ptr;
 using boost::polymorphic_downcast;
@@ -88,6 +89,8 @@ class FarecMainWin : public QMainWindow
 		void Show_grads_src( bool );
 		void Show_grads_pview( bool );
 		void Show_segments(bool);
+		
+		void About_dlg(bool);
 
 #ifdef DEBUG_KRZYS
 		void Test_autoprep( bool );

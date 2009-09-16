@@ -34,6 +34,20 @@ Person::Person( uint64_t i, const QUuid& ui, const QDateTime& dt, uint64_t stt, 
 
 }
 
+Person::Person(const QSqlQuery& que, const QImage& img):
+		id(que.value(0).toULongLong(0)), 
+		uuid(QUuid(que.value(5).toString())), 
+		ptime(que.value(6).toDateTime()), 
+		status(que.value(7).toULongLong()), 
+		name(que.value(1).toString()), 
+		surname(que.value(2).toString()), 
+		addr(que.value(3).toString()), 
+		comments(que.value(4).toString()), 
+		img(img)
+{
+	
+}
+
 Person::~Person()
 {
 }
@@ -93,7 +107,7 @@ QImage Person::getImg() const
 	return img;
 }
 
-void Person::setImg( QImage img )
+void Person::setImg( const QImage & img )
 {
 	this->img = img;
 }

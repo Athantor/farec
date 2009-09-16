@@ -15,6 +15,7 @@ SET(farec_ui_SRCS
   ui/Persons
   ui/PersonChooser
   ui/AboutDialog
+  ui/PplSrchModel
 )
 
 SET(farec_SRCS
@@ -53,6 +54,7 @@ SET(farec_MOCS_H
 	ui/Persons.hh
 	ui/PersonChooser.hh
 	ui/AboutDialog.hh
+	ui/PplSrchModel.hh
 )
 
 SET(farec_RC

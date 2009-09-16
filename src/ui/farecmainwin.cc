@@ -97,6 +97,8 @@ void FarecMainWin::Connect_slots()
 	db_sb_lbl->setPixmap(ui.actionDbRoz_cz->icon().pixmap(16, ui.statusbar->height()));
 	db_sb_lbl->setToolTip(QString::fromUtf8("Nie połączono z BD"));
 
+	ui.tableView->setModel(srchmodel.get());
+	
 }
 
 void FarecMainWin::Populate_toolbar()
@@ -405,10 +407,11 @@ void FarecMainWin::Search_face( bool )
 
 		if(srch)
 		{
-			for(auto it = srch->begin(); it != srch -> end(); ++it)
-			{
-				std::cout << "!" << it.key() << ": " << *it << std::endl;
-			}
+			srchmodel.reset(new PplSrchModel(srch, fdb));
+			ui.tableView->setModel(srchmodel.get());
+		} else {
+			srchmodel.reset();
+			ui.tableView->setModel(srchmodel.get());
 		}
 
 		Show_segments(cls);
@@ -418,7 +421,7 @@ void FarecMainWin::Search_face( bool )
 void FarecMainWin::About_dlg(bool)
 {
 	AboutDialog::Show_me("FaRec", " ver. 1.0.", 
-			QString::fromUtf8("© <a href='mailto:krzysztofkundzicz@gmail.com'>"
+			QString::fromUtf8("© <a href='mailto:krzysztofkundzicz\u0040gmail.com'>"
 					"Krzysztof Kundzicz</a>; 2009; "
 					"Licensed under <a href='http://www.gnu.org/licenses/gpl-3.0.txt'>GPLv3</a>."), this);
 }

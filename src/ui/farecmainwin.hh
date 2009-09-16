@@ -56,6 +56,7 @@
 #include "Persons.hh"
 #include "PersonChooser.hh"
 #include "AboutDialog.hh"
+#include "PplSrchModel.hh"
 
 using boost::scoped_ptr;
 using boost::polymorphic_downcast;
@@ -118,6 +119,7 @@ class FarecMainWin : public QMainWindow
 		QLabel *db_sb_lbl;
 		//     sha1         data
 		QHash<QString, shared_ptr<Classifier> > cache;
+		shared_ptr<PplSrchModel> srchmodel;
 
 		void Connect_slots();
 		void Populate_toolbar();

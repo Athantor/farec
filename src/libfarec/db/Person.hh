@@ -27,6 +27,8 @@
 #include <QUuid>
 #include <QDateTime>
 #include <QImage>
+#include <QSqlQuery>
+#include <QVariant>
 
 #include <cstdint>
 
@@ -37,6 +39,7 @@ class Person
 		Person( uint64_t, const QUuid&, const QDateTime&, uint64_t = 0, const QString& = QString(),
 				const QString& = QString(), const QString& = QString(), const QString& = QString(),
 				const QImage& = QImage() );
+		Person(const QSqlQuery&, const QImage& = QImage());
 		virtual ~Person();
 		uint64_t getId() const;
 
@@ -51,7 +54,7 @@ class Person
 		void setTime( QDateTime time );
 		void setUuid( QUuid uuid );
 		QImage getImg() const;
-		void setImg( QImage img );
+		void setImg( const QImage &img );
 		QString getAddr() const;
 		QString getComments() const;
 		QString getSurname() const;
